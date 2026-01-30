@@ -22,7 +22,7 @@ You will be presented with a list of all of your ESPHome ESP32 devices and you m
 This is technically the only required field, as basic functionality will be available when the Blueprint knows to which panel it has to send the settings.
 
 > [!NOTE]
-> You cannot have more than one blueprint based automation per each panel
+> You cannot have more than one blueprint-based automation per each panel
 
 ### Language for NSPanel 
 
