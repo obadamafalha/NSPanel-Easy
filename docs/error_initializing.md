@@ -25,14 +25,15 @@ Your boot page probably looks like this:
 
 #### Initializing or IP address
 
-In the top, you will see the message "Initializing..." while the display is executing it's boot sequence or waiting for a connection from ESPHome.
+At the top, you will see the message "Initializing..." while the display is executing its boot sequence or waiting for a connection from ESPHome.
 
-Once ESPHome is connected to both the display and the Wi-Fi network, that text will be replace by the IP address, which can be useful for troubleshooting.
+Once ESPHome is connected to both the display and the Wi-Fi network, that text will be replaced by the IP address, which can be useful for troubleshooting.
 
 #### Baud rate (bps)
 
-On the top right corner, it's shown the baud rate used by the display to communicate to ESPHome.
-By default, all the communication should happens at 115200 bps, but as 921600 bps is also supported, the display will alternate between these 2 rates every 30 seconds until ESPHome gets connected.
+On the top right corner, it’s shown the baud rate used by the display to communicate to ESPHome.
+By default, all the communication should happen at 115200 bps, but as 921600 bps is also supported,
+the display will alternate between these 2 rates every 30 seconds until ESPHome gets connected.
 
 #### Framework
 
