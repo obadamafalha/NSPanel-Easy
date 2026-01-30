@@ -73,7 +73,7 @@ script:
           ESP_LOGD("${TAG_VERSIONING}", "  TFT:       %s", version_tft->state.c_str());
           system_flags.version_check_ok = true;
           if (version_blueprint->state != "${version}") {
-            ESP_LOGW("${TAG_VERSIONING}", "TFT Blueprint mismatch!");
+            ESP_LOGW("${TAG_VERSIONING}", "Blueprint version mismatch!");
             if (version_blueprint->state < "${min_blueprint_version}") {
               ESP_LOGE("${TAG_VERSIONING}", "v${min_blueprint_version} or later is required");
               system_flags.version_check_ok = false;

@@ -11,6 +11,10 @@ permissions:
 
 jobs:
   update-tags:
+    if: ${{ !github.event.release.prerelease }}
+    concurrency:
+      group: update-tags
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,10 +30,10 @@ jobs:
       - name: Move and push stable tag
         run: |
           git tag -f stable ${{ github.event.release.tag_name }}^{}
-          git push -f origin stable
+          git push origin refs/tags/stable --force-with-lease
 
       - name: Move and push latest tag
         run: |
           git tag -f latest ${{ github.event.release.tag_name }}^{}
-          git push -f origin latest
+          git push origin refs/tags/latest --force-with-lease
 ...
