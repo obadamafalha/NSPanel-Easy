@@ -75,7 +75,7 @@ script:
           if (version_blueprint->state != "${version}") {
             ESP_LOGW("${TAG_VERSIONING}", "TFT Blueprint mismatch!");
             if (version_blueprint->state < "${min_blueprint_version}") {
-              ESP_LOGE("${TAG_VERSIONING}", "v${min_tft_version} or later is required");
+              ESP_LOGE("${TAG_VERSIONING}", "v${min_blueprint_version} or later is required");
               system_flags.version_check_ok = false;
             }
           }
@@ -140,7 +140,7 @@ script:
             - lambda: |-
                 if (not version_blueprint->state.empty()) wait_for_version_blueprint->stop();
                 if (iteration % 5 == 1) boot_log->execute("Boot", "Waiting for Blueprint version");
-                if (iteration % 9) boot_request_blueprint_settings->execute("timeout");
+                if (iteration % 9 == 0) boot_request_blueprint_settings->execute("timeout");
             - delay: 1s
 
   - id: wait_for_versions
