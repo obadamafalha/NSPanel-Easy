@@ -3,6 +3,7 @@
 #include "text.h"
 #include <algorithm>
 #include <cctype>
+#include <cstdlib>
 #include <cstring>
 
 namespace nspanel_easy {
