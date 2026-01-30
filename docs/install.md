@@ -259,7 +259,7 @@ Power it up, and it should appear online in the ESPHome Dashboard within a coupl
 
 ### Integrating your panel to Home Assistant
 Once your panel loaded the new ESPHome firmware, it should be automatically detected by Home Assistant and you should get a notification about that.
-If that isn't happnening, you can manually add it as a new intgration with the following steps:
+If that isn't happening, you can manually add it as a new integration with the following steps:
 > [!TIP]
 > You can use [this link](https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome)
 > to go directly to the dialog to add a new ESPHome device,
@@ -272,7 +272,7 @@ If that isn't happnening, you can manually add it as a new intgration with the f
 
 After that, you will have access to the **Device's page** related to your NSPanel.
 On that page you will find all the entities published by the ESPHome firmware installed in your panel,
-which can be use to see it's status and control some of it's settings.
+which can be used to see its status and control some of its settings.
 
 It might take a minute or two until the device's page gets fully populated, but when that is completed, take a look around and get familiar with that page.
 
