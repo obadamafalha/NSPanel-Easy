@@ -75,7 +75,7 @@ globals:
   - id: qrcode_icon_color
     type: uint16_t
     restore_value: ${qrcode_restore_value}
-    initial_value: '${qrcode_initial_value}'
+    initial_value: '${qrcode_icon_color_initial_value}'
 
   - id: qrcode_string
     type: std::string
