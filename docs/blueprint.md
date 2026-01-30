@@ -212,7 +212,7 @@ The entities are numbered as follows:
 
 Additionally there is the possibility to choose an icon of your choice for the Entities button on the Home page.
 
-Of course there is also the possibility to enter a label for each of the 4 pages and the aligment for the values on the entities pages.
+Of course there is also the possibility to enter a label for each of the 4 pages and the alignment for the values on the entities pages.
 
 ## Advanced Settings
 
