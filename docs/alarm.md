@@ -29,7 +29,7 @@ To enable this:
 1. Go to your ESPHome integrations panel (Settings > Devices and services > ESPHome).
 2. Click "Configure" next to your panel's entry.
 
-   ![Configure option in ESPHome integrations panel](pics/94725493/37bfc622-c0cd-4941-a397-3eeb2ddbe6a2)
+   ![Configure option in ESPHome integrations panel](pics/94725493/37bfc622-c0cd-4941-a397-3eeb2ddbe6a2.png)
 
 3. Select the "**Allow the device to perform Home Assistant actions**" option.
 
@@ -61,9 +61,9 @@ single click or return to the Home page.
 <!-- markdownlint-disable MD013 -->
 State | Color | Icon | Icon Name | Description
 -- | -- | -- | -- | --
-disarmed | White | ![shield-off-outline](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/5b1c8219-3958-4096-9100-0b4ef47e7dac) | mdi:shield-off-outline | The alarm is disarmed (off).
-armed_home | Green | ![shield-home-outline](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/1ed9347b-139a-4729-a795-b08934b56581) | mdi:shield-home-outline | The alarm is armed in home mode.
-armed_away | Green | ![shield-lock-outline](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/998db33c-3ec5-47dd-9686-c28eee81e9eb) | mdi:shield-lock-outline | The alarm is armed in away mode.
+disarmed | White | ![shield-off-outline](pics/94725493/5b1c8219-3958-4096-9100-0b4ef47e7dac.svg) | mdi:shield-off-outline | The alarm is disarmed (off).
+armed_home | Green | ![shield-home-outline](pics/94725493/1ed9347b-139a-4729-a795-b08934b56581.svg) | mdi:shield-home-outline | The alarm is armed in home mode.
+armed_away | Green | ![shield-lock-outline](pics/94725493/998db33c-3ec5-47dd-9686-c28eee81e9eb.svg) | mdi:shield-lock-outline | The alarm is armed in away mode.
 armed_night | Green | ![shield-moon-outline](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/84528bca-577d-4a43-8366-e6f9e41bc7b4) | mdi:shield-moon-outline | The alarm is armed in night mode.
 armed_vacation | Green | ![shield-airplane-outline](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/067218de-ec8c-4fce-a427-7848a7ae9f27) | mdi:shield-airplane-outline | The alarm is armed in vacation mode.
 armed_custom_bypass | Green | ![shield-half-full](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/af7ed346-28eb-4796-b62b-2a51e9cb6272) | mdi:shield-half-full | The alarm is armed in bypass mode.
