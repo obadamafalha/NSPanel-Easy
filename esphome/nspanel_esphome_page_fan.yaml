@@ -1,0 +1,94 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME Page fan                                                                          #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  BOOT_STEP_PAGE_FAN: 16
+  PAGE_FAN_ID: 22
+  TAG_PAGE_FAN: nspanel.page.fan
+
+display:
+  - id: !extend disp1
+    on_touch:
+      then:
+        - lambda: |-
+            if (
+                  page_id == ${PAGE_FAN_ID} and  // Page fan
+                  !touch_event                   // Only act with release
+                ) {
+              switch (component_id) {
+                case 13:  // bt_oscillate
+                  fire_ha_event("action_call", {
+                    {"action", "fan.oscillate"},
+                    {"key", "oscillating"},
+                    {"value", "toggle"},
+                    {"entity", detailed_entity->state.c_str()}
+                  });
+                  break;
+                case 14:  // power_button
+                  fire_ha_event("action_call", {
+                    {"action", "fan.toggle"},
+                    {"entity", detailed_entity->state.c_str()}
+                  });
+                  break;
+              }
+            }
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_PAGE_FAN
+
+script:
+  - id: !extend event_from_display
+    then:
+      - lambda: |-
+          if (params[0] == "fan" and params[1] == "percentage") {
+            // CSV Format: fan,percentage,<value>
+            // params[0]=page, params[1]=percentage, params[2]=value
+
+            if (params_count != 3) {
+              ESP_LOGW("${TAG_PAGE_FAN}", "Bad params");
+              return;
+            }
+
+            const std::string& value = params[2];
+
+            ESP_LOGV("${TAG_PAGE_FAN}", "Fan speed: %s%%", value.c_str());
+
+            if (value == "0") {
+              ESP_LOGV("${TAG_PAGE_FAN}", "Turn-off fan");
+
+              fire_ha_event("action_call", {
+                {"action", "fan.turn_off"},
+                {"entity", detailed_entity->state.c_str()}
+              });
+            } else {
+              ESP_LOGV("${TAG_PAGE_FAN}", "Set fan speed");
+
+              fire_ha_event("action_call", {
+                {"action", "fan.turn_on"},
+                {"key", "percentage"},
+                {"value", value.c_str()},
+                {"entity", detailed_entity->state.c_str()}
+              });
+            }
+          }
+
+  - id: !extend page_change
+    then:
+      - lambda: if (new_page_id == ${PAGE_FAN_ID}) page_fan->execute();
+
+  - id: page_fan
+    mode: single
+    then:  # There's nothing here so far
+
+  - id: !extend stop_page_constructors
+    then:
+      - lambda: page_fan->stop();
+...

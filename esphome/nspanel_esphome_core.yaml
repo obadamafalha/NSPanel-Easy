@@ -1,0 +1,193 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME CORE                                                                              #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  DELAY_DEFAULT: 25  # delay in msec
+  DELAY_LONG: 125    # delay in msec
+  DELAY_SHORT: 5     # delay in msec
+
+  TAG_CORE: "nspanel.core"
+
+packages:
+  # yamllint disable rule:colons
+  version:           !include nspanel_esphome_version.yaml
+  api:               !include nspanel_esphome_api.yaml
+  base:              !include nspanel_esphome_base.yaml
+  boot:              !include nspanel_esphome_boot.yaml
+  datetime:          !include nspanel_esphome_datetime.yaml
+  hw_buttons:        !include nspanel_esphome_hw_buttons.yaml
+  hw_display:        !include nspanel_esphome_hw_display.yaml
+  hw_memory:         !include nspanel_esphome_hw_memory.yaml
+  hw_wifi:           !include nspanel_esphome_hw_wifi.yaml
+  page_boot:         !include nspanel_esphome_page_boot.yaml
+  page_home:         !include nspanel_esphome_page_home.yaml
+  page_screensaver:  !include nspanel_esphome_page_screensaver.yaml
+  # yamllint enable rule:colons
+
+##### ESPHOME CONFIGURATION #####
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_CORE
+
+##### START - GLOBALS CONFIGURATION #####
+globals:
+  - id: hardware_settings
+    type: nspanel_easy::HardwareSettings
+    restore_value: true
+    initial_value: 'nspanel_easy::HardwareSettings{}'
+
+  #### Localization (MUI) ####
+  - id: mui_decimal_separator
+    type: std::string  # To do: Should this be optimized as it is always 1-char?
+    restore_value: true
+    initial_value: '"."'
+
+##### START - NUMBER CONFIGURATION #####
+number:
+  ##### Timers settings #####
+  - name: Timeout Page
+    platform: template
+    id: timeout_page
+    entity_category: config
+    min_value: 0
+    max_value: 86400
+    initial_value: 15
+    step: 1
+    restore_value: true
+    optimistic: true
+    icon: mdi:timer
+    unit_of_measurement: "s"
+    update_interval: never
+    on_value:
+      then:
+        - script.execute: timer_page
+  - name: Timeout Dimming
+    platform: template
+    id: timeout_dim
+    entity_category: config
+    min_value: 0
+    max_value: 86400
+    initial_value: 30
+    step: 1
+    restore_value: true
+    optimistic: true
+    icon: mdi:timer
+    unit_of_measurement: "s"
+    update_interval: never
+    on_value:
+      then:
+        - script.execute: timer_dim
+
+script:  # Scripts
+  - id: !extend dump_config
+    then:
+      - lambda: |-
+          // Report Packages
+          ESP_LOGCONFIG("${TAG_CORE}", "Packages:");
+          #ifdef NSPANEL_EASY_CORE
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Core");
+          #endif
+          #ifdef NSPANEL_EASY_ADVANCED
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Advanced");
+          #endif
+          #ifdef NSPANEL_EASY_ADDON_BLUETOOTH_PROXY
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Bluetooth Proxy");
+          #endif
+          #ifdef NSPANEL_EASY_ADDON_UPLOAD_TFT
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Upload TFT");
+          #endif
+          #ifdef NSPANEL_EASY_ADDON_CLIMATE_BASE
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Climate - Base");
+          #endif
+          #ifdef NSPANEL_EASY_ADDON_CLIMATE_COOL
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Climate - Cool");
+          #endif
+          #ifdef NSPANEL_EASY_ADDON_CLIMATE_DUAL
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Climate - Dual");
+          #endif
+          #ifdef NSPANEL_EASY_ADDON_CLIMATE_HEAT
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Climate - Heat");
+          #endif
+          #ifdef NSPANEL_EASY_PREBUILT
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Pre-built");
+          #endif
+          #ifdef NSPANEL_EASY_PREBUILT_WALL_DISPLAY
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Pre-built (Wall Display)");
+          #endif
+          #if defined(USE_BLUETOOTH_PROXY) || defined(USE_WEBSERVER) || defined(USE_CAPTIVE_PORTAL)
+          ESP_LOGCONFIG("${TAG_CORE}", "Components:");
+          #ifdef USE_ESP32_BLE_SERVER
+          ESP_LOGCONFIG("${TAG_CORE}", "  - BLE server");
+          #endif
+          #ifdef USE_ESP32_BLE_CLIENT
+          ESP_LOGCONFIG("${TAG_CORE}", "  - BLE tracker");
+          #endif
+          #ifdef USE_BLUETOOTH_PROXY
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Bluetooth proxy");
+          #endif
+          #ifdef USE_CAPTIVE_PORTAL
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Captive portal");
+          #endif
+          #ifdef USE_IMPROV
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Improv (BLE)");
+          #endif
+          #ifdef USE_WEBSERVER
+          ESP_LOGCONFIG("${TAG_CORE}", "  - Web server");
+          #endif
+          #endif
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          wait_for_api->stop();
+          wait_for_blueprint->stop();
+
+  - id: wait_for_api
+    mode: single
+    then:
+      - repeat:
+          count: 60  # seconds
+          then:
+            - lambda: |-
+                if (system_flags.wifi_ready) wait_for_api->stop();
+                if (iteration % 5 == 1) boot_log->execute("Boot", "Waiting for API");
+            - delay: 1s
+
+  - id: wait_for_blueprint
+    mode: single
+    then:
+      - lambda: boot_log->execute("Boot", "Waiting for Blueprint");
+      - while:
+          condition:
+            - lambda: return (not system_flags.blueprint_ready) and (not is_blueprint_fully_ready());
+          then:
+            - lambda: |-
+                ESP_LOGD("${TAG_CORE}", "Blueprint progress: %0.1f%%", blueprint_status_flags.get_completion_percentage());
+                ESP_LOGV("${TAG_CORE}", "  Page home: %s", YESNO(blueprint_status_flags.page_home));
+                ESP_LOGV("${TAG_CORE}", "  Page qrcode: %s", YESNO(blueprint_status_flags.page_qrcode));
+                ESP_LOGV("${TAG_CORE}", "  Page utilities: %s", YESNO(blueprint_status_flags.page_utilities));
+                ESP_LOGV("${TAG_CORE}", "  Relay settings: %s", YESNO(blueprint_status_flags.relay_settings));
+                ESP_LOGV("${TAG_CORE}", "  Version: %s", YESNO(blueprint_status_flags.version));
+                ESP_LOGV("${TAG_CORE}", "  HW Buttons settings: %s", YESNO(blueprint_status_flags.hw_buttons_settings));
+                static uint8_t counter = 0;
+                counter++;
+                if (counter >= 10) {
+                  counter = 0;
+                  boot_request_blueprint_settings->execute("timeout");
+                }
+            - delay: 1s
+      - lambda: |-
+          ESP_LOGI("${TAG_CORE}", "Blueprint progress: %0.1f%%", blueprint_status_flags.get_completion_percentage());
+          boot_log->execute("Boot", "Blueprint is ready");
+          refresh_wifi_icon->execute();
+...

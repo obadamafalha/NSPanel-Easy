@@ -1,0 +1,314 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHome Add-on for Cover control based on time                                            #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+##### ATTENTION: This will add cover elements to the core system and requires the core part.  #####
+#####################################################################################################
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  ### Local cover defaults   ###
+  interlock_wait_time: '250'
+  TAG_ADDON_COVER: nspanel.addon.cover
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_ADDON_COVER
+
+cover:
+  - id: cover_embedded
+    name: Cover
+    platform: feedback
+    open_action:
+      then:
+        - lambda: |-
+            cover_open_virtual_relay->turn_on();
+    open_duration: 1ms
+    close_action:
+      then:
+        - lambda: |-
+            cover_close_virtual_relay->turn_on();
+    close_duration: 1ms
+    stop_action:
+      then:
+        - lambda: |-
+            cover_open_virtual_relay->turn_off();
+            cover_close_virtual_relay->turn_off();
+            relay_1->turn_off();
+            relay_2->turn_off();
+
+number:
+  - id: cover_acceleration_wait_time
+    name: Cover acceleration wait time
+    icon: mdi:timer
+    platform: template
+    unit_of_measurement: ms
+    internal: false
+    entity_category: config
+    min_value: 0
+    max_value: 10000
+    step: 1
+    initial_value: 0
+    optimistic: true
+    restore_value: true
+    update_interval: never
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(x)) return;
+            boot_log->execute("Cover", "Set acc. wait time");
+            cover_embedded->set_acceleration_wait_time(x);
+            dump_config_cover->execute();
+
+  - id: cover_direction_change_wait_time
+    name: Cover direction change wait time
+    icon: mdi:timer
+    platform: template
+    unit_of_measurement: ms
+    internal: false
+    entity_category: config
+    min_value: 0
+    max_value: 10000
+    step: 1
+    initial_value: 100
+    optimistic: true
+    restore_value: true
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(x)) return;
+            boot_log->execute("Cover", "Set dir. change wait time");
+            cover_embedded->set_direction_change_waittime(x);
+            dump_config_cover->execute();
+
+  - id: cover_interlock_wait_time
+    name: Cover interlock wait time
+    icon: mdi:timer
+    platform: template
+    unit_of_measurement: ms
+    internal: false
+    entity_category: config
+    min_value: 1
+    max_value: 5000
+    step: 1
+    initial_value: ${interlock_wait_time}
+    optimistic: true
+    restore_value: true
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(x)) return;
+            boot_log->execute("Cover", "Set relay interlock time");
+            relay_1->set_interlock_wait_time(x);
+            relay_2->set_interlock_wait_time(x);
+            dump_config_cover->execute();
+
+  - id: cover_open_duration
+    name: Cover open duration
+    icon: mdi:timer
+    platform: template
+    unit_of_measurement: ms
+    internal: false
+    entity_category: config
+    min_value: 1
+    max_value: 600000
+    step: 1
+    initial_value: 1
+    optimistic: true
+    restore_value: true
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(x)) return;
+            boot_log->execute("Cover", "Set open duration");
+            cover_embedded->set_open_duration(x);
+            dump_config_cover->execute();
+
+  - id: cover_close_duration
+    name: Cover close duration
+    icon: mdi:timer
+    platform: template
+    unit_of_measurement: ms
+    internal: false
+    entity_category: config
+    min_value: 1
+    max_value: 600000
+    step: 1
+    initial_value: 1
+    optimistic: true
+    restore_value: true
+    on_value:
+      then:
+        - lambda: |-
+            if (isnan(x)) return;
+            boot_log->execute("Cover", "Set close duration");
+            cover_embedded->set_close_duration(x);
+            dump_config_cover->execute();
+
+script:
+  - id: !extend dump_config
+    then:
+      - lambda: |-
+          // Check if more than one or none of the climate options are defined
+          #ifdef NSPANEL_EASY_ADDON_CLIMATE_BASE
+            #error "Configuration error: The add-on cover and add-on climate cannot be installed simultaneously."
+          #endif
+          ESP_LOGCONFIG("${TAG_ADDON_COVER}", "Add-on cover (time based):");
+          cover_embedded->dump_config();
+
+  - id: dump_config_cover
+    mode: restart
+    then:
+      - delay: 10s
+      - lambda: cover_embedded->dump_config();
+
+  - id: dump_config_relays
+    mode: restart
+    then:
+      - delay: 10s
+      - lambda: |-
+          relay_1->dump_config();
+          relay_2->dump_config();
+
+  - id: set_physical_relays
+    mode: restart
+    parameters:
+      opening: bool   # operation is opening (true) or closing (false)
+      state: bool  # true when turning the relay on, or false when turning the relay off
+    then:
+      - lambda: |-
+          ESP_LOGV("${TAG_ADDON_COVER}", "Add-on cover - Set physical relays:");
+          ESP_LOGV("${TAG_ADDON_COVER}", "  operation: %s", opening ? "opening" : "closing");
+          ESP_LOGV("${TAG_ADDON_COVER}", "  state: %s", TRUEFALSE(state));
+          auto cover_relays_active_index = cover_relays_mode->active_index();
+          if (not cover_relays_active_index.has_value()) {
+            ESP_LOGW("${TAG_ADDON_COVER}", "Cover relays mode - No active index found");
+            relay_1->turn_off();
+            relay_2->turn_off();
+            return;
+          }
+
+          ESP_LOGV("${TAG_ADDON_COVER}", "  active index: %i", cover_relays_active_index.value());
+          const bool cover_mode_std = (cover_relays_active_index.value() == 0);
+          ESP_LOGV("${TAG_ADDON_COVER}", "  standard mode: %s", YESNO(cover_mode_std));
+          auto relay_open = cover_mode_std ? relay_1 : relay_2;
+          auto relay_close = cover_mode_std ? relay_2 : relay_1;
+
+          if (opening) {
+            if (state) {
+              ESP_LOGV("${TAG_ADDON_COVER}", "Add-on cover - start opening");
+              relay_open->turn_on();
+            } else {
+              ESP_LOGV("${TAG_ADDON_COVER}", "Add-on cover - stop opening");
+              relay_open->turn_off();
+            }
+          } else {
+            if (state) {
+              ESP_LOGV("${TAG_ADDON_COVER}", "Add-on cover - start closing");
+              relay_close->turn_on();
+            } else {
+              ESP_LOGV("${TAG_ADDON_COVER}", "Add-on cover - stop closing");
+              relay_close->turn_off();
+            }
+          }
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          dump_config_cover->stop();
+          dump_config_relays->stop();
+          set_physical_relays->stop();
+
+select:
+  - id: cover_device_class
+    name: Cover device class
+    platform: template
+    options:
+      - "None"
+      - "Awning"
+      - "Blind"
+      - "Curtain"
+      - "Damper"
+      - "Door"
+      - "Garage"
+      - "Gate"
+      - "Shade"
+      - "Shutter"
+      - "Window"
+    optimistic: true
+    restore_value: true
+    internal: false
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:window-shutter-cog
+    update_interval: never
+    on_value:
+      then:
+        - lambda: |-
+            if (x.empty()) return;
+            boot_log->execute("Cover", "Set device class");
+            std::string lower_x = x;
+            std::transform(lower_x.begin(), lower_x.end(), lower_x.begin(), ::tolower);
+            cover_embedded->set_device_class(lower_x.c_str());
+            dump_config_cover->execute();
+
+  - id: cover_relays_mode
+    name: Cover relays mode
+    platform: template
+    options:
+      - "Relay 1 opens, relay 2 closes"
+      - "Relay 2 opens, relay 1 closes"
+    optimistic: true
+    restore_value: true
+    internal: false
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:dip-switch
+
+switch:
+  - id: !extend relay_1
+    interlock: [relay_1, relay_2]
+    interlock_wait_time: ${interlock_wait_time}ms
+    restore_mode: ALWAYS_OFF
+    internal: true
+  - id: !extend relay_2
+    interlock: [relay_1, relay_2]
+    interlock_wait_time: ${interlock_wait_time}ms
+    restore_mode: ALWAYS_OFF
+    internal: true
+
+  - id: cover_open_virtual_relay
+    platform: template
+    internal: true
+    restore_mode: ALWAYS_OFF
+    optimistic: true
+    on_turn_on:
+      then:
+        - lambda: |-
+            set_physical_relays->execute(true, true);
+    on_turn_off:
+      then:
+        - lambda: |-
+            set_physical_relays->execute(true, false);
+
+  - id: cover_close_virtual_relay
+    platform: template
+    internal: true
+    restore_mode: ALWAYS_OFF
+    optimistic: true
+    on_turn_on:
+      then:
+        - lambda: |-
+            set_physical_relays->execute(false, true);
+    on_turn_off:
+      then:
+        - lambda: |-
+            set_physical_relays->execute(false, false);
+...

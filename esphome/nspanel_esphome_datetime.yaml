@@ -1,0 +1,160 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME CORE - DATE & TIME                                                                #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  BOOT_STEP_DATETIME: '2'
+  TAG_DATETIME: nspanel.datetime
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_DATETIME
+
+globals:
+  - id: mui_timezone
+    type: std::string
+    restore_value: true
+    initial_value: ""
+
+script:
+  - id: !extend action_component_text
+    then:
+      - lambda: |-
+          if (page == "mem") {
+            if (component == "time_format") {
+              id(mui_time_format) = txt;
+              return;
+            } else if (component == "meridiem_am") {
+              id(mui_meridiem_am) = txt;
+              return;
+            } else if (component == "meridiem_pm") {
+              id(mui_meridiem_pm) = txt;
+              return;
+            } else if (component == "timezone") {
+              set_timezone->execute(txt.c_str());
+              return;
+            }
+          }
+
+  - id: !extend boot
+    then:
+      - lambda: |-
+          boot_log->execute("Date/Time", "Set time zone");
+          set_timezone_from_globals->execute();
+
+  - id: new_minute
+    mode: restart
+    then:
+      - lambda: |-
+          refresh_datetime->execute();
+          refresh_hardware_buttons_bars->execute(3);
+          refresh_wifi_icon->execute();
+
+  - id: !extend page_home
+    then:
+      - script.execute: refresh_datetime
+
+  - id: refresh_datetime
+    mode: restart
+    then:
+      - lambda: |-
+          if (system_flags.tft_upload_active)  // Do not refresh if uploading TFT
+            return;
+
+          std::string time_format_str = id(mui_time_format);
+
+          if (time_format_str.find("%-H") != std::string::npos) {
+            time_format_str = time_format_str.replace(time_format_str.find("%-H"), sizeof("%-H")-1,
+                                                      to_string((int)(id(time_provider).now().hour)));
+          }
+
+          if (time_format_str.find("%-I") != std::string::npos) {
+            if (id(time_provider).now().hour>12) {
+              time_format_str = time_format_str.replace(time_format_str.find("%-I"), sizeof("%-I")-1,
+                                                        to_string((int)(id(time_provider).now().hour-12)));
+            } else if (id(time_provider).now().hour==0) {
+              time_format_str = time_format_str.replace(time_format_str.find("%-I"), sizeof("%-I")-1, "12");
+            } else {
+              time_format_str = time_format_str.replace(time_format_str.find("%-I"), sizeof("%-I")-1,
+                                                        to_string((int)(id(time_provider).now().hour)));
+            }
+          }
+
+          const std::string& meridiem_text = (id(time_provider).now().hour<12) ?
+                                              id(mui_meridiem_am) :
+                                              id(mui_meridiem_pm);
+
+          if (current_page->state == "screensaver" and id(screensaver_display_time)) {
+            std::string time_format_str_sleep = time_format_str;
+            if (time_format_str_sleep.find("%p") != std::string::npos)
+              time_format_str_sleep.replace(time_format_str_sleep.find("%p"), sizeof("%p")-1, meridiem_text.c_str());
+            disp1->set_component_text("text", id(time_provider).now().strftime(time_format_str_sleep).c_str());
+          }
+
+          disp1->set_component_text("home.meridiem", (time_format_str.find("%p") != std::string::npos) ?
+                                                      meridiem_text.c_str() : " ");
+          disp1->set_component_text("home.time", id(time_provider).now().strftime(time_format_str).c_str());
+
+  - id: set_timezone
+    mode: single
+    parameters:
+      timezone: string
+    then:
+      - lambda: |-
+          if (timezone.empty() or timezone == id(mui_timezone)) return;
+          id(mui_timezone) = timezone;
+          set_timezone_from_globals->execute();
+
+  - id: set_timezone_from_globals
+    mode: single
+    then:
+      - lambda: |-
+          if (id(mui_timezone).empty()) {
+            ESP_LOGD("${TAG_DATETIME}", "Current timezone: %s", time_provider->get_timezone().c_str());
+            return;
+          }
+          ESP_LOGI("${TAG_DATETIME}", "Setting timezone: %s", id(mui_timezone).c_str());
+          const size_t start = id(mui_timezone).find('<');
+          if (start != std::string::npos) {
+            const size_t end = id(mui_timezone).find('>');
+            if (end != std::string::npos && end > start) {
+              id(mui_timezone).replace(start, (end - start) + 1, "UTC");
+            }  // if valid brackets found
+          }  // if formatting needed
+          time_provider->set_timezone(id(mui_timezone).c_str());
+          time_provider->call_setup();
+          time_provider->dump_config();
+          refresh_datetime->execute();
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          refresh_datetime->stop();
+          set_timezone->stop();
+          set_timezone_from_globals->stop();
+
+time:  # Keeps time display updated
+  - id: time_provider
+    platform: homeassistant
+    on_time:
+      - seconds: 0
+        then:
+          - script.execute: new_minute
+
+    on_time_sync:
+      then:
+        - lambda: |-
+            ESP_LOGD("${TAG_DATETIME}", "System clock synchronized");
+            ESP_LOGD("${TAG_DATETIME}", "Timezone: %s", time_provider->get_timezone().c_str());
+            refresh_datetime->execute();
+...

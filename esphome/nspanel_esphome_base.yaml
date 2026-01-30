@@ -1,0 +1,136 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME CORE - Base                                                                       #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  BOOT_STEP_BASE: 0
+  device_name: nspanel
+  friendly_name: ${device_name}
+  GPIO_PSRAM_CLK_PIN: '5'
+  GPIO_PSRAM_CS_PIN: '18'
+  name: ${device_name}
+  ota_password: ${wifi_password}
+  project_tag: nspanel_easy
+  TAG_BASE: nspanel.base
+
+button:
+  - id: restart_nspanel  # Reboot ESP32
+    name: Restart
+    platform: restart
+
+esp32:
+  # Extended by:
+  #  - hw_memory
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: NSPanel Easy
+  project:
+    name: edwardtfn.NSPanel-Easy
+    version: ${version}
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_BASE
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/edwardtfn/NSPanel-Easy
+      ref: v${version}
+    refresh: 300s
+    components:
+      - nspanel_easy
+
+interval:
+  - interval: 89s  # Intentionally a prime to reduce the occurences of this happening together with the time update
+    startup_delay: 89s
+    then:
+      - lambda: |-
+          if (!system_flags.ota_in_progress and !system_flags.tft_upload_active and !system_flags.safe_mode_active) {
+            ESP_LOGV("${TAG_BASE}", "Calling the watchdog");
+            watchdog_round->execute();
+          }
+
+logger:
+
+nspanel_easy:  # Adds custom library for NSPanel HA Blueprint project
+  disable_bootloader_logs: false
+
+ota:
+  - id: ota_std
+    platform: esphome
+    password: ${ota_password}
+    on_begin:
+      then:
+        - lambda: |-
+            system_flags.ota_in_progress = true;
+            stop_all->execute();
+
+safe_mode:
+  id: safe_mode_component
+  on_safe_mode:
+    then:
+      - lambda: |-
+          system_flags.safe_mode_active = true;
+          stop_all->execute();
+
+script:
+  - id: dump_config
+    mode: restart
+    then:
+      - delay: 10s
+
+  - id: stop_all
+    mode: restart
+    then:
+      - lambda: |-
+          dump_config->stop();
+          watchdog_round->stop();
+          watchdog_round_wait_to_end->stop();
+
+  - id: wait_to_be_ready
+    mode: single
+    then:
+      - while:
+          condition:
+            - lambda: return !is_device_ready_for_tasks();
+          then:
+            - lambda: |-
+                ESP_LOGW("${TAG_BASE}", "Waiting for the system to be ready before executing an action");
+            - delay: 5s
+      - lambda: |-
+          ESP_LOGV("${TAG_BASE}", "The system is ready to run actions");
+
+  - id: watchdog_round
+    mode: restart
+    then:
+      - lambda: |-
+          if (system_flags.ota_in_progress or system_flags.tft_upload_active or system_flags.safe_mode_active) {
+            ESP_LOGW("${TAG_BASE}", "The watchdog cannot run now");
+            watchdog_round_wait_to_end->stop();
+            watchdog_round->stop();
+            return;
+          }
+          ESP_LOGD("${TAG_BASE}", "The watchdog is starting a round");
+          watchdog_round_wait_to_end->execute();
+
+  - id: watchdog_round_wait_to_end
+    mode: single
+    then:
+      - script.wait: watchdog_round
+      - lambda: |-
+          ESP_LOGD("${TAG_BASE}", "The watchdog completed the round");
+...

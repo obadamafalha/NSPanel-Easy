@@ -1,0 +1,181 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+######################################################################################################
+#### ESPHOME - Page Screensaver                                                                #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  wakeup_with_button_press: false
+  BOOT_STEP_PAGE_SCREENSAVER: 23
+  PAGE_SCREENSAVER_ID: 9
+  TAG_PAGE_SCREENSAVER: nspanel.page.screensaver
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_PAGE_SCREENSAVER
+
+globals:
+  - id: screensaver_display_time
+    type: bool
+    restore_value: true
+    initial_value: 'false'
+  - id: screensaver_display_time_font
+    type: uint8_t
+    restore_value: true
+    initial_value: '6'
+  - id: screensaver_display_time_color
+    type: uint16_t
+    restore_value: true
+    initial_value: 'Colors::GRAY_DARK'
+
+number:
+  - id: display_sleep_brightness  # Screen brightness when in screensaver page
+    name: Display Brightness Sleep
+    platform: template
+    entity_category: config
+    unit_of_measurement: '%'
+    min_value: 0
+    max_value: 100
+    initial_value: 0
+    step: 1
+    restore_value: true
+    optimistic: true
+    update_interval: never
+    on_value:
+      then:
+        - lambda: |-
+            disp1->send_command_printf("brightness_sleep=%i", int(x));
+            page_screensaver->execute();
+
+  - name: Timeout Sleep
+    platform: template
+    id: timeout_sleep
+    entity_category: config
+    min_value: 0
+    max_value: 86400
+    initial_value: 60
+    step: 1
+    restore_value: true
+    optimistic: true
+    icon: mdi:timer
+    unit_of_measurement: "s"
+    update_interval: never
+    on_value:
+      then:
+        - lambda: |-
+            if (x == 0 and current_page_id == ${PAGE_SCREENSAVER_ID}) {
+              wakeup->execute(false);
+            }
+            timer_sleep->execute();
+
+script:
+  - id: !extend action_component_color
+    then:
+      - lambda: |-
+          if (page == "screensaver") {
+            if (component == "text") {
+              id(screensaver_display_time_color) = color;
+            } else if (component == "screensaver_bco") {
+              disp1->set_component_value("screensaver_bco", color);
+            }
+          }
+
+  - id: !extend action_component_val
+    then:
+      - lambda: |-
+          if (page == "mem") {
+            if (component == "screensaver_display_time") {
+              id(screensaver_display_time) = (val > 0);
+              page_screensaver->execute();
+            } else if (component == "screensaver_time_font") {
+              id(screensaver_display_time_font) = val;
+              page_screensaver->execute();
+            }
+          }
+
+  - id: !extend ha_button
+    then:
+      - lambda: |-
+          if (current_page_id != ${PAGE_SCREENSAVER_ID}) {
+            timer_reset_all->execute();
+            return;
+          }
+          static const bool wakeup_with_button_press = ${'true' if wakeup_with_button_press else 'false'};
+          ESP_LOGV("${TAG_PAGE_SCREENSAVER}", "wakeup_with_button_press: %s", YESNO(wakeup_with_button_press));
+          if (not wakeup_with_button_press) return;
+          wakeup->execute(true);
+
+  - id: !extend page_change
+    then:
+      - lambda: if (new_page_id == ${PAGE_SCREENSAVER_ID}) page_screensaver->execute();
+
+  - id: page_screensaver
+    mode: single
+    then:
+      - if:
+          condition:
+            - lambda: return (current_page_id == ${PAGE_SCREENSAVER_ID} and not system_flags.tft_upload_active);
+          then:
+            - lambda: |-
+                page_screensaver_set_brightness->execute();
+                disp1->send_command_printf("wakeup_page_id=%" PRIu8, wakeup_page_id);
+                if (id(screensaver_display_time)) {
+                  disp1->set_component_font("text", id(screensaver_display_time_font));
+                  disp1->set_component_font_color("text", id(screensaver_display_time_color));
+                  disp1->show_component("text");
+                  refresh_datetime->execute();
+                }
+            - delay: 5s
+            - script.execute: page_screensaver_set_brightness
+
+  - id: page_screensaver_set_brightness
+    mode: single
+    then:
+      - lambda: |-
+          if (current_page_id == ${PAGE_SCREENSAVER_ID})
+            set_brightness->execute(int(display_sleep_brightness->state));
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          page_screensaver->stop();
+          page_screensaver_set_brightness->stop();
+          timer_sleep->stop();
+
+  - id: timer_sleep      # Handles the sleep (go to screensaver page) after a timeout
+    mode: restart
+    then:
+      - if:
+          condition:
+            - lambda: return timeout_sleep->state > 0;
+          then:
+            - delay: !lambda return (int(timeout_sleep->state) *1000);
+            - lambda: |-
+                if (
+                      timeout_sleep->state > 0 and
+                      current_page_id != ${PAGE_SCREENSAVER_ID} and
+                      current_page_id != ${PAGE_BOOT_ID}
+                    ) {
+                  ESP_LOGD("${TAG_PAGE_SCREENSAVER}", "Sleep from '%s'", page_names[current_page_id]);
+                  goto_page->execute(${PAGE_SCREENSAVER_ID});
+                  set_brightness->execute(display_sleep_brightness->state);
+                }
+
+  - id: !extend timer_reset_all
+    then:
+      - script.execute: timer_sleep
+
+  - id: !extend watchdog_round
+    then:
+      - script.execute: page_screensaver_set_brightness
+
+select:
+  - id: !extend wakeup_page_name
+    on_value:
+      then:
+        - script.execute: page_screensaver
+...

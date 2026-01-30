@@ -1,0 +1,179 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME - Page boot                                                                       #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  BOOT_STEP_PAGE_BOOT: 29
+  PAGE_BOOT_COMPONENT_ID_BT_REBOOT: 24
+  PAGE_BOOT_DELAY_TO_EXIT: 30s
+  PAGE_BOOT_ID: 0
+  TAG_PAGE_BOOT: nspanel.page.boot
+
+display:
+  - id: !extend disp1
+    start_up_page: ${PAGE_BOOT_ID}
+    on_touch:
+      then:
+        - lambda: |-
+            if (
+                  !touch_event and  // Only act with release
+                  page_id == ${PAGE_BOOT_ID} and
+                  component_id == ${PAGE_BOOT_COMPONENT_ID_BT_REBOOT}  // Reboot button
+                ) {
+              screen_power->turn_off();
+              App.safe_reboot();
+            }
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_PAGE_BOOT
+
+script:
+  - id: !extend boot_log
+    then:
+      - lambda: |-
+          if (current_page_id == ${PAGE_BOOT_ID}) {
+            disp1->send_command_printf("log_body.txt+=\"%s: %s\\r\"", category.c_str(), log_message.c_str());
+            feed_wdt_delay(${DELAY_SHORT});
+          }
+
+  - id: !extend boot_preparation
+    then:
+      - script.execute: page_boot_exit_on_timeout
+
+  - id: !extend event_from_display  # Defined by hw_display
+    then:
+      - lambda: |-
+          if (params[0] == "boot" and params[1] == "params") {
+            // CSV Format: boot,params,<display_mode>,<charset>,<version>
+            // params[0]=page, params[1]=params, params[2]=display_mode, params[3]=charset, params[4]=version
+
+            system_flags.display_settings_received = false;
+
+            if (params_count != 5) {
+              ESP_LOGW("${TAG_PAGE_BOOT}", "Bad params");
+              return;
+            }
+
+            // Stop the timer which sends these params, as those are not going to change anymore
+            disp1->send_command("tm_esphome.en=0");
+
+            // Parse display parameters
+            display_mode = atoi(params[2].c_str());
+            display_charset = atoi(params[3].c_str());
+            version_tft->publish_state(params[4]);
+
+            const bool tft_ver_valid = (not version_tft->state.empty());
+
+            ESP_LOGI("${TAG_PAGE_BOOT}", "Display params:");
+            ESP_LOGI("${TAG_PAGE_BOOT}", "  Mode:        %" PRIu8, display_mode);
+            ESP_LOGI("${TAG_PAGE_BOOT}", "  Charset:     %" PRIu8, display_charset);
+            ESP_LOGI("${TAG_PAGE_BOOT}", "  TFT version: %s%s", version_tft->state.c_str(),
+                                                                tft_ver_valid ? "" : " (INVALID)");
+
+            system_flags.display_settings_received = tft_ver_valid and display_mode > 0 and display_charset > 0;
+
+            check_versions->execute(!system_flags.display_settings_received);
+          }
+
+  - id: page_boot
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGD("${TAG_PAGE_BOOT}", "Page boot constructor started");
+          page_boot_exit_on_timeout->execute();
+          disp1->set_component_text("ver_firmware", "Firmware: ${version}");  // ESPHome version
+          #ifdef ARDUINO
+          disp1->set_component_text("sys_framework", "Framework: Arduino");
+          #elif defined(USE_ESP_IDF)
+          disp1->set_component_text("sys_framework", "Framework: ESP-IDF");
+          #else
+          disp1->set_component_text("sys_framework", "Framework: Unknown");
+          #endif
+          page_boot_show_blueprint_version->execute();
+          page_boot_show_ip->execute();
+          wait_for_page_boot_exit->execute();
+          ESP_LOGD("${TAG_PAGE_BOOT}", "Page boot constructor completed");
+
+  - id: page_boot_exit_on_timeout
+    mode: single
+    then:
+      - delay: ${PAGE_BOOT_DELAY_TO_EXIT}
+      - script.wait: wait_for_version_tft
+      - lambda: |-
+          if (current_page_id == ${PAGE_BOOT_ID})
+            wakeup->execute(false);
+
+  - id: page_boot_show_blueprint_version
+    mode: single
+    then:
+      - lambda: |-
+          if (current_page_id == ${PAGE_BOOT_ID} and !version_blueprint->state.empty())
+            disp1->set_component_text_printf("ver_blueprint", "Blueprint: %s", version_blueprint->state.c_str());
+
+  - id: page_boot_show_ip
+    mode: single
+    then:
+      - lambda: |-
+          if (wifi_component->is_connected() and current_page_id == ${PAGE_BOOT_ID}) {
+            auto ips = network::get_ip_addresses();
+            if (!ips.empty()) {
+              char ip[16];  // sufficient for IPv4: "255.255.255.255" + '\0'
+              ips[0].str_to(ip);
+              disp1->set_component_text_printf("sys_ip", "IP: %s", ip);
+            }
+          }
+
+  - id: !extend page_change
+    then:
+      - lambda: |-
+          if (new_page_id == ${PAGE_BOOT_ID} and display_mode != 4)
+            page_boot->execute();
+
+  - id: !extend stop_all
+    then:
+      - lambda: wait_for_page_boot_exit->stop();
+
+  - id: !extend stop_page_constructors
+    then:
+      - lambda: |-
+          page_boot->stop();
+          page_boot_show_blueprint_version->stop();
+          page_boot_show_ip->stop();
+
+  - id: wait_for_page_boot_exit
+    mode: restart
+    then:
+      - while:
+          condition:
+            - lambda: return current_page_id == ${PAGE_BOOT_ID};
+          then:
+            - lambda: |-
+                ESP_LOGV("${TAG_PAGE_BOOT}", "Waiting for boot page exit");
+            - delay: 1s
+
+  - id: !extend watchdog_round
+    then:
+      - lambda: |-
+          if (current_page_id == ${PAGE_BOOT_ID} and !version_tft->state.empty())
+            wakeup->execute(true);
+
+text_sensor:
+  - id: !extend version_blueprint
+    on_value:
+      then:
+        - lambda: |-
+            page_boot_show_blueprint_version->execute();
+            wait_to_be_ready->execute();
+
+wifi:
+  on_connect:
+    then:
+      - script.execute: page_boot_show_ip
+...
