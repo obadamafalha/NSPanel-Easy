@@ -36,7 +36,7 @@ By default, all the communication should happens at 115200 bps, but as 921600 bp
 
 #### Framework
 
-Right bellow the baud rate information, you may see the framework used by ESPHome, which is either `esp-idf` (default for new installations) or `arduino` (default for installations prior v4.1.4).
+Right below the baud rate information, you may see the framework used by ESPHome, which is either `esp-idf` (default for new installations) or `arduino` (default for installations prior v4.1.4).
 
 That information will be available only when ESPHome establishes communication with the display.
 If you cannot see that information after a couple of seconds then you may have an issue on the communication between ESPHome and the display (explained later).
