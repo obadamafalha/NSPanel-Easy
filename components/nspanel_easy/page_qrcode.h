@@ -2,7 +2,7 @@
 
 #pragma once
 
-#ifdef NSPANEL_EASY_PAGE_NOTIFICATION
+#ifdef NSPANEL_EASY_PAGE_QRCODE
 
 #include "nextion_components.h"  // For HMIComponent
 #include "pages.h"               // For page_names and get_page_id
@@ -56,4 +56,4 @@ namespace nspanel_easy {
   }    // namespace hmi
 }  // namespace nspanel_easy
 
-#endif  // NSPANEL_EASY_PAGE_NOTIFICATION
+#endif  // NSPANEL_EASY_PAGE_QRCODE
