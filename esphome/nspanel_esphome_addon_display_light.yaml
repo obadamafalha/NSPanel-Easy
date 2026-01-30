@@ -40,7 +40,7 @@ output:
     write_action:
       - lambda: |-
           ESP_LOGV("${TAG_ADDON_DISPLAY_LIGHT}", "state: %f", state);
-          uint8_t target_brightness = int(round(display_light->current_values.is_on() ? (display_light->current_values.get_brightness() * 100.0f) : 0.0));
+          uint8_t target_brightness = int(round(state * 100.0f));
           ESP_LOGV("${TAG_ADDON_DISPLAY_LIGHT}", "target_brightness: %" PRIu8 "%%", target_brightness);
           set_brightness->execute(target_brightness);
 
