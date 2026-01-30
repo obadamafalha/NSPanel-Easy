@@ -356,14 +356,14 @@ Although it's not a functional TFT for controlling your panel, it can be usefull
 issues in your first TFT upload, as it will remove the *Nextion Active Reparse Mode* used when
 a Sonoff's TFT and also when some other custom implementations are installed.
 - **NSPanel EU:** This should be used when you are using a Sonoff NSPanel EU model.
-- **NSPanel US:** This should be used when you are using a Sonoff NSPanel US model installed on
-it's normal (portrait) position with the buttons below the screen.
+- **NSPanel US:** This should be used when you are using a Sonoff NSPanel US model
+installed on its normal (portrait) position with the buttons below the screen.
 - **NSPanel US Landscape:** This should be used when you are using a Sonoff NSPanel US model
 installed on the landscape position with the buttons at the right side of the screen.
 - **NSPanel EU (CJK languages):** This should be used when you are using a Sonoff NSPanel EU model
 and want to use the CJK (Chinese/Japanese/Korean) languages.
 - **NSPanel US (CJK languages):** This should be used when you are using a Sonoff NSPanel US model
-installed on it's normal (portrait) position with the buttons below the screen,
+installed on its normal (portrait) position with the buttons below the screen,
 and want to use the CJK (Chinese/Japanese/Korean) languages.
 - **NSPanel US Landscape (CJK languages):** This should be used when you are using a Sonoff NSPanel US model
 installed on the landscape position with the buttons at the right side of the screen,
