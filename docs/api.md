@@ -563,7 +563,7 @@ RTTTL is a compact format for storing melody sequences in a text-based format, m
 This string must conform to the RTTTL format, which includes the melody's name, default settings, and a sequence of notes. 
 
 **Example Tones:**
-For example tones and further inspiration, you can visit examples of RTTTL songs [here](https://codebender.cc/sketch:109888#RTTTL%20Songs.ino).
+For example tones and further inspiration, you can visit examples of RTTTL songs [here](https://esphome.io/components/rtttl/#common-beeps).
 
 **Home Assistant Example:**
 ```yaml
