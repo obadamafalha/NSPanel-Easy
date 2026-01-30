@@ -172,7 +172,6 @@ wifi:
 
   on_connect:
     then:
-      - script.execute: update_flag_api_ready
       - lambda: |-
           update_flag_api_ready->execute();
           if (cached_device_name.empty()) {
