@@ -69,8 +69,8 @@ namespace nspanel_easy {
                                 reserved(0) {}
 
         /**
-         * @brief Check if all active flags (bits 1-5) are set
-         * @return true if all active flags are set, false otherwise
+         * `@brief` Check if all active flags (bits 0-5) are set
+         * `@return` true if all active flags are set, false otherwise
          */
         bool all_active_flags_set() const {
             // All 6 active flags must be set
@@ -78,16 +78,16 @@ namespace nspanel_easy {
         }
 
         /**
-         * @brief Count active flags (bits 1-6) set
-         * @return Number of flags set
+         * `@brief` Count active flags (bits 0-5) set
+         * `@return` Number of flags set
          */
         uint8_t count_active_flags_set() const {
             return page_home + page_qrcode + relay_settings + version + hw_buttons_settings + page_utilities;
         }
 
         /**
-         * @brief Calculate percentage of active flags that are set
-         * @return Percentage (0.0-100.0) of active flags set (bits 1-5 only)
+         * `@brief` Calculate percentage of active flags that are set
+         * `@return` Percentage (0.0-100.0) of active flags set (bits 0-5)
          */
         float get_completion_percentage() const {
             static constexpr uint8_t TOTAL_ACTIVE_FLAGS = 6;
