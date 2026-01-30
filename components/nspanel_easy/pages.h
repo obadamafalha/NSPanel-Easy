@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <cstring>
 #include <initializer_list>
 #include <string>
 #include "esphome/core/string_ref.h"  // For StringRef
@@ -55,6 +56,7 @@ namespace nspanel_easy {
     };
 
     constexpr size_t PAGE_COUNT = sizeof(page_names) / sizeof(page_names[0]);
+    static_assert(PAGE_COUNT <= UINT8_MAX, "PAGE_COUNT exceeds uint8_t range");
 
     // Global system flags - initialized to 0 (all flags false)
     extern uint8_t current_page_id;
@@ -69,6 +71,7 @@ namespace nspanel_easy {
     *         is not found, returns UINT8_MAX as an indicator that no matching page was found.
     */
     inline uint8_t get_page_id(const char* page_name) {
+        if (page_name == nullptr || *page_name == '\0') return UINT8_MAX;
         for (uint8_t i = 0; i < PAGE_COUNT; ++i) {
             if (strcmp(page_names[i], page_name) == 0)
                 return i;

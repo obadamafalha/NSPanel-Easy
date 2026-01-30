@@ -1,6 +1,7 @@
 # Panel startup issues
 
-When your panel starts, a number of different things needs to be set and the ESPHome must establish connection to the Nextion display used by your panel
+When your panel starts, a number of different things need to be set
+and ESPHome must establish a connection to the Nextion display used by your panel
 and also to your Home Assistant, which will provide the proper settings required by your panel.
 If everything goes right, the boot page will be shown for just a few seconds, then the wake-up page will be shown.
 
@@ -25,9 +26,11 @@ Your boot page probably looks like this:
 
 #### Initializing or IP address
 
-At the top, you will see the message "Initializing..." while the display is executing its boot sequence or waiting for a connection from ESPHome.
+At the top, you will see the message "Initializing..." while the display is executing its boot sequence
+or waiting for a connection from ESPHome.
 
-Once ESPHome is connected to both the display and the Wi-Fi network, that text will be replaced by the IP address, which can be useful for troubleshooting.
+Once ESPHome is connected to both the display and the Wi-Fi network,
+that text will be replaced by the IP address, which can be useful for troubleshooting.
 
 #### Baud rate (bps)
 
@@ -37,7 +40,8 @@ the display will alternate between these 2 rates every 30 seconds until ESPHome 
 
 #### Framework
 
-Right below the baud rate information, you may see the framework used by ESPHome, which is either `esp-idf` (default for new installations) or `arduino` (default for installations prior v4.1.4).
+Right below the baud rate information, you may see the framework used by ESPHome,
+which is either `esp-idf` (default for new installations) or `arduino` (default for installations prior v4.1.4).
 
 That information will be available only when ESPHome establishes communication with the display.
 If you cannot see that information after a couple of seconds then you may have an issue on the communication between ESPHome and the display (explained later).

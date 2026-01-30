@@ -36,10 +36,10 @@ Updates the visual state (on/off) of the left and right hardware button indicato
 ## Action Documentation
 
 ### General Guidance
-In general, there's no validation on the content of the parameters in a action call.
-Please make sure to fulfill the validation from the action caller side, otherwise it can drive to a crash in the ESPHome side, it will most likely restart the panel.
+In general, there’s no validation of parameters in an action call.
+Please validate inputs on the caller side; otherwise this can crash the ESPHome side and likely restart the panel.
 
-One example is with colors. In almost all cases, it is expected an array with 3 unsigned integers between 0 to 255.
+One example is colors. In almost all cases, an array of three unsigned integers between 0 and 255 is expected.
 If you send anything different, the conversion to the RGB565 used by Nextion will crash.
 
 ### Table of Contents
@@ -577,7 +577,8 @@ data:
 > Ensure the `tone` parameter contains a valid RTTTL string to successfully play the melody.
 
 ### TFT File Update Action: `upload_tft`
-Enables the remote update of the panel's TFT file from a specified URL or a default location, available exclusively with the "Upload TFT" add-on installed.
+Enables the remote update of the panel's TFT file from a specified URL or a default location,
+available exclusively with the "Upload TFT" add-on installed.
 This action is valuable for downloading alternative TFT files for customization or addressing file access issues.
 
 **Usage:**
@@ -685,7 +686,7 @@ This action can be seamlessly integrated with a motion sensor to wake the displa
 Additionally, if the display is already awake, calling this action with `reset_timer: true` can reset the sleep timer,
 keeping the display active as long as there is movement and allowing it to sleep normally once no motion is detected.
 
-The example bellow integrates the `wake_up` action with a motion sensor to ensure the display wakes or remains awake during periods of activity, reverting to sleep mode after inactivity.
+The example below integrates the `wake_up` action with a motion sensor to ensure the display wakes or remains awake during periods of activity, reverting to sleep mode after inactivity.
 
 ```yaml
 automation:
@@ -740,7 +741,7 @@ where `value01_icon` to `value03_icon` supports the icons.
 
 ### Entities Pages - Values
 Just like in "[Home Page - Values](#home-page---values)", this is a multi-component system, with names `value01` to `value08` containing the state of the entity,
-where `value01_icon` to `value08_icon` supports the icons and, exclusivelly in the Entities pages, `value01_label` to `value08_label`,
+where `value01_icon` to `value08_icon` supports the icons and, exclusively in the Entities pages, `value01_label` to `value08_label`,
 which will contain the friendly name or some alternative label for the entities.
 
-Each to these sets are sent using the [Value Action (`value`)](#value-action-value), with up to 8 individual calls to this action for each page construction.
+Each of these sets are sent using the [Value Action (`value`)](#value-action-value), with up to 8 individual calls to this action for each page construction.

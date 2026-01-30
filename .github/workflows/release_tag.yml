@@ -6,12 +6,15 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
   update-tags:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
         with:
           fetch-depth: '0'
 
@@ -22,11 +25,11 @@ jobs:
 
       - name: Move and push stable tag
         run: |
-          git tag -f stable ${{ github.event.release.tag_name }}
+          git tag -f stable ${{ github.event.release.tag_name }}^{}
           git push -f origin stable
 
       - name: Move and push latest tag
         run: |
-          git tag -f latest ${{ github.event.release.tag_name }}
+          git tag -f latest ${{ github.event.release.tag_name }}^{}
           git push -f origin latest
 ...

@@ -49,4 +49,27 @@ namespace nspanel_easy {
         return reinterpret_cast<HardwareSettings&>(raw_value);
     }
 
+    inline HardwareSettings from_raw(uint8_t raw) {
+        HardwareSettings s;
+        s.button_left_enabled  = (raw >> 0) & 1;
+        s.button_left_state    = (raw >> 1) & 1;
+        s.button_right_enabled = (raw >> 2) & 1;
+        s.button_right_state   = (raw >> 3) & 1;
+        s.relay1_local         = (raw >> 4) & 1;
+        s.relay1_fallback      = (raw >> 5) & 1;
+        s.relay2_local         = (raw >> 6) & 1;
+        s.relay2_fallback      = (raw >> 7) & 1;
+        return s;
+    }
+
+    inline uint8_t to_raw(const HardwareSettings& s) {
+        return (s.button_left_enabled  << 0) |
+               (s.button_left_state    << 1) |
+               (s.button_right_enabled << 2) |
+               (s.button_right_state   << 3) |
+               (s.relay1_local         << 4) |
+               (s.relay1_fallback      << 5) |
+               (s.relay2_local         << 6) |
+               (s.relay2_fallback      << 7);
+    }
 }  // namespace nspanel_easy

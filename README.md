@@ -64,7 +64,7 @@ Our goal? To make the customization of your NSPanel seamless, intuitive, and com
 
 ![Home US](docs/pics/us_home.png)
 
-- Current weather with button to Weather Forcast page
+- Current weather with button to Weather Forecast page
 - Hardware buttons can be freely assigned
 - Hardware button label (optional)
 - Blue line indicates the entity's states (`on` or `off`)
@@ -174,7 +174,8 @@ This page is accessible with a long press in the time area on the Home page.
 
 ## Device's page
 
-On the device's page under "Devices & Services" you can set the global configuration of your device and see the value of it's sensors and relays:
+On the device's page under "Devices & Services" you can set the global configuration of your device
+and see the value of its sensors and relays:
 
 ![Device Setting - Controls](docs/pics/ha_device_controls.png)
 

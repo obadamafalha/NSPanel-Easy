@@ -57,7 +57,10 @@ namespace nspanel_easy {
         if (text_to_display.length() > 1000) {
             return "ERROR: Text too long";
         }
-
+        // Invalid parameters check
+        if (line_length_limit == 0 || bytes_per_char == 0) {
+            return "ERROR: Invalid line length";
+        }
         // Early exit for already formatted text
         if (text_to_display.find("\\r") != std::string::npos) {
             return text_to_display;
@@ -142,16 +145,25 @@ namespace nspanel_easy {
         if ((byte & 0x80) == 0x00) {
             code_point = byte;
         } else if ((byte & 0xE0) == 0xC0 && bytes[1] != '\0') {
-            code_point = ((byte & 0x1F) << 6) | (static_cast<unsigned char>(bytes[1]) & 0x3F);
+            unsigned char b1 = static_cast<unsigned char>(bytes[1]);
+            if ((b1 & 0xC0) != 0x80) return 0;
+            code_point = ((byte & 0x1F) << 6) | (b1 & 0x3F);
         } else if ((byte & 0xF0) == 0xE0 && bytes[1] != '\0' && bytes[2] != '\0') {
+            unsigned char b1 = static_cast<unsigned char>(bytes[1]);
+            unsigned char b2 = static_cast<unsigned char>(bytes[2]);
+            if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x0F) << 12) |
-                            ((static_cast<unsigned char>(bytes[1]) & 0x3F) << 6) |
-                            (static_cast<unsigned char>(bytes[2]) & 0x3F);
+                            ((b1 & 0x3F) << 6) |
+                            (b2 & 0x3F);
         } else if ((byte & 0xF8) == 0xF0 && bytes[1] != '\0' && bytes[2] != '\0' && bytes[3] != '\0') {
+            unsigned char b1 = static_cast<unsigned char>(bytes[1]);
+            unsigned char b2 = static_cast<unsigned char>(bytes[2]);
+            unsigned char b3 = static_cast<unsigned char>(bytes[3]);
+            if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80 || (b3 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x07) << 18) |
-                            ((static_cast<unsigned char>(bytes[1]) & 0x3F) << 12) |
-                            ((static_cast<unsigned char>(bytes[2]) & 0x3F) << 6) |
-                            (static_cast<unsigned char>(bytes[3]) & 0x3F);
+                            ((b1 & 0x3F) << 12) |
+                            ((b2 & 0x3F) << 6) |
+                            (b3 & 0x3F);
         } else {
             code_point = 0;
         }

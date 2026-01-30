@@ -41,10 +41,11 @@ Table of contents:
 This project adds lots of functionalities to your NSPanel and we are constantly adding new features based on user's feedback.
 However, you might have some specific case that are not included on the current implementation or is not a common case for other users.
 
-You can take advantage of [ESPHome Configuration Types](https://esphome.io/guides/configuration-types.html) to add your custom functionality
-or even to customize an existing functionality with minimum effort and this document intents to clarify how to use this and give some examples of customization.
+You can take advantage of [ESPHome Configuration Types](https://esphome.io/guides/configuration-types.html)
+to add your custom functionality or even to customize an existing functionality with minimum effort,
+and this document intends to clarify how to use this and give some examples of customization.
 
-Please feel free to add your own customation to this document by creating a PR in the `dev` branch.
+Please feel free to add your own customization to this document by creating a PR in the `dev` branch.
 
 ***IMPORTANT:***
 - *Use customization at your own risk. Custom/advanced systems won't be supported by this project's team.*
@@ -55,9 +56,10 @@ Please feel free to add your own customation to this document by creating a PR i
 There's nothing particular for this project, so you can just use any of the [ESPHome Configuration Types](https://esphome.io/guides/configuration-types.html)
 and only edit your local ESPHome yaml settings.
 
-Most of the ESPHome components in this project contains an `Id`, which can be used together with the `!extend` key to add or replace existing code.
+Most of the ESPHome components in this project contain an `Id`,
+which can be used together with the `!extend` key to add or replace existing code.
 
-You should add your customizations at the end of your ESPHome yaml, as in the example bellow:
+You should add your customizations at the end of your ESPHome YAML, as in the example below:
 
 ```yaml
 substitutions:
@@ -216,9 +218,10 @@ web_server:
 ```
 
 ### Reboot when API fails
-Reboot your panel if it loses it's connection to Home Assistant for more than a certain time (15 minutes in this example).
+Reboot your panel if it loses its connection to Home Assistant for more than a certain time (15 minutes in this example).
 
-Sometimes the low level ESP functions could report that the ESP is connected to the network, when in fact it is not and only a full reboot fixes it.
+Sometimes the low-level ESP functions could report that the ESP is connected to the network,
+when in fact it is not and only a full reboot fixes it.
 
 To support long times without Wi-Fi, this is disabled by default in this project, but you can set a reasonable interval to restart, based on your network reliability.
 
@@ -232,7 +235,7 @@ api:
 Set IP address manually.
 
 > [!ATTENTION]
-> At least one DNS server is required to enable TFT transfer direcly from GitHub, otherwise use `nextion_update_url`.
+> At least one DNS server is required to enable TFT transfer directly from GitHub, otherwise use `nextion_update_url`.
 
 ```yaml
 # Set IP address manually
@@ -243,7 +246,7 @@ wifi:
         static_ip: 192.168.0.123
         gateway: 192.168.0.1
         subnet: 255.255.255.0
-        dns1: 1.1.1.1  # At least one DNS server is required to enable TFT transfer direcly from GitHub, otherwise use `nextion_update_url`.
+        dns1: 1.1.1.1  # At least one DNS server is required to enable TFT transfer directly from GitHub, otherwise use `nextion_update_url`.
         dns2: 8.8.8.8
 ```
 
@@ -346,11 +349,15 @@ time:
 You can find more ideas around this on [Blackymas/NSPanel_HA_Blueprint#955](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/955).
 
 ### Enforce time zone
-Until v3.4 (including), the time was coming from Home Assistant with it's timezone, so the Blueprint was sending the info with no transformation, to the panel.
-From v4.0, the time reference still coming from HA (or optionally from a time server), but is calculated in ESPHome, which will try to detect the timezone from the server.
-From v4.3.3 or later, the time still calculated on ESPHome side, however, you can select the timezone on the Blueprint, making this customization obsolete.
+Until v3.4 (including), the time was coming from Home Assistant with it's timezone,
+so the Blueprint was sending the info with no transformation, to the panel.
+From v4.0, the time reference still coming from HA (or optionally from a time server),
+but is calculated in ESPHome, which will try to detect the timezone from the server.
+From v4.3.3 or later, the time still calculated on ESPHome side, however, you can select the timezone on the Blueprint,
+making this customization obsolete.
 
-If your system is not showing the time in the correct timezone, it's probabily ESPHome not succeeding on finding your time zone.
+If your system is not showing the time in the correct timezone,
+it's probably ESPHome not succeeding on finding your time zone.
 You can easily force a timezone by adding this to your ESPHome settings:
 
 ```yaml
@@ -360,9 +367,10 @@ time:
 ```
 
 ### Compiling ESPHome on lower powered machines
-For systems with lower CPU or memory capabilities, like an RPi 3 or systems with less than 2GB of RAM, this could help preventing errors caused by lack of resources when compiling ESPHome firmware.
+For systems with lower CPU or memory capabilities, like an RPi 3 or systems with less than 2GB of RAM,
+this could help preventing errors caused by lack of resources when compiling ESPHome firmware.
 
-More datails on the [ESPHome docs](https://esphome.io/changelog/2022.11.0.html#running-esphome-on-lower-powered-machines).
+More details on the [ESPHome docs](https://esphome.io/changelog/2022.11.0.html#running-esphome-on-lower-powered-machines).
 
 ```yaml
 # Limit the amount of resources used for compiling
@@ -539,7 +547,7 @@ You can overlap the settings with this customization.
 
 `esp-idf` is maintained by EspressIF and is kept updated,
 more boards are supported and the memory management is better,
-making it ideal if you wanna customize your panel to support memory consumption functionalities,
+making it ideal if you want to customize your panel to support memory consumption functionalities,
 like `bluetooth_proxy` or [Improv](https://www.improv-wifi.com/).
 Consequently, this project uses `esp-idf` as the default framework since `v4.3.0`. 
 

@@ -37,7 +37,7 @@ For troubleshooting, refer to the following sections:
 > ![Image](pics/eu_reset_button.png)
 
 ### If using manual IP, make sure you have a DNS server configured
-At least one DNS server is required to enable TFT transfer direcly from GitHub, otherwise use `nextion_update_url`.
+At least one DNS server is required to enable TFT transfer directly from GitHub, otherwise use `nextion_update_url`.
 If you are setting up a manual IP as a customization, please remember to add a valid DNS server for your panel.
 
 ### Using the `nspanel_blank.tft` File to Assist
@@ -95,7 +95,7 @@ Pay special attention to memory-intensive customizations.
 - **Issue**: Ensuring the file size matches the GitHub version.
 - **Solution**: Use the same URL you provided to ESPHome to download the file on your computer and compare sizes.
 - **Verification Steps**: Download the file, then right-click and select 'Properties' to check the size.
-Compare this with the size listed on GitHub or from the file you downlodaded directly from GitHub.
+Compare this with the size listed on GitHub or from the file you downloaded directly from GitHub.
 
 ### Power Cycle Your Panel
 - **Issue**: General troubleshooting.
@@ -143,7 +143,7 @@ esp32:
 - **Issue**: Your firmware might be missing some important library, you may be using an outdated version or the ESP may be out of memory.
 - **Solution**: Remove all add-ons and non-essential customization and flash your panel again.
 - **Step-by-Step Guide**:
-    1. Look your yaml file and commment out all the customization (typically on a section name "My customizations") and any of the remote files other than `nspanel_esphome.yaml`.
+    1. Look your yaml file and comment out all the customization (typically on a section name "My customizations") and any of the remote files other than `nspanel_esphome.yaml`.
     2. Flash your panel with the new cleaner yaml. You can do this over the air/wirelessly, although it is recommended to use serial when changing between frameworks
     3. Try to update the TFT file again
     4. Add the add-ons and removed customization back and then flash it again.
@@ -151,7 +151,7 @@ esp32:
 ### Try an alternative http service
 - **Issue**: Your current http server may be overloaded.
 - **Solution**: Try another http server installed in your computer.
-There are many options available for free to run under you local Windows, MAC or Linux machine.
+There are many options available for free to run under your local Windows, MAC or Linux machine.
 - **Examples**: Just to name some:
   | Solution | Website | Supported OSs | Pros | Cons |
   |----------|---------|---------------|------|------|

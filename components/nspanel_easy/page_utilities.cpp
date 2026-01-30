@@ -21,7 +21,9 @@ namespace nspanel_easy {
     static constexpr size_t UTILITIES_GROUPS_COUNT = 8;
 
     void resetUtilitiesGroups() {
-        #ifdef USE_ESP_IDF
+        cleanupUtilitiesGroups();  // Free any existing allocation first
+
+        #ifdef USE_ESP_IDF  // To-do: Review if this arduino specific code is still needed
         UtilitiesGroups = static_cast<UtilitiesGroupValues*>(
             heap_caps_malloc(UTILITIES_GROUPS_COUNT * sizeof(UtilitiesGroupValues), MALLOC_CAP_SPIRAM));
         #elif defined(USE_ARDUINO)
@@ -47,6 +49,9 @@ namespace nspanel_easy {
     }
 
     uint8_t findUtilitiesGroupIndex(const char* group_id) {
+        if (UtilitiesGroups == nullptr) return UINT8_MAX;
+        if (group_id == nullptr || *group_id == '\0') return UINT8_MAX;
+
         int low = 0;
         int high = 7;  // Directly use the number of elements in UtilitiesGroups - 1
 

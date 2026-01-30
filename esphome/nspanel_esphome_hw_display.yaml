@@ -196,7 +196,7 @@ script:
       # - page_home
       - lambda: |-
           ESP_LOGV("${TAG_HW_DISPLAY}", "New event from display:");
-          ESP_LOGV("${TAG_HW_DISPLAY}", "  page: %S", params[0].c_str());
+          ESP_LOGV("${TAG_HW_DISPLAY}", "  page: %s", params[0].c_str());
           ESP_LOGV("${TAG_HW_DISPLAY}", "  params: %d", params_count);
 
           if (params_count >= 2) {

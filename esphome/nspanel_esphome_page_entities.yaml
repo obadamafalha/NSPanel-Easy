@@ -106,15 +106,10 @@ script:
     then:
       - lambda: |-
           // Set value alignment
-          if (
-                page_entities_value_horizontal_alignment != 1 and
-                (
-                  current_page_id == ${PAGE_ENTITYPAGE01_ID} or
-                  current_page_id == ${PAGE_ENTITYPAGE02_ID} or
-                  current_page_id == ${PAGE_ENTITYPAGE03_ID} or
-                  current_page_id == ${PAGE_ENTITYPAGE04_ID}
-                )
-              ) {
+          if (current_page_id == ${PAGE_ENTITYPAGE01_ID} or
+              current_page_id == ${PAGE_ENTITYPAGE02_ID} or
+              current_page_id == ${PAGE_ENTITYPAGE03_ID} or
+              current_page_id == ${PAGE_ENTITYPAGE04_ID}) {
             for (uint8_t i = 1; i <= 8; ++i) {
               disp1->send_command_printf("value%02d.xcen=%" PRIu8, i, page_entities_value_horizontal_alignment);
             }

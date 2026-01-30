@@ -5,10 +5,10 @@ name: Validate Python (flake8)
 on:
   push:
     paths:
-      - '*.py'
+      - '**/*.py'
   pull_request:
     paths:
-      - '*.py'
+      - '**/*.py'
   workflow_dispatch:
 
 jobs:

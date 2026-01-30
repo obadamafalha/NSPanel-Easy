@@ -31,7 +31,7 @@ script:
     then:
       - lambda: |-
           if (page == "mem" and component == "mui_please_confirm") {
-            id(mui_please_confirm) = txt;
+            id(mui_please_confirm) = txt.substr(0, 25);
           }
 
   - id: !extend page_change

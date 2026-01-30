@@ -200,7 +200,8 @@ script:
           disp1->set_component_value("temp_offset", set_climate_temp_offset);
           disp1->set_component_value("temp_step", set_climate_temp_step);
           disp1->set_component_text("temp_unit", temperature_unit);
-          const char dec_separator_str[2] = {id(mui_decimal_separator)[0], '\0'};
+          const char dec_sep = id(mui_decimal_separator).empty() ? '.' : id(mui_decimal_separator)[0];
+          const char dec_separator_str[2] = {dec_sep, '\0'};
           disp1->set_component_text("dec_separator", dec_separator_str);
           disp1->show_component("current_temp");
           char buffer[15];

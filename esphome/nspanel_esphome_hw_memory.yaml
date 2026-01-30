@@ -15,6 +15,7 @@ substitutions:
   GPIO_PSRAM_CLK_PIN: 5
   GPIO_PSRAM_CS_PIN: 18
   TAG_HW_MEMORY: nspanel.hw.memory
+  WIFI_USE_PSRAM: true
 
 esp32:
   framework:
@@ -75,5 +76,5 @@ script:
           #endif  // USE_PSRAM
 
 wifi:
-  use_psram: true
+  use_psram: ${WIFI_USE_PSRAM}
 ...

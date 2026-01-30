@@ -75,7 +75,7 @@ The instructions to upload TFT will vary depending on the version you are instal
 
     ![Image](pics/GitHub_repo_select_tag_tft_files.png)
 3. Locate the TFT file related to your model and download it to your local http server.
-4. Double check your `nextion_update_url` substitution is pointing to the right URL where the file you just downloaded is available.
+4. Double-check your `nextion_update_url` substitution is pointing to the right URL where the file you just downloaded is available.
 
     ![Image](pics/esphome_dashboard_yaml_nextion_update_url.png)
 5. Go to your device's page under **Settings** > **Devices & services** > **ESPHome**.

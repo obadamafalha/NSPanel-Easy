@@ -9,7 +9,7 @@ namespace nspanel_easy {
         size_t dotPos = entity_id.find(".");
         HomeAssistantEntity result;
         
-        if (dotPos != std::string::npos) {
+        if (dotPos != std::string::npos && dotPos > 0 && dotPos + 1 < entity_id.size()) {
             // Extract domain and id from the entity_id string
             result.domain = entity_id.substr(0, dotPos);
             result.id = entity_id.substr(dotPos + 1);

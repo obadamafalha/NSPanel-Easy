@@ -200,16 +200,13 @@ script:
   - id: !extend event_from_display
     then:
       - lambda: |-
+          if (params_count < 2) return;
+
           if (params[0] == "${PAGE_MEDIA_PLAYER_NAME}") {
             // CSV Format:
             // media_player,volume_mute,<value>
             // media_player,volume_set,<value>
             // media_player,<action>
-
-            if (params_count < 2) {
-              ESP_LOGW("${TAG_PAGE_MEDIA_PLAYER}", "Bad params");
-              return;
-            }
 
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "key=%s", params[1].c_str());
 
@@ -235,6 +232,8 @@ script:
               }
 
               float value_float = atof(params[2].c_str()) / 100.0f;
+              if (value_float < 0.0f) value_float = 0.0f;
+              else if (value_float > 1.0f) value_float = 1.0f;
               ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "volume_level=%.2f", value_float);
 
               fire_ha_event("action_call", {

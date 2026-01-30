@@ -57,8 +57,7 @@ api:
             }
 
             // Update direction
-            if (group_id != "grid" and !isnan(direction) and
-                (constructor or direction != UtilitiesGroups[id].direction)) {
+            if (group_id != "grid" and (constructor or direction != UtilitiesGroups[id].direction)) {
               UtilitiesGroups[id].direction = direction;
               disp1->set_component_value((group_id + "_line_d").c_str(), direction);
               delay(${DELAY_DEFAULT});

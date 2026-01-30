@@ -25,6 +25,10 @@ script:
             // CSV Format: cover,<key>[,<value>]
             // params[0]=page, params[1]=key, params[2]=value (optional)
 
+            if (params_count < 2) {
+              ESP_LOGW("${TAG_PAGE_COVER}", "Bad params");
+              return;
+            }
             const std::string& key = params[1];
             ESP_LOGV("${TAG_PAGE_COVER}", "Cover control: key=%s", key.c_str());
 
@@ -35,18 +39,26 @@ script:
               }
 
               const std::string& value = params[2];
-              ESP_LOGV("${TAG_PAGE_COVER}", "Setting position: %s", value.c_str());
+              char* end = nullptr;
+              long pos = strtol(value.c_str(), &end, 10);
+              if (end == value.c_str() || *end != '\0' || pos < 0 || pos > 100) {
+                ESP_LOGW("${TAG_PAGE_COVER}", "Bad position: %s", value.c_str());
+                return;
+              }
+              const std::string pos_str = std::to_string(pos);
+              ESP_LOGV("${TAG_PAGE_COVER}", "Setting position: %s", pos_str.c_str());
 
               fire_ha_event("action_call", {
                 {"action", "cover.set_cover_position"},
                 {"key", key.c_str()},
-                {"value", value.c_str()},
+                {"value", pos_str.c_str()},
                 {"entity", detailed_entity->state.c_str()}
               });
             } else {
               ESP_LOGV("${TAG_PAGE_COVER}", "Executing action: %s", key.c_str());
+              const std::string action = "cover." + key;
               fire_ha_event("action_call", {
-                {"action", ("cover." + key).c_str()},
+                {"action", action.c_str()},
                 {"entity", detailed_entity->state.c_str()}
               });
             } // endif key == "position"

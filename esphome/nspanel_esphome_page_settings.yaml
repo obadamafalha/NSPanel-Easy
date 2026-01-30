@@ -72,14 +72,11 @@ script:
   - id: !extend event_from_display
     then:
       - lambda: |-
+          if (params_count != 3) return;
+
           if (params[0] == "settings") {
             // CSV Format: settings,<event>,<value>
             // params[0]=page, params[1]=event, params[2]=value
-
-            if (params_count != 3) {
-              ESP_LOGW("${TAG_PAGE_SETTINGS}", "Bed params");
-              return;
-            }
 
             uint8_t value = atoi(params[2].c_str());
 

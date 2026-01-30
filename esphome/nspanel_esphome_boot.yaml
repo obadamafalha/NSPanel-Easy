@@ -32,7 +32,7 @@ script:
     mode: single
     then:  # Other packages will subscribe themselves to this to run after critical components and early routines
       - lambda: |-
-          ESP_LOGI("TAG_BOOT", "Starting boot sequence");
+          ESP_LOGI("${TAG_BOOT}", "Starting boot sequence");
           blueprint_status_flags.reset();
           wait_to_be_ready->execute();
           boot_preparation->execute();

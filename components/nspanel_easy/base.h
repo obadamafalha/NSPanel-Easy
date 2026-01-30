@@ -6,6 +6,8 @@
 #include "esphome/core/hal.h"          // For delay()
 #include "esphome/core/log.h"
 #include <cstdint>
+#include <map>
+#include <string>
 
 namespace nspanel_easy {
 

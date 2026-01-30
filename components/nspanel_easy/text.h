@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <cstdint>
+#include <initializer_list>
 #include <string>
 
 namespace nspanel_easy {
