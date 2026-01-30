@@ -30,7 +30,6 @@ Let’s embark on this journey together to create a smart home that’s uniquely
   - [Integrating Your Panel to Home Assistant](#integrating-your-panel-to-home-assistant)
   - [Making Changes Over The Air (OTA)](#making-changes-over-the-air-ota)
   - [Updating Your NSPanel Firmware](#updating-your-nspanel-firmware)
-  - [Migrating from Other Custom Firmware](#migrating-from-other-custom-firmware)
 - [Upload TFT](#upload-tft)
   - [Select the Right File](#select-the-right-file)
   - [Uploading to Nextion](#uploading-to-nextion)
@@ -312,14 +311,6 @@ To update your device's firmware to the latest version, simply follow the [Steps
 > When updating the ESPHome firmware, make sure to also update the TFT file and the Blueprint to the corresponding version.
 
 Keeping each component of the NSPanel HA Blueprint in sync with the same version enhances the stability and functionality of your smart panel.
-
-### Migrating from other custom firmware
-The installation in a NSPanel with Sonoff's original firmware should be straighforward, however,
-if you have installed some other custom firmware before, you may have additional steps to execute.
-
-#### NSPanel Lovelace UI
-If you have already installed on your NSPanel the "nspanel-lovelace-ui" firmware from @joBr99 or from Tasmota, an [intermediate step](lovelace_ui.md) is necessary.
-Please execute that first before returning here.
 
 #### Other
 Please try the standard process and if you find any issue,
