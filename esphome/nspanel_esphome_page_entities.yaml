@@ -47,7 +47,7 @@ script:
           } else if (page.find("entitypage") == 0) {
             if (
                 not txt.empty() and  // There's nothing to adjust if the value is empty
-                component.find("_") == std::string::npos  // Applyes only to value itself. No label or icon.
+                component.find("_") == std::string::npos  // Applies only to value itself. No label or icon.
                 ) {
               // Value - Adjust decimal separator
               if (not id(mui_decimal_separator).empty() and id(mui_decimal_separator) != ".") {
