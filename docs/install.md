@@ -212,7 +212,7 @@ This connection is necessary to put the ESP32 into firmware transfer mode.
 Using a voltage higher than 3.3VDC, such as 5VDC, can damage your panel.
 4. To avoid short circuits, consider moving the panel's board away from the metal backing of the display.
 The use of a non-conductive tool, like the blue plastic one shown in the picture, can be helpful.
-![114730547 MP](https://github.com/edwardtfn/NSPanel-Easy/assets/5879533/575bc3de-a2ae-4440-a420-751325e55122)
+![114730547 MP](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/575bc3de-a2ae-4440-a420-751325e55122)
 5. Note the cross-connection of `RX` and `TX` pins.
     The following pin-out should be used:
     <!-- markdownlint-disable MD033 -->
@@ -240,18 +240,18 @@ After ensuring your device is properly connected, proceed to update or install t
    This method will compile and transfer the firmware directly to your panel over Wi-Fi.
    - For **initial installations** or updates via a USB-to-Serial TTL adapter, select either **Plug into this computer** or **Manual download**.
    Both these options will compile the firmware and allow you to download it to your computer.
-   ![140043](https://github.com/edwardtfn/NSPanel-Easy/assets/5879533/3c08d3b7-df9b-4862-8ced-347deff41cb5)
+   ![140043](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/3c08d3b7-df9b-4862-8ced-347deff41cb5)
 
 
 4. **Transfer Firmware via USB-to-Serial TTL:**
    - Navigate to [ESPHome Web](https://web.esphome.io/) on your computer.
    - Click **Connect** and choose the serial interface connected to your USB-to-Serial TTL adapter.
-     ![141609](https://github.com/edwardtfn/NSPanel-Easy/assets/5879533/fde27c26-3434-48f5-a028-6baee15ab35e)
+     ![141609](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/fde27c26-3434-48f5-a028-6baee15ab35e)
 
 
    - Once connected, opt to install an existing firmware to your panel.
    Select the compiled firmware file and initiate the installation.
-   ![141248](https://github.com/edwardtfn/NSPanel-Easy/assets/5879533/ad6a5813-131c-43d5-9174-3a9f73d5b6bf)
+   ![141248](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/ad6a5813-131c-43d5-9174-3a9f73d5b6bf)
 
 
 The firmware installation process will take a few minutes.
