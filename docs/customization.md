@@ -343,7 +343,7 @@ time:
               sleep_duration: 7h
 ```
 
-You can find more ideas around this on [#955](https://github.com/edwardtfn/NSPanel-Easy/issues/955).
+You can find more ideas around this on [Blackymas/NSPanel_HA_Blueprint#955](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/955).
 
 ### Enforce time zone
 Until v3.4 (including), the time was coming from Home Assistant with it's timezone, so the Blueprint was sending the info with no transformation, to the panel.
@@ -719,7 +719,9 @@ This is particularly useful for devices like WiFi-connected lights.
 For instance, you can program it to cut the power to a connected light under certain conditions, directly via a switch.
 
 #### Use Case
-One application, as utilized by @tikismoke and detailed in [#1349](https://github.com/edwardtfn/NSPanel-Easy/issues/1349), is in response to fluctuating energy prices.
+One application, as utilized by @tikismoke and detailed in
+[Blackymas/NSPanel_HA_Blueprint#1349](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/1349),
+is in response to fluctuating energy prices.
 When the energy price is high, an automation can change the fallback mode to cut off the relay.
 This ensures that the bulb does not consume energy in standby mode. However, it will still function normally with `light.toggle` from the blueprint in all other cases.
 Local control is reinstated when the power price returns to normal.
@@ -765,7 +767,8 @@ switch:
 
 ### Relay Interlocking
 This is using ESPHome capability to prevents the two relays to be active at the same time, which could be useful in some cases,
-like to control a cover like discussed in [#965](https://github.com/edwardtfn/NSPanel-Easy/issues/965).
+like to control a cover like discussed in
+[Blackymas/NSPanel_HA_Blueprint#965](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/965).
 
 > [!ATTENTION]
 > There are some considerations about using software interlocking on the [ESPHome GPIO Switch documentation](https://esphome.io/components/switch/gpio.html#interlocking).

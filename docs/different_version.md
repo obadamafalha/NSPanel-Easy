@@ -96,4 +96,4 @@ It's always a good idea to refer to the latest version of the project for curren
 - For the most up-to-date information and updates,
 refer to the [project's documents](README.md)
 and check the [issues](https://github.com/edwardtfn/NSPanel-Easy/issues)
-and [discussions](https://github.com/edwardtfn/NSPanel-Easy/discussions) sections on our GitHub repository.
+sections on our GitHub repository.

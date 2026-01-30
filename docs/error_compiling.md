@@ -7,7 +7,7 @@ These are our suggestions for both cases:
 
 Go to your ESPHome Dashboard, click the 3-dot menu related to your device and then "**Clean Build Files**":
 
-![image](https://raw.githubusercontent.com/edwardtfn/NSPanel-Easy/dev/docs/pics/esphome_dashboard_clean_build_files.png)
+![image](/docs/pics/esphome_dashboard_clean_build_files.png)
 
 ## Limited resources on ESPHome compiler host
 ### Free Up Server Resources
@@ -27,7 +27,7 @@ With less memory the compiler will crash!
 
     > [!TIP]
     > Place this in a dedicated customization section in your YAML for easier maintenance,
-    similar to [this example](https://github.com/edwardtfn/NSPanel-Easy/blob/main/docs/customization.md#instructions).
+    similar to [this example](/docs/customization.md#instructions).
 
 3. Restart your host system, not just Home Assistant. Use the advanced options to **Reboot system**, which also restarts add-ons and can free up memory.
 

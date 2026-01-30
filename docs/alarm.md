@@ -29,7 +29,7 @@ To enable this:
 1. Go to your ESPHome integrations panel (Settings > Devices and services > ESPHome).
 2. Click "Configure" next to your panel's entry.
 
-   ![Configure option in ESPHome integrations panel](https://github.com/edwardtfn/NSPanel-Easy/assets/94725493/37bfc622-c0cd-4941-a397-3eeb2ddbe6a2)
+   ![Configure option in ESPHome integrations panel](pics/94725493/37bfc622-c0cd-4941-a397-3eeb2ddbe6a2)
 
 3. Select the "**Allow the device to perform Home Assistant actions**" option.
 
