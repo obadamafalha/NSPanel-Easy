@@ -152,7 +152,7 @@ script:
           update_flag_wifi_ready->execute();
 
 text_sensor:
-  - id: device_name  # Device name - Used by bluepring to find service's names
+  - id: device_name  # Device name - Used by blueprint to find service's names
     name: Device Name
     platform: template
     icon: mdi:identifier
