@@ -71,7 +71,7 @@ script:
           if (brightness != current_light_brightness) {
             if (current_page_id != ${PAGE_SCREENSAVER_ID} and brightness > 0) {
               auto call = display_light->turn_on();
-              call.set_brightness(brightness_current / 100.0f);
+              call.set_brightness(brightness / 100.0f);
               call.perform();
             } else if (display_light->current_values.is_on()) {
               auto call = display_light->turn_off();
