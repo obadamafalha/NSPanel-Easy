@@ -306,7 +306,7 @@ The Simpsons:d=4,o=5,b=160:c.6,e6,f#6,8a6,g.6,e6,c6,8a,8f#,8f#,8f#,2g,8p,8p,8f#,
 
 ![HA - Developer Tools - Action - RTTTL Play](pics/ha_developer_tools_action_rtttl_play.png)
 
-More information: https://esphome.io/components/rtttl.html#common-beeps
+More information: https://esphome.io/components/rtttl/#common-beeps
 
 More songs: https://codebender.cc/sketch:109888#RTTTL%20Songs.ino
 

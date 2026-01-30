@@ -32,7 +32,7 @@ substitutions:
 - Use simple numeric values (e.g., `22`) for basic GPIO assignments
 - Use indented YAML syntax for complex configurations with multiple properties
 - `inverted: true` is used when your hardware behaves in active-low mode (e.g., relay turns ON when pin is LOW)
-- For advanced GPIO configuration options, see [ESPHome Pin Schema documentation](https://esphome.io/guides/configuration-types.html#pin-schema)
+- For advanced GPIO configuration options, see [ESPHome Pin Schema documentation](https://esphome.io/guides/configuration-types/#pin-schema)
 
 ---
 

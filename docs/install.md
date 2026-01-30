@@ -67,7 +67,7 @@ With less memory the compiler will crash!
 
 - **Installing ESPHome as a Home Assistant Add-On**: For seamless integration with Home Assistant, ESPHome can be installed as an add-on.
 This method provides an easy-to-navigate interface and direct integration with your Home Assistant setup.
-For detailed instructions on this installation method, refer to [Getting Started with ESPHome and Home Assistant](https://esphome.io/guides/getting_started_hassio).
+For detailed instructions on this installation method, refer to [Getting Started with ESPHome and Home Assistant](https://esphome.io/guides/getting_started_hassio/).
 
 - **Manual Installation of ESPHome**: A manual installation on your computer might be preferred
 if your Home Assistant's host is resource-limited and struggles with compiling ESPHome projects.
@@ -159,7 +159,7 @@ Learn about secrets in ESPHome: [Home Assistant Secrets in ESPHome](https://www.
 
 12. (Optional) Enhance security with API encryption by adding the copied key from step 6 to the **My Customization** area.
     > [!TIP]
-    > You can get a new randomly generated valid key from [ESPHome Native API Component](https://esphome.io/components/api.html#configuration-variables) page.
+    > You can get a new randomly generated valid key from [ESPHome Native API Component](https://esphome.io/components/api/#configuration-variables) page.
 
 13. After finalizing settings, click **Save** and close the YAML window.
 
@@ -184,9 +184,9 @@ Your NSPanel is now configured in your ESPHome Dashboard.
 
 #### Required Tools
 For first-time flashing of your NSPanel with ESPHome, you may need:
-1. [USB-to-Serial TTL adapter](https://esphome.io/guides/physical_device_connection#usb-serial-adapter)
-2. [Jumper wires](https://esphome.io/guides/physical_device_connection#jumper-wires)
-3. [Breakable headers (optional)](https://esphome.io/guides/physical_device_connection#pcb-headers)
+1. [USB-to-Serial TTL adapter](https://esphome.io/guides/physical_device_connection/#usb-serial-adapter)
+2. [Jumper wires](https://esphome.io/guides/physical_device_connection/#jumper-wires)
+3. [Breakable headers (optional)](https://esphome.io/guides/physical_device_connection/#pcb-headers)
 4. Appropriate screwdriver to disassemble your panel's controller module (touch plate)
 
 #### Connecting Your Device via USB-to-Serial TTL Interface
