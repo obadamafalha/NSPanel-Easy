@@ -51,8 +51,8 @@ namespace nspanel_easy {
      * 
      * Uses bitfields to pack 8 boolean states into 1 byte (uint8_t).
      * These flags track specific blueprint initialization steps.
-     * Bits 1-5 are active flags used in percentage calculation.
-     * Bits 0, 6, 7 are reserved and not used in calculations.
+     * Bits 0-5 are active flags used in percentage calculation.
+     * Bits 6-7 are reserved and not used in calculations.
      */
     struct BlueprintStatusFlags {
         uint8_t page_home : 1;            ///< Home page initialization completed
@@ -70,7 +70,7 @@ namespace nspanel_easy {
 
         /**
          * `@brief` Check if all active flags (bits 0-5) are set
-         * `@return` true if all active flags are set, false otherwise
+         * `@return` true if all active flags (bits 0-5) are set, false otherwise
          */
         bool all_active_flags_set() const {
             // All 6 active flags must be set
@@ -97,7 +97,7 @@ namespace nspanel_easy {
         /**
          * @brief Reset all blueprint status flags to their initial state (false)
          *
-         * Clears all active flags (bits 0-4) and reserved bits, returning the
+         * Clears all active flags (bits 0-5) and reserved bits, returning the
          * struct to its default-constructed state.
          */
         void reset() {
