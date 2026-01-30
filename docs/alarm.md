@@ -16,6 +16,7 @@ without the code, leading to failed operations that require a code.
 > To enhance security, we strongly recommend enabling API encryption for NSPanel users managing an Alarm 
 > system. Follow the instructions in the ["API encryption" example here](customization.md#api-encryption) 
 > to implement this security measure.
+
 ## Configuration
 
 ### Allow the device to perform Home Assistant actions
@@ -29,7 +30,7 @@ To enable this:
 1. Go to your ESPHome integrations panel (Settings > Devices and services > ESPHome).
 2. Click "Configure" next to your panel's entry.
 
-   ![Configure option in ESPHome integrations panel](pics/94725493/37bfc622-c0cd-4941-a397-3eeb2ddbe6a2.png)
+   ![Configure option in ESPHome integrations panel](pics/ha_settings_devices_and_services_esphome_configure.png)
 
 3. Select the "**Allow the device to perform Home Assistant actions**" option.
 
