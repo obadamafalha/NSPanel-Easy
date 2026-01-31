@@ -60,7 +60,7 @@ If you send anything different, the conversion to the RGB565 used by Nextion wil
 | [`page_alarm`](#alarm-settings-page-action-page_alarm) | [Alarm Settings Page Action](#alarm-settings-page-action-page_alarm) | Updates the Alarm page with current state information. |
 | [`page_climate`](#climate-page-action-page_climate) | [Climate Page Action](#climate-page-action-page_climate) | Updates the Climate page with current state information. |
 | [`page_media_player`](#media-player-page-action-page_media_player) | [Media Player Page Action](#media-player-page-action-page_media_player) | Updates the Media Player page with current state information. |
-| [`qrcode`](#qr-code-action-qrcode) | [QR Code Action](#qr-code-action-qrcode) | Displays a QR code on the panel or update the QR code information for local control. |
+| [`qrcode`](#qr-code-action-qrcode) | [QR Code Action](#qr-code-action-qrcode) | Displays a QR code on the panel or updates the QR code information for local control. |
 | [`rtttl_play`](#rtttl-play-action-rtttl_play) | [RTTTL Play Action](#rtttl-play-action-rtttl_play) | Plays melodies encoded in the RTTTL format. |
 | [`upload_tft`](#tft-file-update-action-upload_tft) | [Upload TFT Action](#tft-file-update-action-upload_tft) | Enables TFT file updates from a URL, requiring the "Upload TFT" add-on. |
 | [`utilities_group_refresh`](#utilities-group-refresh-action-utilities_group_refresh) | [Utilities Group Refresh Action](#utilities-group-refresh-action-utilities_group_refresh) | Updates utility group display values and direction indicators. |
@@ -132,8 +132,10 @@ This action is ideal for creating visually dynamic interfaces, allowing elements
 events, or user actions, such as indicating status changes or highlighting specific UI components.
 
 **Parameters:**
-- `page` (string): Identifier of the page where the component is. Use `mem` when setting memory vars or leave empty for current page or global vars.
-- `id` (string): Identifier of the component whose color will be updated. It is essential that this matches the component's ID in your display layout to ensure the correct element is targeted.
+- `page` (string): Identifier of the page where the component is.
+    Use `mem` when setting memory vars or leave empty for current page or global vars.
+- `id` (string): Identifier of the component whose color will be updated.
+    It is essential that this matches the component's ID in your display layout to ensure the correct element is targeted.
 - `color` (int[]): The new color for the component, specified as an RGB array (e.g., `[255, 0, 0]` for red).
 
 **Home Assistant Example:**
@@ -198,7 +200,7 @@ data:
 > Ensure the `id` accurately matches the component on your display to successfully update its value.
 
 ### Components Visibility Action: `components_visibility`
-Hides or shows a list of component on the display, allowing for dynamic interface changes.
+Hides or shows a list of components on the display, allowing for dynamic interface changes.
 
 **Usage:**
 This action is ideal for creating interactive user interfaces that adapt by hiding or showing certain elements based on user actions, conditions, or events.
@@ -220,7 +222,7 @@ data:
 > [!NOTE]
 > Replace <your_panel_name> with your specific panel name as configured in Home Assistant to ensure correct action execution.
 >
-> Ensure the ids matches the component on your display you wish to hide or show.
+> Ensure the ids match the components on your display you wish to hide or show.
 
 > [!IMPORTANT]
 > This command only works when the target page is visible.
@@ -342,7 +344,7 @@ data:
 ```
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
-> The action ensures the action executes correctly, displaying the notification with the specified `label` and `message`.
+> This ensures the action executes correctly, displaying the notification with the specified `label` and `message`.
 >
 > Utilize `\r` within the message for custom line breaks, offering precise formatting control.
 

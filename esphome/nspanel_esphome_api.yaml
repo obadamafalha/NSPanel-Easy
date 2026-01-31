@@ -130,6 +130,12 @@ api:
 
               // Extract component information using helper function
               const NextionComponent component = extractNextionComponent(component_id, resolved_page);
+              const std::string component_page = component.page;
+              if (component_page != resolved_page) {
+                ESP_LOGW("${TAG_API}", "Skipping component on non-current page (%s vs %s)",
+                        component_page.c_str(), resolved_page.c_str());
+                continue;
+              }
 
               // Use short format for current page components
               const char* target_id = component.component_id;
@@ -289,7 +295,14 @@ script:
             return;
           }
           if (page != "mem") {
-            disp1->send_command_printf("%s.%s.txt=\"%s\"", page.c_str(), component.c_str(), txt.c_str());
+            std::string escaped = txt;
+            for (size_t pos = 0; (pos = escaped.find('\\', pos)) != std::string::npos; pos += 2) {
+              escaped.replace(pos, 1, "\\\\");
+            }
+            for (size_t pos = 0; (pos = escaped.find('"', pos)) != std::string::npos; pos += 2) {
+              escaped.replace(pos, 1, "\\\"");
+            }
+            disp1->send_command_printf("%s.%s.txt=\"%s\"", page.c_str(), component.c_str(), escaped.c_str());
             return;
           }
 
