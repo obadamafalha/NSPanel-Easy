@@ -141,9 +141,12 @@ events, or user actions, such as indicating status changes or highlighting speci
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
 > 
-> The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`. This is by design to support a modular architecture.
+> The base implementation of `component_color` action does **not** include handling for `page: mem`.
+> This is by design to support a modular architecture.
 > 
-> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration. These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
+> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
+> These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables.
+> For example:
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
@@ -182,9 +185,12 @@ Ideal for user interfaces that require real-time text updates, such as status me
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
 > 
-> The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`. This is by design to support a modular architecture.
+> The base implementation of `component_text` action does **not** include handling for `page: mem`.
+> This is by design to support a modular architecture.
 > 
-> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration. These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
+> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
+> These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables.
+> For example:
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
@@ -223,9 +229,12 @@ Ideal for interfaces requiring real-time updates of numerical values, such as co
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
 > 
-> The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`. This is by design to support a modular architecture.
+> The base implementation of `component_val` action does **not** include handling for `page: mem`.
+> This is by design to support a modular architecture.
 > 
-> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration. These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
+> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
+> These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables.
+> For example:
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
