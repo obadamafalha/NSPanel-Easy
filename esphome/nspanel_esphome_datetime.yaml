@@ -96,8 +96,9 @@ script:
 
           if (current_page->state == "screensaver" and id(screensaver_display_time)) {
             std::string time_format_str_sleep = time_format_str;
-            if (time_format_str_sleep.find("%p") != std::string::npos)
-              time_format_str_sleep.replace(time_format_str_sleep.find("%p"), sizeof("%p")-1, meridiem_text.c_str());
+            const size_t p_pos = time_format_str_sleep.find("%p");
+            if (p_pos != std::string::npos)
+              time_format_str_sleep.replace(p_pos, sizeof("%p")-1, meridiem_text.c_str());
             disp1->set_component_text("text", id(time_provider).now().strftime(time_format_str_sleep).c_str());
           }
 
