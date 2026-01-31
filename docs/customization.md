@@ -38,14 +38,14 @@ Table of contents:
 &nbsp;
 &nbsp;
 ## Description
-This project adds lots of functionalities to your NSPanel and we are constantly adding new features based on user's feedback.
-However, you might have some specific case that are not included on the current implementation or is not a common case for other users.
+This project adds many features to your NSPanel, and we are constantly adding new ones based on user feedback.
+However, you might have specific cases that are not included in the current implementation or are uncommon for other users.
 
 You can take advantage of [ESPHome Configuration Types](https://esphome.io/guides/configuration-types.html)
 to add your custom functionality or even to customize an existing functionality with minimum effort,
 and this document intends to clarify how to use this and give some examples of customization.
 
-Please feel free to add your own customization to this document by creating a PR in the `dev` branch.
+Please feel free to add your own customization to this document by submitting a PR.
 
 ***IMPORTANT:***
 - *Use customization at your own risk. Custom/advanced systems won't be supported by this project's team.*
@@ -59,7 +59,7 @@ and only edit your local ESPHome yaml settings.
 Most of the ESPHome components in this project contain an `Id`,
 which can be used together with the `!extend` key to add or replace existing code.
 
-You should add your customizations at the end of your ESPHome YAML, as in the example below:
+You should add your customizations at the customization area or at the end of your ESPHome YAML, as in the example below:
 
 ```yaml
 substitutions:

@@ -124,14 +124,15 @@ script:
             return;
           }
           ESP_LOGI("${TAG_DATETIME}", "Setting timezone: %s", id(mui_timezone).c_str());
-          const size_t start = id(mui_timezone).find('<');
+          std::string tz_to_apply = id(mui_timezone);
+          const size_t start = tz_to_apply.find('<');
           if (start != std::string::npos) {
-            const size_t end = id(mui_timezone).find('>');
+            const size_t end = tz_to_apply.find('>');
             if (end != std::string::npos && end > start) {
-              id(mui_timezone).replace(start, (end - start) + 1, "UTC");
+              tz_to_apply.replace(start, (end - start) + 1, "UTC");
             }  // if valid brackets found
           }  // if formatting needed
-          time_provider->set_timezone(id(mui_timezone).c_str());
+          time_provider->set_timezone(tz_to_apply.c_str());
           time_provider->call_setup();
           time_provider->dump_config();
           refresh_datetime->execute();

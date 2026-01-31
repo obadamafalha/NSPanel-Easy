@@ -74,7 +74,7 @@ The instructions to upload TFT will vary depending on the version you are instal
 2. Double-check that the correct version is shown below the repository name:
 
     ![Image](pics/GitHub_repo_select_tag_tft_files.png)
-3. Locate the TFT file related to your model and download it to your local http server.
+3. Locate the TFT file related to your model and download it to your local HTTP server.
 4. Double-check your `nextion_update_url` substitution is pointing to the right URL where the file you just downloaded is available.
 
     ![Image](pics/esphome_dashboard_yaml_nextion_update_url.png)
