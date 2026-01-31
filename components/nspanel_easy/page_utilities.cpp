@@ -11,14 +11,6 @@
 #include "esp32-hal-psram.h"
 #endif
 
-#ifndef NDEBUG_INITIAL_UTILITIES_GROUPS
-    // Verify sort order in debug builds
-    for (size_t i = 1; i < UTILITIES_GROUPS_COUNT; ++i) {
-        assert(std::strcmp(INITIAL_UTILITIES_GROUPS[i-1].group_id, 
-                          INITIAL_UTILITIES_GROUPS[i].group_id) < 0);
-    }
-#endif
-
 namespace nspanel_easy {
 
     bool page_utilities_enabled = false;
@@ -29,6 +21,14 @@ namespace nspanel_easy {
     static constexpr size_t UTILITIES_GROUPS_COUNT = 8;
 
     void resetUtilitiesGroups() {
+
+        #ifndef NDEBUG
+            // Verify sort order in debug builds
+            for (size_t i = 1; i < UTILITIES_GROUPS_COUNT; ++i) {
+                assert(std::strcmp(INITIAL_UTILITIES_GROUPS[i-1].group_id, 
+                                INITIAL_UTILITIES_GROUPS[i].group_id) < 0);
+            }
+        #endif  // NDEBUG
 
         cleanupUtilitiesGroups();  // Free any existing allocation first
 
