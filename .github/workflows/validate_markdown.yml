@@ -37,6 +37,13 @@ jobs:
           separator: ","
           config: '.rules/.markdownlint.jsonc'
           fix: true
+      # https://github.com/edwardtfn/NSPanel-Easy/pull/1#pullrequestreview-3730634846
+      - name: Commit fixes
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-fix markdown lint issues"
+          file_pattern: '*.md'
 
   markdown-links:
     name: Check links

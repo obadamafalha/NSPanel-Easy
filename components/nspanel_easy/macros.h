@@ -16,8 +16,8 @@
  * @param condition Boolean condition to check
  * @param ... Printf-style format string and arguments
  */
- #ifndef ESP_LOGE_IF
- #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_ERROR
+#ifndef ESP_LOGE_IF
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_ERROR
 #define ESP_LOGE_IF(tag, condition, ...) \
   do { \
     if (condition) { \

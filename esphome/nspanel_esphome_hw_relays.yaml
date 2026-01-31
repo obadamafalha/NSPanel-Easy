@@ -76,10 +76,11 @@ script:
             } else if (component == "relay_settings") {
               // Extract individual relay settings from the calculated uint8_t value
               // Bit layout from YAML calculation: bits 0,1,4,5 used
-              id(hardware_settings).relay1_local = (val >> 0) & 1;
-              id(hardware_settings).relay1_fallback = (val >> 1) & 1;
-              id(hardware_settings).relay2_local = (val >> 4) & 1;
-              id(hardware_settings).relay2_fallback = (val >> 5) & 1;
+              const uint8_t relay_settings = static_cast<uint8_t>(val);
+              id(hardware_settings).relay1_local = (relay_settings >> 0) & 1;
+              id(hardware_settings).relay1_fallback = (relay_settings >> 1) & 1;
+              id(hardware_settings).relay2_local = (relay_settings >> 4) & 1;
+              id(hardware_settings).relay2_fallback = (relay_settings >> 5) & 1;
 
               // Update blueprint status
               blueprint_status_flags.relay_settings = true;

@@ -11,6 +11,14 @@
 #include "esp32-hal-psram.h"
 #endif
 
+#ifndef NDEBUG_INITIAL_UTILITIES_GROUPS
+    // Verify sort order in debug builds
+    for (size_t i = 1; i < UTILITIES_GROUPS_COUNT; ++i) {
+        assert(std::strcmp(INITIAL_UTILITIES_GROUPS[i-1].group_id, 
+                          INITIAL_UTILITIES_GROUPS[i].group_id) < 0);
+    }
+#endif
+
 namespace nspanel_easy {
 
     bool page_utilities_enabled = false;
@@ -53,7 +61,7 @@ namespace nspanel_easy {
         if (group_id == nullptr || *group_id == '\0') return UINT8_MAX;
 
         int low = 0;
-        int high = 7;  // Directly use the number of elements in UtilitiesGroups - 1
+        int high = static_cast<int>(UTILITIES_GROUPS_COUNT) - 1;
 
         while (low <= high) {
             int mid = low + (high - low) / 2;

@@ -37,6 +37,8 @@ namespace nspanel_easy {
                             relay2_local(0), relay2_fallback(0) {}
     };
 
+    static_assert(sizeof(HardwareSettings) == 1, "HardwareSettings must be exactly 1 byte");
+
     // Note: hardware_settings_raw is declared as uint8_t in ESPHome YAML with restore_value: true
     // Use the helper function below to access it as a HardwareSettings struct
     

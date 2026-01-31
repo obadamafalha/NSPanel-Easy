@@ -127,12 +127,8 @@ namespace nspanel_easy {
     }
 
     bool isStringInList(const std::string& strToSearch, std::initializer_list<std::string> list) {
-        for (const auto& str : list) {
-            if (strToSearch == str) {
-                return true;
-            }
-        }
-        return false;
+        return std::any_of(list.begin(), list.end(),
+            [&strToSearch](const std::string& str) { return strToSearch == str; });
     }
 
     uint32_t decode_utf8(const char* bytes) {
@@ -147,6 +143,8 @@ namespace nspanel_easy {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             if ((b1 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x1F) << 6) | (b1 & 0x3F);
+            // Reject overlong encodings (code points < 0x80 encoded as 2 bytes)
+            if (code_point < 0x80) return 0;
         } else if ((byte & 0xF0) == 0xE0 && bytes[1] != '\0' && bytes[2] != '\0') {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             unsigned char b2 = static_cast<unsigned char>(bytes[2]);
@@ -154,6 +152,8 @@ namespace nspanel_easy {
             code_point = ((byte & 0x0F) << 12) |
                             ((b1 & 0x3F) << 6) |
                             (b2 & 0x3F);
+            // Reject overlong encodings and surrogate code points
+            if (code_point < 0x800 || (code_point >= 0xD800 && code_point <= 0xDFFF)) return 0;
         } else if ((byte & 0xF8) == 0xF0 && bytes[1] != '\0' && bytes[2] != '\0' && bytes[3] != '\0') {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             unsigned char b2 = static_cast<unsigned char>(bytes[2]);
