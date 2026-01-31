@@ -413,7 +413,10 @@ For detailed descriptions of each feature and its corresponding bitmask value, r
 - `target_temp` (float): The set target temperature.
 - `target_temp_high` (float): The high end of the target temperature range, for devices that support temperature ranges.
 - `target_temp_low` (float): The low end of the target temperature range.
-- `temp_step` (int): Increment step for temperature adjustment, effectively the granularity of temperature change allowed.
+- `temp_step` (int): The minimum temperature granularity (step size) supported by the device when setting a new temperature,
+    encoded as the step in degrees (Celsius or Fahrenheit) multiplied by 10 and rounded to the nearest integer.
+    This value is used to scale the temperature selector on the display.
+    For example, a 0.5°C step is sent as `5`, while a 1.0°C step is sent as `10`.
 - `total_steps` (int): Total number of steps for temperature adjustment, calculated as ((temp_max - temp_min) / temp_step).
 - `temp_offset` (int): Offset applied to the temperature reading for calibration.
 - `climate_icon` (string): Icon representing the current climate status,
@@ -426,11 +429,11 @@ selected from [HASwitchPlate Material Design Icons](https://htmlpreview.github.i
 action: esphome.<your_panel_name>_page_climate
 data:
   current_temp: 22.5
-  supported_features: 1 | 4  # Assuming '1' is for temperature control and '4' is for fan mode, as an example.
+  supported_features: 5      # Example bitmask: 1 (temp control) + 4 (fan mode)
   target_temp: 24.0
   target_temp_high: 25.0
   target_temp_low: 19.0
-  temp_step: 5               # Adjust in 0.5°C increments.
+  temp_step: 5               # Adjust in 0.5°C increments (if your firmware uses 0.5°C steps)
   total_steps: 56            # Calculated based on the device's temperature range and step.
   temp_offset: 70            # Applied as a calibration offset.
   climate_icon: "\uE392"     # mdi:thermostat
