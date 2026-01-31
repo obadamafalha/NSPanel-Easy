@@ -752,7 +752,8 @@ data:
 ```
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
-> This action ensures the action is executed correctly, waking the display and optionally resetting timers based on the reset_timer parameter.
+> This ensures the action executes correctly,
+> waking the display and optionally resetting timers based on the `reset_timer` parameter.
 
 **Practical Use Case: Motion Sensor Activation:**
 This action can be seamlessly integrated with a motion sensor to wake the display when motion is detected, making it instantly usable.
