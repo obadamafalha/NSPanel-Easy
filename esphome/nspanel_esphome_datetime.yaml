@@ -102,9 +102,14 @@ script:
             disp1->set_component_text("text", id(time_provider).now().strftime(time_format_str_sleep).c_str());
           }
 
+          std::string time_format_str_home = time_format_str;
+          const size_t p_pos_home = time_format_str_home.find("%p");
+          if (p_pos_home != std::string::npos)
+            time_format_str_home.replace(p_pos_home, sizeof("%p")-1, "");
+
           disp1->set_component_text("home.meridiem", (time_format_str.find("%p") != std::string::npos) ?
                                                       meridiem_text.c_str() : " ");
-          disp1->set_component_text("home.time", id(time_provider).now().strftime(time_format_str).c_str());
+          disp1->set_component_text("home.time", id(time_provider).now().strftime(time_format_str_home).c_str());
 
   - id: set_timezone
     mode: single
