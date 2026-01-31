@@ -194,6 +194,10 @@ script:
             ESP_LOGW("${TAG_PAGE_CLIMATE}", "'set_climate' was called while the device is not ready for tasks");
             return;
           }
+          if (set_climate_temp_step <= 0) {
+            ESP_LOGW("${TAG_PAGE_CLIMATE}", "Invalid temp_step (<= 0); skipping climate render");
+            return;
+          }
           disp1->send_command_printf("climateslider.maxval=%i", set_climate_total_steps);
           disp1->send_command_printf("slider_high.maxval=%i", set_climate_total_steps);
           disp1->send_command_printf("slider_low.maxval=%i", set_climate_total_steps);

@@ -153,7 +153,7 @@ api:
             if (supported_features & 4) {
               if (last_volume_level != volume_level) {
                 last_volume_level = volume_level;
-                disp1->set_component_text_printf("vol_text", "%" PRIu32 "%%", volume_level);
+                disp1->set_component_text_printf("vol_text", "%d%%", volume_level);
                 disp1->set_component_value("vol_slider", volume_level);
               }
               disp1->show_component("vol_slider");

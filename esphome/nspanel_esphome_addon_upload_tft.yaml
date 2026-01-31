@@ -71,7 +71,7 @@ display:
 globals:
   - id: first_time_synced_ms
     type: uint32_t
-    restore_value: no
+    restore_value: false
     initial_value: '0'
 
 nspanel_ha_blueprint:
@@ -186,16 +186,19 @@ script:
           // Calculate URL if needed
           std::string resolved_url = url;
 
-          // Convert to lowercase and trim
-          std::transform(resolved_url.begin(), resolved_url.end(), resolved_url.begin(),
-                        [](unsigned char c){ return std::tolower(c); });
+          // Trim whitespace (both ends) for comparisons, but keep original casing
+          auto startPos = resolved_url.find_first_not_of(" \t");
           auto endPos = resolved_url.find_last_not_of(" \t");
-          if (std::string::npos != endPos) {
-            resolved_url = resolved_url.substr(0, endPos + 1);
-          }
+          std::string trimmed = (startPos == std::string::npos)
+                                  ? ""
+                                  : resolved_url.substr(startPos, endPos - startPos + 1);
 
-          // Calculate URL if empty
-          if (resolved_url.empty()) {
+          std::string normalized = trimmed;
+          std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                        [](unsigned char c){ return std::tolower(c); });
+
+          // Calculate URL if empty or "default"
+          if (normalized.empty() || normalized == "default") {
             auto idx_opt = tft_file_model->active_index();
             if (!idx_opt.has_value()) {
               resolved_url = "${nextion_update_url}";  // Fallback if no valid index
@@ -216,6 +219,8 @@ script:
                 resolved_url = "${nextion_update_url}";
               }
             }
+          } else {
+            resolved_url = trimmed;
           }
 
           ESP_LOGV("${TAG_UPLOAD_TFT}", "  Upload URL: %s", resolved_url.c_str());

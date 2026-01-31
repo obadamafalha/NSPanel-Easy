@@ -107,10 +107,8 @@ api:
             const std::string resolved_page = page.empty() ? current_page->state : page;
             ESP_LOGV("${TAG_API}", "  page: %s", resolved_page.c_str());
 
-            // Determine if we should process based on page context
-            const bool is_current_page = (resolved_page == current_page->state);
-
-            if (!is_current_page) {
+            // If caller explicitly targets a page, require it to be current
+            if (!page.empty() && resolved_page != current_page->state) {
               ESP_LOGW("${TAG_API}", "Not the current page (%s vs %s)",
                       resolved_page.c_str(), current_page->state.c_str());
               return;
@@ -130,6 +128,12 @@ api:
 
               // Extract component information using helper function
               const NextionComponent component = extractNextionComponent(component_id, resolved_page);
+              if (std::string(component.page) != current_page->state) {
+                ESP_LOGW("${TAG_API}", "Skipping off-page component (%s vs %s)",
+                        component.page, current_page->state.c_str());
+                continue;
+              }
+              const char* target_id = component.component_id;
               const std::string component_page = component.page;
               if (component_page != resolved_page) {
                 ESP_LOGW("${TAG_API}", "Skipping component on non-current page (%s vs %s)",
@@ -137,8 +141,6 @@ api:
                 continue;
               }
 
-              // Use short format for current page components
-              const char* target_id = component.component_id;
               ESP_LOGV("${TAG_API}", "  target: %s", target_id);
 
               // Apply visibility change

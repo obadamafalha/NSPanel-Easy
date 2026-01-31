@@ -137,15 +137,16 @@ namespace nspanel_easy {
         }
         uint32_t code_point = 0;
         unsigned char byte = static_cast<unsigned char>(bytes[0]);
+        auto is_continuation = [](unsigned char b) { return (b & 0xC0) == 0x80; };  // Helper to check valid continuation byte
         if ((byte & 0x80) == 0x00) {
             code_point = byte;
-        } else if ((byte & 0xE0) == 0xC0 && bytes[1] != '\0') {
+        } else if ((byte & 0xE0) == 0xC0 && is_continuation(bytes[1])) {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             if ((b1 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x1F) << 6) | (b1 & 0x3F);
             // Reject overlong encodings (code points < 0x80 encoded as 2 bytes)
             if (code_point < 0x80) return 0;
-        } else if ((byte & 0xF0) == 0xE0 && bytes[1] != '\0' && bytes[2] != '\0') {
+        } else if ((byte & 0xF0) == 0xE0 && is_continuation(bytes[1]) && is_continuation(bytes[2])) {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             unsigned char b2 = static_cast<unsigned char>(bytes[2]);
             if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80) return 0;
@@ -154,7 +155,7 @@ namespace nspanel_easy {
                             (b2 & 0x3F);
             // Reject overlong encodings and surrogate code points
             if (code_point < 0x800 || (code_point >= 0xD800 && code_point <= 0xDFFF)) return 0;
-        } else if ((byte & 0xF8) == 0xF0 && bytes[1] != '\0' && bytes[2] != '\0' && bytes[3] != '\0') {
+        } else if ((byte & 0xF8) == 0xF0 && is_continuation(bytes[1]) && is_continuation(bytes[2]) && is_continuation(bytes[3])) {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             unsigned char b2 = static_cast<unsigned char>(bytes[2]);
             unsigned char b3 = static_cast<unsigned char>(bytes[3]);

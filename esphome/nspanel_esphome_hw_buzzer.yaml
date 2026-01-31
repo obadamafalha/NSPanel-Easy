@@ -50,8 +50,10 @@ script:
   - id: !extend wait_for_page_boot_exit
     then:
       - lambda: |-
-          if (${'false' if boot_sound else 'true'}) return;  // Boot sound is disabled
+          // Only when boot sound is enabled
+          #if ${boot_sound}
           if (current_page_id == ${PAGE_BOOT_ID}) return;    // Page boot is visible, do not play sound
           boot_log->execute("Boot", "Play boot sound");
           buzzer->play("${tone_boot}");
+          #endif
 ...

@@ -37,7 +37,7 @@ For troubleshooting, refer to the following sections:
 > ![Image](pics/eu_reset_button.png)
 
 ### If using manual IP, make sure you have a DNS server configured
-At least one DNS server is required to enable TFT transfer directly from GitHub, otherwise use `nextion_update_url`.
+At least one DNS server is required to enable TFT transfer directly from GitHub; otherwise use `nextion_update_url`.
 If you are setting up a manual IP as a customization, please remember to add a valid DNS server for your panel.
 
 ### Using the `nspanel_blank.tft` File to Assist
@@ -62,7 +62,7 @@ click the **Add integration** button, select **ESPHome**, add the device hostnam
 - **Issue**: The Nextion display might not connect to ESPHome immediately after boot.
 - **Solution**: Wait up to 2 minutes for the boot script to complete.
 If you are already using a TFT from this project, the display of ESPHome version and the framework used (`arduino` vs `esp-idf`) is an indication that a communication was established.
-If you haven't installed any TFT yet, look for Nextion related messages on ESPHome logs.
+If you haven't installed any TFT yet, look for Nextion-related messages on ESPHome logs.
 - **Additional Guidance**: Knowing when the device is fully booted and ready to accept the TFT upload can prevent many issues.
 Observe any changes in the display or logs indicators to ensure the device is ready.
 
@@ -143,7 +143,7 @@ esp32:
 - **Issue**: Your firmware might be missing some important library, you may be using an outdated version or the ESP may be out of memory.
 - **Solution**: Remove all add-ons and non-essential customization and flash your panel again.
 - **Step-by-Step Guide**:
-    1. Look your yaml file and comment out all the customization (typically on a section name "My customizations") and any of the remote files other than `nspanel_esphome.yaml`.
+    1. Look at your YAML file and comment out all the customization (typically on a section name "My customizations") and any of the remote files other than `nspanel_esphome.yaml`.
     2. Flash your panel with the new cleaner yaml. You can do this over the air/wirelessly, although it is recommended to use serial when changing between frameworks
     3. Try to update the TFT file again
     4. Add the add-ons and removed customization back and then flash it again.
@@ -151,7 +151,7 @@ esp32:
 ### Try an alternative http service
 - **Issue**: Your current http server may be overloaded.
 - **Solution**: Try another http server installed in your computer.
-There are many options available for free to run under your local Windows, MAC or Linux machine.
+There are many options available for free to run under your local Windows, macOS, or Linux machine.
 - **Examples**: Just to name some:
   | Solution | Website | Supported OSs | Pros | Cons |
   |----------|---------|---------------|------|------|

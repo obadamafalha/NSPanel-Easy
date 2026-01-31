@@ -167,8 +167,8 @@ trigger:
     entity_id:
       - binary_sensor.motion_detector
     to: "on"
-    condition: []
-    action:
+condition: []
+action:
   - action: esphome.panelname_notification_show
     data:
       label: Motion Detected

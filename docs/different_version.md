@@ -24,7 +24,7 @@ Take note of the branch (`dev`, `beta`, or `main`) or version name exactly as it
 > [!NOTE]
 > **Understanding Tags in GitHub**
 > Tags on GitHub mark specific versions of a project, akin to bookmarks.
-They're created for each new release, allowing easy access to different project stages.
+> They're created for each new release, allowing easy access to different project stages.
 
 ### Special Versions
 - **dev**: The development version, containing the latest code but potentially unstable.

@@ -29,6 +29,7 @@ namespace nspanel_easy {
     static constexpr size_t UTILITIES_GROUPS_COUNT = 8;
 
     void resetUtilitiesGroups() {
+
         cleanupUtilitiesGroups();  // Free any existing allocation first
 
         #ifdef USE_ESP_IDF  // To-do: Review if this arduino specific code is still needed

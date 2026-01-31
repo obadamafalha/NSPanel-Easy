@@ -4,8 +4,10 @@
 
 #ifdef NSPANEL_EASY_PAGE_UTILITIES
 
+#include <algorithm>  // For std::min
 #include <cstdint>
-#include <cstring>  // For std::strcpy
+#include <cstdlib>    // For std::free
+#include <cstring>    // For std::strcpy
 #include <string>
 #include "esphome/core/defines.h"
 #include "nextion_components.h"  // For HMIComponent
@@ -35,6 +37,16 @@ namespace nspanel_easy {
 
   void resetUtilitiesGroups();
   inline void cleanupUtilitiesGroups() {
+    if (UtilitiesGroups != nullptr) {
+        #ifdef USE_ESP_IDF
+        heap_caps_free(UtilitiesGroups);
+        #elif defined(USE_ARDUINO)
+        free(UtilitiesGroups);
+        #else
+        delete[] UtilitiesGroups;
+        #endif
+        UtilitiesGroups = nullptr;
+    }
     if (UtilitiesGroups != nullptr) {
       free(UtilitiesGroups);      // Compatible with both heap_caps_malloc and ps_malloc
       UtilitiesGroups = nullptr;  // Prevent dangling pointers

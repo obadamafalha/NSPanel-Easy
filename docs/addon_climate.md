@@ -7,7 +7,7 @@ using the internal temperature sensor and independent of the network availabilit
 
 ### Attention
 1. The NSPanel is limited to 2A per relay.
-Don't use it for directly power your cooler/heater if exceeding the panel specifications:
+Don't use it to directly power your cooler/heater if it exceeds the panel specifications:
     - 150W/110V/Gang, 300W/110V/Total
     - 300W/220V/Gang, 600W/220V/Total
 2. A target temperature must be set on the climate entity in Home Assistant or the page Climate in your panel.
@@ -68,8 +68,8 @@ The following keys are available to be used in your `substitutions`:
 <!-- markdownlint-disable MD013 MD033 -->
 Key|Required|Supported values|Default|Description
 :-|:-:|:-:|:-:|:-
-cooler_relay|Mandatory for *cool* and *dual*|`1` or `2`|`0` (disabled)|Relay used for control the cooler. Use `1` for "Relay 1" or `2` for "Relay 2".
-heater_relay|Mandatory for *heat* and *dual*|`1` or `2`|`0` (disabled)|Relay used for control the heater. Use `1` for "Relay 1" or `2` for "Relay 2".
+cooler_relay|Mandatory for *cool* and *dual*|`1` or `2`|`0` (disabled)|Relay used to control the cooler. Use `1` for "Relay 1" or `2` for "Relay 2".
+heater_relay|Mandatory for *heat* and *dual*|`1` or `2`|`0` (disabled)|Relay used to control the heater. Use `1` for "Relay 1" or `2` for "Relay 2".
 temp_units|Optional|`°C` or `°F`|`°C`|Temperature unit.
 min_off_time|Optional|Positive integer representing the number of seconds|`300`|Minimum duration (in seconds) the cooling/heating action must be disengaged before it may be engaged.
 min_run_time|Optional|Positive integer representing the number of seconds|`300`|Minimum duration (in seconds) the cooling/heating action must be engaged before it may be disengaged.
@@ -111,7 +111,6 @@ substitutions:
   temp_units: "°F"      # Temperatures in Fahrenheit
   temp_min: "40"        # Min supported temperature is 40°F
   temp_max: "80"        # Max supported temperature is 80°F
-  temp_step: "1"        # Temperature granularity is 1°F
   cool_deadband: "1.2"  # Temperature delta before engaging cooling
   cool_overrun: "1.2"   # Temperature delta before disengaging cooling
 
@@ -153,7 +152,6 @@ substitutions:
   temp_units: "°F"      # Temperatures in Fahrenheit
   temp_min: "40"        # Min supported temperature is 40°F
   temp_max: "80"        # Max supported temperature is 80°F
-  temp_step: "1"        # Temperature granularity is 1°F
   heat_deadband: "1.2"  # Temperature delta before engaging heat
   heat_overrun: "1.2"   # Temperature delta before disengaging heat
 
@@ -197,7 +195,6 @@ substitutions:
   temp_units: "°F"      # Temperatures in Fahrenheit
   temp_min: "40"        # Min supported temperature is 40°F
   temp_max: "80"        # Max supported temperature is 80°F
-  temp_step: "1"        # Temperature granularity is 1°F
   cool_deadband: "1.2"  # Temperature delta before engaging cooling
   cool_overrun: "1.2"   # Temperature delta before disengaging cooling
   heat_deadband: "1.2"  # Temperature delta before engaging heat
@@ -238,14 +235,11 @@ Furthermore, I have selected `18.3°C` as the default target temperature.
   heater_relay: "1" #Use relay 1
   temp_min: "15" 
   temp_max: "22" 
-  temp_step: "0.1"
   heat_deadband: "0.1"
     
   ##### CHANGE ME END #####
 climate:
   - id: !extend thermostat_embedded
-    visual:
-      temperature_step: ${temp_step}
     preset:
       - name: Home
         default_target_temperature_low: 18.3
@@ -257,4 +251,4 @@ Such filtering methods can delay the response times of an already slow underfloo
 Despite this, the temperature stability achieved is quite satisfactory, as illustrated in the graph below.
 
 ![Temperature vs Time](pics/addon_underfloor.png)
-*On March 24th (around 9:20 PM) and March 25th (around 7:30AM) a window was opened, and all heaters were set to 'off.' for 30min*
+*On March 24th (around 9:20 PM) and March 25th (around 7:30AM) a window was opened, and all heaters were set to 'off.' for 30 min*

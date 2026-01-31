@@ -13,6 +13,9 @@ namespace nspanel_easy {
             // Extract domain and id from the entity_id string
             result.domain = entity_id.substr(0, dotPos);
             result.id = entity_id.substr(dotPos + 1);
+            if (result.domain == "alarm_control_panel") {
+                result.domain = "alarm";
+            }
         } else {
             // No dot found, the entire entity_id is considered as id.
             result.domain = "invalid";
