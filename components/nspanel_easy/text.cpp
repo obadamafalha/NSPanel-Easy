@@ -164,6 +164,8 @@ namespace nspanel_easy {
                             ((b1 & 0x3F) << 12) |
                             ((b2 & 0x3F) << 6) |
                             (b3 & 0x3F);
+            // Reject overlong encodings and values beyond Unicode max
+            if (code_point < 0x10000 || code_point > 0x10FFFF) return 0;
         } else {
             code_point = 0;
         }
