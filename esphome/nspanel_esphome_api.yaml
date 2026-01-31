@@ -320,18 +320,6 @@ script:
             return;
           }
 
-  - id: api_recover_from_failed
-    mode: single
-    then:
-      - while:
-          condition:
-            - lambda: return api_server->is_failed();
-          then:
-            - lambda: |-
-                ESP_LOGW("${TAG_API}", "API reported a failed state. Recovering...");
-                api_server->setup();
-            - delay: 5s
-
   - id: !extend dump_config
     then:
       - lambda: |-
@@ -365,7 +353,6 @@ script:
   - id: !extend stop_all
     then:
       - lambda: |-
-          api_recover_from_failed->stop();
           ha_button->stop();
           update_flag_api_ready->stop();
 
@@ -393,9 +380,4 @@ script:
             ESP_LOGW("${TAG_API}", "API disconnected. Falling back to Home page.");
             goto_page->execute(${PAGE_HOME_ID});
           }
-
-wifi:
-  on_connect:
-    then:
-      - script.execute: api_recover_from_failed
 ...
