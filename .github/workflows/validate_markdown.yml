@@ -14,6 +14,8 @@ on:
 jobs:
   markdown-lint:
     name: Markdown Lint
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -39,7 +41,7 @@ jobs:
           fix: true
       # https://github.com/edwardtfn/NSPanel-Easy/pull/1#pullrequestreview-3730634846
       - name: Commit fixes
-        if: steps.changed-files.outputs.any_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "style: auto-fix markdown lint issues"
