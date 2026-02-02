@@ -63,6 +63,10 @@ Take note of the branch (`dev`, `beta`, or `main`) or version name exactly as it
 <!-- markdownlint-enable MD028 -->
 
 ### For Nextion TFT Component
+
+> [!NOTE]
+> The TFT version is automatically matched to your ESPHome version—no manual version selection is required.
+
 1. Go to your device's page under **Settings** > **Devices & services** > **ESPHome**.
 2. On the **Configuration** group, press **Update TFT display** and wait for the upload to complete. The system will automatically find the right TFT file for the ESPHome version you are running.
 
