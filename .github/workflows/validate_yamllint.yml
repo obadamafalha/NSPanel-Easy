@@ -24,7 +24,7 @@ jobs:
           fetch-depth: '0'
 
       - name: Identify changed files
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v47.0.1
         id: changed-files
         with:
           files: '**/*.y*ml'
