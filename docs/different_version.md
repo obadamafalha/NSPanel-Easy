@@ -70,7 +70,7 @@ Take note of the branch (`dev`, `beta`, or `main`) or version name exactly as it
 1. Use your preferred code editor to edit the blueprint file under `/config/blueprints/automation/edwardtfn/nspanel_easy_blueprint.yaml`.
 2. Go to the GitHub repository and select the [branch (`main`, `beta` or `dev`)](https://github.com/edwardtfn/NSPanel-Easy/branches)
 or the [tag](https://github.com/edwardtfn/NSPanel-Easy/tags) (for previous versions) you want to use.
-3. Find the file `nspanel_blueprint.yaml` in the root of the branch/tag, then click on it to open the file content visualization.
+3. Find the file `nspanel_easy_blueprint.yaml` in the root of the branch/tag, then click on it to open the file content visualization.
 4. Click the button "**Copy raw file**" in the top right area of the code box. This will copy the entire code to the clipboard.
 5. Go back to your code editor in Home Assistant and replace the entire old code by the one in your clipboard (typically CTRL+A & CTRL+V).
 6. Go to **Developer Tools**, select the tab **YAML** and click the button to reload **AUTOMATIONS**.
