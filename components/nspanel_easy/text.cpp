@@ -131,41 +131,48 @@ namespace nspanel_easy {
             [&strToSearch](const std::string& str) { return strToSearch == str; });
     }
 
-    uint32_t decode_utf8(const char* bytes) {
-        if (!bytes || bytes[0] == '\0') {
-            return 0;
+    uint32_t decode_nextion_icon_utf8(const char* bytes, size_t length) {
+        // Nextion icons are encoded as 1-3 byte UTF-8 sequences only
+        if (!bytes || length == 0 || length > 3) {
+            return 0;  // Invalid: null, empty, or too long for Nextion icon
         }
-        uint32_t code_point = 0;
+
         unsigned char byte = static_cast<unsigned char>(bytes[0]);
-        auto is_continuation = [](unsigned char b) { return (b & 0xC0) == 0x80; };  // Helper to check valid continuation byte
+        uint32_t code_point = 0;
+
+        // 1-byte sequence (0x00-0x7F)
         if ((byte & 0x80) == 0x00) {
             code_point = byte;
-        } else if ((byte & 0xE0) == 0xC0 && is_continuation(bytes[1])) {
-            unsigned char b1 = static_cast<unsigned char>(bytes[1]);
-            code_point = ((byte & 0x1F) << 6) | (b1 & 0x3F);
-            // Reject overlong encodings (code points < 0x80 encoded as 2 bytes)
-            if (code_point < 0x80) return 0;
-        } else if ((byte & 0xF0) == 0xE0 && is_continuation(bytes[1]) && is_continuation(bytes[2])) {
-            unsigned char b1 = static_cast<unsigned char>(bytes[1]);
-            unsigned char b2 = static_cast<unsigned char>(bytes[2]);
-            code_point = ((byte & 0x0F) << 12) |
-                            ((b1 & 0x3F) << 6) |
-                            (b2 & 0x3F);
-            // Reject overlong encodings and surrogate code points
-            if (code_point < 0x800 || (code_point >= 0xD800 && code_point <= 0xDFFF)) return 0;
-        } else if ((byte & 0xF8) == 0xF0 && is_continuation(bytes[1]) && is_continuation(bytes[2]) && is_continuation(bytes[3])) {
-            unsigned char b1 = static_cast<unsigned char>(bytes[1]);
-            unsigned char b2 = static_cast<unsigned char>(bytes[2]);
-            unsigned char b3 = static_cast<unsigned char>(bytes[3]);
-            code_point = ((byte & 0x07) << 18) |
-                            ((b1 & 0x3F) << 12) |
-                            ((b2 & 0x3F) << 6) |
-                            (b3 & 0x3F);
-            // Reject overlong encodings and values beyond Unicode max
-            if (code_point < 0x10000 || code_point > 0x10FFFF) return 0;
-        } else {
-            code_point = 0;
         }
+        // 2-byte sequence (0xC0-0xDF)
+        else if ((byte & 0xE0) == 0xC0) {
+            if (length < 2 || (bytes[1] & 0xC0) != 0x80) {
+                return 0;  // Invalid: insufficient length or bad continuation byte
+            }
+            code_point = ((byte & 0x1F) << 6) | (bytes[1] & 0x3F);
+            // Reject overlong encodings
+            if (code_point < 0x80) {
+                return 0;
+            }
+        }
+        // 3-byte sequence (0xE0-0xEF)
+        else if ((byte & 0xF0) == 0xE0) {
+            if (length < 3 || (bytes[1] & 0xC0) != 0x80 || (bytes[2] & 0xC0) != 0x80) {
+                return 0;  // Invalid: insufficient length or bad continuation bytes
+            }
+            code_point = ((byte & 0x0F) << 12) |
+                        ((bytes[1] & 0x3F) << 6) |
+                        (bytes[2] & 0x3F);
+            // Reject overlong encodings and surrogate code points
+            if (code_point < 0x800 || (code_point >= 0xD800 && code_point <= 0xDFFF)) {
+                return 0;
+            }
+        }
+        // Invalid: 4-byte sequences or invalid leading byte
+        else {
+            return 0;
+        }
+
         return code_point;
     }
 
