@@ -12,6 +12,9 @@
 #include "esphome/core/defines.h"
 #include "nextion_components.h"  // For HMIComponent
 #include "pages.h"               // For page_names and get_page_id
+#ifdef USE_ESP_IDF
+#include "esp_heap_caps.h"
+#endif  // USE_ESP_IDF
 
 /**
  * @file page_utilities.h
