@@ -161,7 +161,7 @@ There are many options available for free to run under your local Windows, macOS
   | XAMPP | [apachefriends.org](https://www.apachefriends.org/index.html) | Linux, Windows, macOS | All-in-one package, easy to install, ideal for beginners | Not optimized for high-traffic sites, more suited for development than production |
 
 ## Additional Tips and Resources
-After troubleshooting, if issues persist, consult the [Issues](https://github.com/edwardtfn/NSPanel-Easy/issues) and feel free to create a new one asking for more personalized assistance.
+After troubleshooting, if issues persist, consult the [Issues](https://github.com/edwardtfn/NSPanel-Easy/issues) and please open a new issue for tailored help.
 
 Please share as much info as possible, like:
 1. Describing (or a picture of) what is in your screen
