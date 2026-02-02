@@ -142,14 +142,12 @@ namespace nspanel_easy {
             code_point = byte;
         } else if ((byte & 0xE0) == 0xC0 && is_continuation(bytes[1])) {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
-            if ((b1 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x1F) << 6) | (b1 & 0x3F);
             // Reject overlong encodings (code points < 0x80 encoded as 2 bytes)
             if (code_point < 0x80) return 0;
         } else if ((byte & 0xF0) == 0xE0 && is_continuation(bytes[1]) && is_continuation(bytes[2])) {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             unsigned char b2 = static_cast<unsigned char>(bytes[2]);
-            if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x0F) << 12) |
                             ((b1 & 0x3F) << 6) |
                             (b2 & 0x3F);
@@ -159,7 +157,6 @@ namespace nspanel_easy {
             unsigned char b1 = static_cast<unsigned char>(bytes[1]);
             unsigned char b2 = static_cast<unsigned char>(bytes[2]);
             unsigned char b3 = static_cast<unsigned char>(bytes[3]);
-            if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80 || (b3 & 0xC0) != 0x80) return 0;
             code_point = ((byte & 0x07) << 18) |
                             ((b1 & 0x3F) << 12) |
                             ((b2 & 0x3F) << 6) |
