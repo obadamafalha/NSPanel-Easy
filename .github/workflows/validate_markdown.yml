@@ -43,7 +43,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "style: auto-fix markdown lint issues"
-          file_pattern: '*.md'
+          file_pattern: '**/*.md'
 
   markdown-links:
     name: Check links
