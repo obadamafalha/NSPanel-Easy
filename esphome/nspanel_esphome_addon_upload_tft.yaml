@@ -82,28 +82,26 @@ script:
   - id: !extend check_versions
     then:
       - lambda: |-
-          static const bool upload_tft_automatically = ${'true' if upload_tft_automatically else 'false'};
+          // Automatic upload is enabled
+          #if upload_tft_automatically
+            // Return if sensor has value and versions match (no update needed)
+            if (version_tft->state == "${version}") {
+              ESP_LOGV("${TAG_UPLOAD_TFT}", "Same version");
+              return;
+            }
 
-          // Automatic upload is disabled
-          if (!upload_tft_automatically) {
+            // Only proceed when std TFT is selected (indices 2+)
+            if (tft_file_model->active_index().value_or(0) <= 1) {
+              ESP_LOGV("${TAG_UPLOAD_TFT}", "No standard TFT selected");
+              return;
+            }
+
+            ESP_LOGI("${TAG_UPLOAD_TFT}", "Auto updating TFT from '%s' to '${version}'", version_tft->state.c_str());
+            upload_tft->execute("");
+          #else  // Automatic upload is disabled
             ESP_LOGV("${TAG_UPLOAD_TFT}", "Auto updating is disabled");
             return;
-          }
-
-          // Return if sensor has value and versions match (no update needed)
-          if (version_tft->state == "${version}") {
-            ESP_LOGV("${TAG_UPLOAD_TFT}", "Same version");
-            return;
-          }
-
-          // Only proceed when std TFT is selected (indices 2+)
-          if (tft_file_model->active_index().value_or(0) <= 1) {
-            ESP_LOGV("${TAG_UPLOAD_TFT}", "No standard TFT selected");
-            return;
-          }
-
-          ESP_LOGI("${TAG_UPLOAD_TFT}", "Auto updating TFT from '%s' to '${version}'", version_tft->state.c_str());
-          upload_tft->execute("");
+          #endif  // upload_tft_automatically
 
   - id: !extend dump_config
     then:
