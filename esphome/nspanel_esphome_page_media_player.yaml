@@ -153,27 +153,27 @@ api:
 
             // Volume set
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Volume set");
-            if (supported_features & ${MEDIA_PLAYER_FEATURE_VOLUME_SET}) {
+            const bool has_volume_set = (supported_features & ${MEDIA_PLAYER_FEATURE_VOLUME_SET});
+            const bool has_volume_step = (supported_features & ${MEDIA_PLAYER_FEATURE_VOLUME_STEP});
+
+            if (has_volume_set) {
               if (last_volume_level != volume_level) {
                 last_volume_level = volume_level;
                 disp1->set_component_text_printf("vol_text", "%d%%", volume_level);
                 disp1->set_component_value("vol_slider", volume_level);
               }
-              disp1->show_component("vol_slider");
-              disp1->show_component("bt_vol_down");
-              disp1->show_component("bt_vol_up");
-              disp1->show_component("vol_text");
-            } else {
-              disp1->hide_component("vol_slider");
-              disp1->hide_component("bt_vol_down");
-              disp1->hide_component("bt_vol_up");
-              disp1->hide_component("vol_text");
             }
+            disp1->set_component_visibility("vol_slider", has_volume_set);
+            disp1->set_component_visibility("vol_text", has_volume_set);
+
+            disp1->set_component_visibility("bt_vol_down", has_volume_step);
+            disp1->set_component_visibility("bt_vol_up", has_volume_step);
             feed_wdt_delay(${DELAY_SHORT});
 
             // Media progress bar
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Media progress bar");
-            if (media_duration > 0) {
+            const bool has_media_duration = media_duration > 0;
+            if (has_media_duration) {
               if (media_duration != last_media_duration or media_position != last_media_position) {
                 last_media_duration = media_duration;
                 last_media_position = media_position;
@@ -181,16 +181,11 @@ api:
                                                 int(round(min(media_position + media_position_delta, media_duration))));
               }
               disp1->set_component_value("prg_total", int(round(media_duration)));
-              disp1->send_command_printf("prg_timer.en=%i", (state == "playing") ? 1 : 0);
-              disp1->show_component("time_current");
-              disp1->show_component("time_total");
-              disp1->show_component("time_progress");
-            } else {
-              disp1->send_command("prg_timer.en=0");
-              disp1->hide_component("time_current");
-              disp1->hide_component("time_total");
-              disp1->hide_component("time_progress");
             }
+            disp1->send_command_printf("prg_timer.en=%i", (has_media_duration && state == "playing") ? 1 : 0);
+            disp1->set_component_visibility("time_current", has_media_duration);
+            disp1->set_component_visibility("time_total", has_media_duration);
+            disp1->set_component_visibility("time_progress", has_media_duration);
 
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Action: page_media_player completed");
 
