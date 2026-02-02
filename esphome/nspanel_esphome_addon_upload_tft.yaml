@@ -91,7 +91,7 @@ script:
             }
 
             // Only proceed when std TFT is selected (indices 2+)
-            if (tft_file_model->active_index().value_or(0) <= 1) {
+            if (tft_file_model->active_index().value_or(0) == 0) {
               ESP_LOGV("${TAG_UPLOAD_TFT}", "No standard TFT selected");
               return;
             }
