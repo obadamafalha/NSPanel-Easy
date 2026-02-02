@@ -232,10 +232,11 @@ Furthermore, I have selected `18.3°C` as the default target temperature.
 ```yaml
  ##### addon-configuration #####
   ## addon_climate ##
-  heater_relay: "1" #Use relay 1
+  heater_relay: "1"  # Use relay 1
   temp_min: "15" 
   temp_max: "22" 
   heat_deadband: "0.1"
+  heat_overrun: "0.1"
     
   ##### CHANGE ME END #####
 climate:
