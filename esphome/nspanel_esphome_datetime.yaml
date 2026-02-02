@@ -104,8 +104,11 @@ script:
 
           std::string time_format_str_home = time_format_str;
           const size_t p_pos_home = time_format_str_home.find("%p");
-          if (p_pos_home != std::string::npos)
-            time_format_str_home.replace(p_pos_home, sizeof("%p")-1, "");
+          if (p_pos_home != std::string::npos) {
+             time_format_str_home.replace(p_pos_home, sizeof("%p")-1, "");
+            while (!time_format_str_home.empty() && time_format_str_home.back() == " ")
+              time_format_str_home.pop_back();
+          }
 
           disp1->set_component_text("home.meridiem", (time_format_str.find("%p") != std::string::npos) ?
                                                       meridiem_text.c_str() : " ");
