@@ -22,6 +22,7 @@ globals:
   - id: home_relay1_icon
     type: std::string
     restore_value: true
+    max_restore_data_length: 16
     initial_value: ''
   - id: home_relay1_icon_color
     type: uint16_t
@@ -30,6 +31,7 @@ globals:
   - id: home_relay2_icon
     type: std::string
     restore_value: true
+    max_restore_data_length: 16
     initial_value: ''
   - id: home_relay2_icon_color
     type: uint16_t
