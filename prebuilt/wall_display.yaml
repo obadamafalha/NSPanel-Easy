@@ -14,9 +14,9 @@ substitutions:
   device_name: "wall-display"
   friendly_name: "Wall Display"
   heater_relay: "1"  # Possible values: 1/2
-  temp_min: "16"     # Min supported temperature is 40°F
-  temp_max: "26"     # Max supported temperature is 80°F
-  temp_step: "0.5"   # Temperature granularity is 1°F
+  temp_min: "4"      # Min supported temperature
+  temp_max: "27"     # Max supported temperature
+  temp_step: "0.5"   # Temperature granularity
 
 packages:
   prebuilt_package: !include nspanel_esphome_prebuilt.yaml
