@@ -56,9 +56,7 @@ script:
     then:
       - lambda: |-
           if (page == "mem") {
-            if (component == "decimal_separator") {
-              if (!txt.empty()) id(mui_decimal_separator) = txt[0];
-            } else if (component == "relay1_icon") {
+            if (component == "relay1_icon") {
               id(home_relay1_icon) = txt;
               disp1->set_component_text(hmi::home::CHIP_RELAY1.name, id(home_relay1_icon).c_str());
             } else if (component == "relay2_icon") {

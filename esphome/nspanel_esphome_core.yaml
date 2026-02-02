@@ -89,6 +89,12 @@ number:
         - script.execute: timer_dim
 
 script:  # Scripts
+  - id: !extend action_component_text
+    then:
+      - lambda: |-
+          if (page == "mem" && component == "decimal_separator" && !txt.empty())
+            id(mui_decimal_separator) = txt[0];
+
   - id: !extend dump_config
     then:
       - lambda: |-

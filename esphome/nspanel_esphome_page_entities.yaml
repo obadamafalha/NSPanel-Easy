@@ -81,7 +81,11 @@ script:
   - id: !extend action_component_val
     then:
       - lambda: |-
-          if (page == "mem" and component == "ent_value_xcen") {  // Entities pages alignment
+          if (page == "mem" and component == "ent_value_xcen") {  // Entities pages alignment (0=Left, 1=Center, 2=Right)
+            if (val > 2) {
+              ESP_LOGW("${TAG_PAGE_ENTITIES}", "Invalid alignment value: %i (expected 0-2)", val);
+              return;
+            }
             ESP_LOGD("${TAG_PAGE_ENTITIES}", "Set value alignment on entities pages: %i", val);
             page_entities_value_horizontal_alignment = val;
           }
