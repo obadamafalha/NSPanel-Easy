@@ -12,11 +12,13 @@
   ],
   "name": "Wall Display",
   "version": "4.3.12",
-  "builds": {
-    "chipFamily": "ESP32",
-    "ota": {
-      "path": "https://raw.githubusercontent.com/edwardtfn/NSPanel-Easy/main/prebuilt/wall_display.bin",
-      "release_url": "https://github.com/edwardtfn/NSPanel-Easy/releases/tag/v4.3.12"
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "ota": {
+        "path": "https://raw.githubusercontent.com/edwardtfn/NSPanel-Easy/main/prebuilt/wall_display.bin",
+        "release_url": "https://github.com/edwardtfn/NSPanel-Easy/releases/tag/v4.3.12"
+      }
     }
-  }
+  ]
 }
