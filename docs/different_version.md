@@ -82,7 +82,7 @@ The instructions to upload TFT will vary depending on the version you are instal
 6. On the **Configuration** group, press **Update TFT display** and wait for the upload to complete.
 
 ### For Blueprint Component
-1. Use your preferred code editor to edit the blueprint file under `/homeassistant/blueprints/automation/Blackymas/nspanel_blueprint.yaml`.
+1. Use your preferred code editor to edit the blueprint file under `/config/blueprints/automation/edwardtfn/nspanel_easy_blueprint.yaml`.
 2. Go to the GitHub repository and select the [branch (`main`, `beta` or `dev`)](https://github.com/edwardtfn/NSPanel-Easy/branches)
 or the [tag](https://github.com/edwardtfn/NSPanel-Easy/tags) (for previous versions) you want to use.
 3. Find the file `nspanel_blueprint.yaml` in the root of the branch/tag, then click on it to open the file content visualization.
