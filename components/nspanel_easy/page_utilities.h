@@ -36,24 +36,12 @@ namespace nspanel_easy {
     int8_t direction;
   };
 
-  extern UtilitiesGroupValues *UtilitiesGroups;
+  extern std::vector<UtilitiesGroupValues, esphome::ExternalRAMAllocator<UtilitiesGroupValues>> UtilitiesGroups;
 
   void resetUtilitiesGroups();
-  inline void cleanupUtilitiesGroups() {
-    if (UtilitiesGroups != nullptr) {
-        #ifdef USE_ESP_IDF
-        heap_caps_free(UtilitiesGroups);
-        #elif defined(USE_ARDUINO)
-        free(UtilitiesGroups);
-        #else
-        delete[] UtilitiesGroups;
-        #endif
-        UtilitiesGroups = nullptr;
-    }
-  };
   uint8_t findUtilitiesGroupIndex(const char* group_id);
 
-  /**
+   /**
   * Copies the contents of a std::string to a fixed-size char array, ensuring
   * null termination. The destination array size is automatically deduced.
   * Designed for fixed-size char arrays only.

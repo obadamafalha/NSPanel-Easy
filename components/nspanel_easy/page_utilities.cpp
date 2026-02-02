@@ -16,35 +16,13 @@ namespace nspanel_easy {
     bool page_utilities_enabled = false;
     uint16_t page_utilities_icon_color = Colors::GRAY_LIGHT;
 
-    UtilitiesGroupValues *UtilitiesGroups = nullptr;
-
     static constexpr size_t UTILITIES_GROUPS_COUNT = 8;
 
-    void resetUtilitiesGroups() {
-
-        #ifndef NDEBUG
-            // Verify sort order in debug builds
-            for (size_t i = 1; i < UTILITIES_GROUPS_COUNT; ++i) {
-                assert(std::strcmp(INITIAL_UTILITIES_GROUPS[i-1].group_id, 
-                                INITIAL_UTILITIES_GROUPS[i].group_id) < 0);
-            }
-        #endif  // NDEBUG
-
-        cleanupUtilitiesGroups();  // Free any existing allocation first
-
-        #ifdef USE_ESP_IDF  // To-do: Review if this arduino specific code is still needed
-        UtilitiesGroups = static_cast<UtilitiesGroupValues*>(
-            heap_caps_malloc(UTILITIES_GROUPS_COUNT * sizeof(UtilitiesGroupValues), MALLOC_CAP_SPIRAM));
-        #elif defined(USE_ARDUINO)
-        UtilitiesGroups = static_cast<UtilitiesGroupValues*>(
-            ps_malloc(UTILITIES_GROUPS_COUNT * sizeof(UtilitiesGroupValues)));
-        #endif  // USE_ESP_IDF
-        
-        if (!UtilitiesGroups) UtilitiesGroups = new UtilitiesGroupValues[UTILITIES_GROUPS_COUNT];
-        if (!UtilitiesGroups) return;
+    std::vector<UtilitiesGroupValues, esphome::ExternalRAMAllocator<UtilitiesGroupValues>> UtilitiesGroups;
     
-        static constexpr UtilitiesGroupValues INITIAL_UTILITIES_GROUPS[UTILITIES_GROUPS_COUNT] = {
-            {"grid", "", "", 0},      // Use "" instead of "\0" for clarity
+    void resetUtilitiesGroups() {
+        static constexpr UtilitiesGroupValues INITIAL_UTILITIES_GROUPS[8] = {
+            {"grid", "", "", 0},
             {"group01", "", "", 0},
             {"group02", "", "", 0},
             {"group03", "", "", 0},
@@ -53,16 +31,15 @@ namespace nspanel_easy {
             {"group06", "", "", 0},
             {"home", "", "", 0}
         };
-    
-        std::memcpy(UtilitiesGroups, INITIAL_UTILITIES_GROUPS, UTILITIES_GROUPS_COUNT * sizeof(UtilitiesGroupValues));
+        
+        UtilitiesGroups.assign(INITIAL_UTILITIES_GROUPS, INITIAL_UTILITIES_GROUPS + 8);
     }
 
     uint8_t findUtilitiesGroupIndex(const char* group_id) {
-        if (UtilitiesGroups == nullptr) return UINT8_MAX;
-        if (group_id == nullptr || *group_id == '\0') return UINT8_MAX;
-
+        if (UtilitiesGroups.empty()) return UINT8_MAX;
+        
         int low = 0;
-        int high = static_cast<int>(UTILITIES_GROUPS_COUNT) - 1;
+        int high = UtilitiesGroups.size() - 1;
 
         while (low <= high) {
             int mid = low + (high - low) / 2;
