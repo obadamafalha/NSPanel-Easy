@@ -87,8 +87,8 @@ heat_overrun|Optional|Number representing a temperature hysteresis in the select
 <!-- markdownlint-enable MD013 MD033 -->
 
 - All values must be delimited with `""`
-- For more details on the keys, please take a look at [ESPHome Base Climate Configurations](https://esphome.io/components/climate/index.html#base-climate-configuration)
-and [ESPHome Climate Thermostat - Additional actions behavior](https://esphome.io/components/climate/thermostat.html#additional-actions-behavior).
+- For more details on the keys, see [ESPHome Base Climate Configurations](https://esphome.io/components/climate/index.html#base-climate-configuration)
+  and [ESPHome Climate Thermostat - Additional actions behavior](https://esphome.io/components/climate/thermostat.html#additional-actions-behavior).
 
 ## Examples
 

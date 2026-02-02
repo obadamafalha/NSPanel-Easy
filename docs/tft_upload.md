@@ -145,8 +145,8 @@ esp32:
 - **Step-by-Step Guide**:
     1. Look at your YAML file and comment out all the customization (typically on a section name "My customizations") and any of the remote files other than `nspanel_esphome.yaml`.
     2. Flash your panel with the new cleaner yaml. You can do this over the air/wirelessly, although it is recommended to use serial when changing between frameworks
-    3. Try to update the TFT file again
-    4. Add the add-ons and removed customization back and then flash it again.
+    3. Retry the TFT update.
+    4. Add the add-ons and removed customizations back, then flash once more.
 
 ### Try an alternative http service
 - **Issue**: Your current http server may be overloaded.

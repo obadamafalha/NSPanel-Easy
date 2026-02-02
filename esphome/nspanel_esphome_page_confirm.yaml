@@ -37,7 +37,7 @@ script:
   - id: !extend page_change
     then:
       - lambda: |-
-          if (new_page_id  == ${PAGE_CONFIRM_ID})
+          if (new_page_id == ${PAGE_CONFIRM_ID})
             page_confirm->execute();
 
   - id: page_confirm

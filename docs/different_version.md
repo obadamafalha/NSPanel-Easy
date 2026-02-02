@@ -29,7 +29,7 @@ Take note of the branch (`dev`, `beta`, or `main`) or version name exactly as it
 ### Special Versions
 - **dev**: The development version, containing the latest code but potentially unstable.
 - **beta**: The pre-release version, more stable than `dev` but still undergoing final testing.
-- **main**: The default latest version, where you will find the most recent release code.
+- **main**: The default branch, typically containing the latest intended code (may be ahead of the latest tagged release).
 
 > [!NOTE]
 > When using `dev` or `beta`, report findings in the [issues](https://github.com/edwardtfn/NSPanel-Easy/issues) section, clearly stating the version.
