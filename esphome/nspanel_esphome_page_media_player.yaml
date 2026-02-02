@@ -102,10 +102,10 @@ api:
 
             // Button - ON/OFF
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Button - ON/OFF");
-            if (supported_features & 128 and state == "off") {  //TURN_ON
+            if (supported_features & ${MEDIA_PLAYER_FEATURE_TURN_ON} and state == "off") {  //TURN_ON
               disp1->set_component_foreground_color("bt_on_off", ${COLOR_WHITE});
               disp1->show_component("bt_on_off");
-            } else if (supported_features & 256 and state != "off") {  //TURN_OFF
+            } else if (supported_features & ${MEDIA_PLAYER_FEATURE_TURN_OFF} and state != "off") {  //TURN_OFF
               disp1->set_component_foreground_color("bt_on_off", ${COLOR_BLUE_INDIGO});
               disp1->show_component("bt_on_off");
             } else {
@@ -115,10 +115,13 @@ api:
 
             // Button - Play/Pause
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Button - Play/Pause");
-            if ((supported_features & 512 or supported_features & 16384) and state != "playing" and state != "off") {  //PLAY_MEDIA+PLAY
+            if (
+                (supported_features & ${MEDIA_PLAYER_FEATURE_PLAY_MEDIA} or supported_features & ${MEDIA_PLAYER_FEATURE_PLAY})
+                and state != "playing" and state != "off"
+                ) {  // PLAY_MEDIA+PLAY
               disp1->set_component_text("bt_play_pause", "\uE409"); // mdi:play
               disp1->show_component("bt_play_pause");
-            } else if (supported_features & 1 and state == "playing" ) {  //PAUSE
+            } else if (supported_features & ${MEDIA_PLAYER_FEATURE_PAUSE} and state == "playing" ) {  //PAUSE
               disp1->set_component_text("bt_play_pause", "\uE3E3"); // mdi:pause
               disp1->show_component("bt_play_pause");
             } else {
@@ -128,19 +131,19 @@ api:
 
             // Button - Previous track
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Button - Previous track");
-            disp1->send_command_printf("vis bt_prev,%i", (supported_features & 16 and state != "off") ? 1 : 0);
+            disp1->send_command_printf("vis bt_prev,%i", (supported_features & ${MEDIA_PLAYER_FEATURE_PREVIOUS_TRACK} and state != "off") ? 1 : 0);
 
             // Button - Next track
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Button - Next track");
-            disp1->send_command_printf("vis bt_next,%i", (supported_features & 32 and state != "off") ? 1 : 0);
+            disp1->send_command_printf("vis bt_next,%i", (supported_features & ${MEDIA_PLAYER_FEATURE_NEXT_TRACK} and state != "off") ? 1 : 0);
 
             // Button - Mute/Unmute
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Button - Mute/Unmute");
             disp1->set_component_value("is_muted", is_volume_muted ? 1 : 0);
-            if (supported_features & 8 and is_volume_muted) {  // unmute
+            if (supported_features & ${MEDIA_PLAYER_FEATURE_VOLUME_MUTE} and is_volume_muted) {  // unmute
               disp1->set_component_text("bt_mute", "\uEE07"); // mdi:volume-variant-off
               disp1->show_component("bt_mute");
-            } else if (supported_features & 8) {  // mute
+            } else if (supported_features & ${MEDIA_PLAYER_FEATURE_VOLUME_MUTE}) {  // mute
               disp1->set_component_text("bt_mute", "\uE57E"); // mdi:volume-low
               disp1->show_component("bt_mute");
             } else {
@@ -150,7 +153,7 @@ api:
 
             // Volume set
             ESP_LOGV("${TAG_PAGE_MEDIA_PLAYER}", "Volume set");
-            if (supported_features & 4) {
+            if (supported_features & ${MEDIA_PLAYER_FEATURE_VOLUME_SET}) {
               if (last_volume_level != volume_level) {
                 last_volume_level = volume_level;
                 disp1->set_component_text_printf("vol_text", "%d%%", volume_level);
