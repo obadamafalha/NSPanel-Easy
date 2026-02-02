@@ -6,15 +6,13 @@
 
 #include <algorithm>  // For std::min
 #include <cstdint>
-#include <cstdlib>    // For std::free
 #include <cstring>    // For std::strcpy
 #include <string>
+#include <vector>
 #include "esphome/core/defines.h"
-#include "nextion_components.h"  // For HMIComponent
-#include "pages.h"               // For page_names and get_page_id
-#ifdef USE_ESP_IDF
-#include "esp_heap_caps.h"
-#endif  // USE_ESP_IDF
+#include "esphome/core/helpers.h"  // For ExternalRAMAllocator
+#include "nextion_components.h"    // For HMIComponent
+#include "pages.h"                 // For page_names and get_page_id
 
 /**
  * @file page_utilities.h
