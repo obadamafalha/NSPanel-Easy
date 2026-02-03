@@ -645,6 +645,7 @@ binary_sensor:
       then:
         - switch.turn_on: relay_1
     on_release:
+      then:
         - switch.turn_off: relay_1
 
   # Right button custom action: Push button / Momentary switch - Relay 2
@@ -655,6 +656,7 @@ binary_sensor:
       then:
         - switch.turn_on: relay_2
     on_release:
+      then:
         - switch.turn_off: relay_2
 ```
 
