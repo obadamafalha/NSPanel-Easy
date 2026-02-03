@@ -11,6 +11,9 @@ on:
       - "nspanel_easy_blueprint.yaml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   code_scan:
     name: Validate Blueprint YAML
