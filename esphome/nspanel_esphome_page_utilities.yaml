@@ -136,13 +136,7 @@ script:
   - id: page_utilities
     mode: single
     then:
-      - lambda: if (UtilitiesGroups == nullptr) resetUtilitiesGroups();
-
-  - id: !extend stop_all
-    mode: single
-    then:
-      - lambda: |-
-          cleanupUtilitiesGroups();
+      - lambda: if (UtilitiesGroups.empty()) resetUtilitiesGroups();
 
   - id: !extend stop_page_constructors
     then:

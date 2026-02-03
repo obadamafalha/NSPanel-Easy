@@ -5,7 +5,7 @@ xcopy /y /d H:\esphome\packages\edwardtfn\NSPanel-Easy\nspanel_esphome*.yaml .
 if errorlevel 1 timeout /t 10
 xcopy /y /d H:\esphome\packages\edwardtfn\NSPanel-Easy\esphome\nspanel_esphome_*.yaml esphome\ 
 if errorlevel 1 timeout /t 10
-xcopy /y /d /e H:\esphome\packages\edwardtfn\NSPanel-Easy\components\. components\.
+xcopy /y /d H:\esphome\packages\edwardtfn\NSPanel-Easy\components\nspanel_easy\. components\nspanel_easy\.
 if errorlevel 1 timeout /t 10
 REM xcopy /y /d /e H:\libraries\. libraries\.
 REM if errorlevel 1 timeout /t 10
