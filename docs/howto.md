@@ -38,7 +38,7 @@ You can find the trace under _**Settings --> Automations & Scenes --> your NSPan
 > [!NOTE]
 > TRACES! Please execute again what does not work and open the trace immediately afterwards.
 > Often you have to open the trace after the reboot too.
-> During the start up, most things are loaded.
+> During the startup, most things are loaded.
 
 > [!IMPORTANT]  
 > In the trace you can see by the _**"orange "**_ lines which way the automation has gone.
@@ -121,7 +121,7 @@ These are the steps to flash your panel with an updated version from this projec
     ![Install button on Clean Build Files dialog](pics/esphome_dashboard_clean_build_files_install_button.png)
 
 3. As your panel is probably already connected to the Wi-Fi, you may select to install **Wirelessly**,
-    as it is much easier and you don't have to unassemble your panel.
+    as it is much easier and you don't have to disassemble your panel.
     ![image](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/94725493/c9b53549-c78a-4a02-bcde-31582905d0c4)
 
 The new firmware will be built and then flashed to your panel, which will restart at the end of this process and start sending logs again:
