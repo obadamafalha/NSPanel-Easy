@@ -24,10 +24,10 @@ jobs:
           fetch-depth: '0'
 
       - name: Identify changed files
-        uses: tj-actions/changed-files@v47.0.1
+        uses: step-security/changed-files@v47.0.1
         id: changed-files
         with:
-          files: '**/*.y*ml'
+          files: '**/*.yaml'
           separator: ","
 
       - name: Validate YAML
