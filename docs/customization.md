@@ -786,27 +786,36 @@ switch:
     lambda: |-
       return (id(relay_settings) & nspanel_easy::RelaySettings::Relay1_Local);
     turn_on_action:
-      - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), true, RelaySettings::Relay1_Local);
+      then:
+        - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), true, RelaySettings::Relay1_Local);
     on_turn_on:
-      - logger.log: "Relay 1 Local turned On!"
+      then:
+        - logger.log: "Relay 1 Local turned On!"
     turn_off_action:
-      - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), false, RelaySettings::Relay1_Local);
+      then:
+        - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), false, RelaySettings::Relay1_Local);
     on_turn_off:
-      - logger.log: "Relay 1 Local turned Off!"
+      then:
+        - logger.log: "Relay 1 Local turned Off!"
   - name: Relay 2 Local
     platform: template
     id: relay2_local
     entity_category: config
     internal: false
-    lambda: return (id(relay_settings) & nspanel_easy::RelaySettings::Relay2_Local);
+    lambda: |-
+      return (id(relay_settings) & nspanel_easy::RelaySettings::Relay2_Local);
     turn_on_action:
-      - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), true, RelaySettings::Relay2_Local);
+      then:
+        - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), true, RelaySettings::Relay2_Local);
     on_turn_on:
-      - logger.log: "Relay 2 Local turned On!"
+      then:
+        - logger.log: "Relay 2 Local turned On!"
     turn_off_action:
-      - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), false, RelaySettings::Relay2_Local);
+      then:
+        - lambda: nspanel_easy::update_bitwise_setting(id(relay_settings), false, RelaySettings::Relay2_Local);
     on_turn_off:
-      - logger.log: "Relay 2 Local turned Off!"
+      then:
+        - logger.log: "Relay 2 Local turned Off!"
 ```
 
 ### Relay Interlocking
