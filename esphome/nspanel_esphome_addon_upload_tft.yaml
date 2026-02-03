@@ -74,7 +74,7 @@ globals:
     restore_value: false
     initial_value: '0'
 
-nspanel_ha_blueprint:
+nspanel_easy:
   lwip_tcp_mss: 1400
   task_wdt_timeout_s: 30
 
