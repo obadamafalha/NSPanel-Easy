@@ -49,6 +49,8 @@ jobs:
 
   markdown-links:
     name: Check links
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
