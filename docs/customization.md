@@ -298,7 +298,7 @@ wifi:
 
 ### SNTP (time) server
 
-ESPHome takes it's time from Home Assistant, however you can configure it to use a Network Time Server instead.
+ESPHome takes its time from Home Assistant, however you can configure it to use a Network Time Server instead.
 
 ```yaml
 # Use my own local network time server
