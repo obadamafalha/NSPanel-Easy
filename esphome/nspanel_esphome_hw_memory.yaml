@@ -39,7 +39,7 @@ esphome:
       - -D NSPANEL_EASY_HW_MEMORY
       - -D USE_ESP32_MIN_CHIP_REVISION_SET  # Remove after implementing `minimum_chip_revision`
 
-NSPANEL_EASY:
+nspanel_easy:
   main_task_stack_size: 16384  # To-do: Review this when PR#10564 gets merged
   psram_clk_pin: ${GPIO_PSRAM_CLK_PIN}
   psram_cs_pin: ${GPIO_PSRAM_CS_PIN}
