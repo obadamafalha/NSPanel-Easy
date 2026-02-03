@@ -79,7 +79,8 @@ It's particularly useful for reflecting changes in device states or user interac
 - `page` (string): The page identifier where the button is located.
 - `id` (string): The button's unique identifier.
 - `state` (bool): The state of the button, which can affect its background picture and other visual elements.
-- `icon` (string): Icon codepoint from [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
+- `icon` (string): Icon codepoint from
+  [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
 Example: "\uE6E8" for `mdi:lightbulb-on-outline`.
 - `icon_color` (int[]): The RGB color array for the icon.
 - `icon_font` (int): The Nextion font identifier for the icon (default is 8).
@@ -107,10 +108,12 @@ data:
 Sends a custom command directly to the display, enabling direct interaction and dynamic content updates.
 
 **Usage:**
-This action is particularly useful for advanced customizations and direct display manipulations, such as showing messages, updating statuses, or any other display-centric commands.
+This action is particularly useful for advanced customizations and direct display manipulations,
+such as showing messages, updating statuses, or any other display-centric commands.
 
 **Parameters:**
-- `cmd` (string): The command string to be sent to the display. Please refer to [The Nextion Instruction Set](https://nextion.tech/instruction-set/) for a comprehensive list of commands supported.
+- `cmd` (string): The command string to be sent to the display.
+Please refer to [The Nextion Instruction Set](https://nextion.tech/instruction-set/) for a comprehensive list of commands supported.
 
 **Home Assistant Example:**
 ```yaml
@@ -224,7 +227,8 @@ Ideal for interfaces requiring real-time updates of numerical values, such as co
 **Parameters:**
 - `page` (string): Identifier of the page where the component is. Use `mem` when setting memory vars or leave empty for current page or global vars.
 - `id` (string): Identifier of the component whose value will be updated. It's crucial this matches the component's ID in your display layout accurately.
-- `val` (int): The new integer value to be set for the component. This can represent various data types, depending on the component's purpose (e.g., temperature, humidity levels).
+- `val` (int): The new integer value to be set for the component.
+  This can represent various data types, depending on the component's purpose (e.g., temperature, humidity levels).
 
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
@@ -267,15 +271,18 @@ This action is ideal for creating interactive user interfaces that adapt by hidi
 
 **Parameters:**
 - `page` (string): Identifier of the page where the component is. Use `mem` when setting memory vars or leave empty for current page or global vars.
-- `ids` (string[]): Array of identifiers of the components to be hidden/shown. It is crucial that this matches the component's ID in your display layout to ensure the correct element is hidden/shown.
+- `ids` (string[]): Array of identifiers of the components to be hidden/shown.
+  It is crucial that this matches the component's ID in your display layout to ensure the correct element is hidden/shown.
 - `visible` (bool): Set to true to show the component, or false to hide it.
 
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
 > 
-> The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`. This is by design to support a modular architecture.
+> The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`.
+> This is by design to support a modular architecture.
 > 
-> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration. These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
+> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
+> These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
@@ -336,7 +343,8 @@ data:
 
 ### Hardware Button State Indication Action: `hw_button_state`
 This action dynamically updates the on-screen indication bars for the hardware buttons, reflecting the current state of the entities they control.
-It's designed to provide immediate visual feedback, enhancing the user interface by showing the active/inactive state of the left and right hardware button indicators on the panel.
+It's designed to provide immediate visual feedback,
+enhancing the user interface by showing the active/inactive state of the left and right hardware button indicators on the panel.
 
 **Usage:**  
 Utilize this action to modify the visual state (on/off) of hardware button indicators on the panel, corresponding to the state of entities controlled by these buttons.
@@ -355,7 +363,8 @@ data:
 ```
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant.
-> This action leverages a bitmask (`button_mask`) for flexible control over multiple hardware buttons simultaneously, offering a streamlined method for updating their visual states.
+> This action leverages a bitmask (`button_mask`) for flexible control over multiple hardware buttons simultaneously,
+> offering a streamlined method for updating their visual states.
 
 ### Icon Action: `icon`
 Updates a chip or custom button's icon, color, and visibility within Home Assistant.
@@ -366,7 +375,8 @@ This action is ideal for dynamically updating icons on your Panel, allowing for 
 **Parameters:**
 - `page` (string): Identifier of the page where the component is. Leave empty for current page.
 - `id` (string): Identifier of the chip or button component. Refer to "[Screen components](#screen-components)" for more details.
-- `icon` (string): Icon codepoint from [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
+- `icon` (string): Icon codepoint from
+  [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
 Example: "\uE6E8" for `mdi:lightbulb-on-outline`.
 - `icon_color` (int[]): RGB color array for the icon. Example: `[0, 255, 0]` for green.
 - `visible` (bool): Flag indicating whether the icon should be visible (`true`) or hidden (`false`).
@@ -430,8 +440,10 @@ Populates the alarm settings page with the current configuration and state infor
 seamlessly integrating with the panel's interface to reflect the latest settings and statuses of the alarm system.
 
 **Usage:**
-The `page_alarm` action is specifically designed to dynamically update the alarm settings page, providing users with immediate access to the alarm system's controls and information.
-It plays a crucial role in ensuring a responsive and user-friendly interface for alarm management, allowing for real-time interaction with the alarm system directly from the panel.
+The `page_alarm` action is specifically designed to dynamically update the alarm settings page,
+providing users with immediate access to the alarm system's controls and information.
+It plays a crucial role in ensuring a responsive and user-friendly interface for alarm management,
+allowing for real-time interaction with the alarm system directly from the panel.
 
 **Parameters:**
 - `page_title` (string): The title displayed at the top of the alarm settings page.
@@ -465,7 +477,8 @@ data:
 ```
 > [!NOTE]
 > Ensure to replace `<your_panel_name>` with the actual name of your panel configured in Home Assistant.
-> This action configuration allows for the alarm settings page to dynamically reflect the current features, state, and control options of your alarm system, enhancing the overall user experience.
+> This action configuration allows for the alarm settings page to dynamically reflect the current features, state,
+> and control options of your alarm system, enhancing the overall user experience.
 
 #### Supported features of the alarm control panel entity
 - ARM_HOME = 1
@@ -486,7 +499,8 @@ It's crucial for maintaining a responsive and informative interface for efficien
 - `current_temp` (float): The current temperature.
 - `supported_features` (int): Bitmask indicating the climate device's supported features.
 These features determine the available climate controls and settings on the device.
-The bitmask values correspond to features such as temperature control, mode setting, fan speed adjustment, etc., as defined in Home Assistant's climate component constants.
+The bitmask values correspond to features such as temperature control, mode setting, fan speed adjustment, etc.,
+as defined in Home Assistant's climate component constants.
 For detailed descriptions of each feature and its corresponding bitmask value, refer to the
 [Home Assistant Climate Component Constants](#supported-features-of-the-climate-entity).
 - `target_temp` (float): The set target temperature.
@@ -539,8 +553,10 @@ Updates the media player page with current configuration and state information,
 integrating seamlessly with the panel's interface to display the latest media playback status and controls.
 
 **Usage:**
-The `page_media_player` action is specifically tailored to dynamically update the media player page, ensuring users have immediate access to media playback controls and information.
-This action is essential for providing a responsive and user-friendly interface for media management, allowing real-time interaction with the media player directly from the panel.
+The `page_media_player` action is specifically tailored to dynamically update the media player page,
+ensuring users have immediate access to media playback controls and information.
+This action is essential for providing a responsive and user-friendly interface for media management,
+allowing real-time interaction with the media player directly from the panel.
 
 **Parameters:**
 - `entity` (string): The entity ID of the media player.
@@ -575,7 +591,8 @@ data:
 ```
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
-> This action ensures the media player page reflects the latest in media playback settings and status, enhancing the user experience by providing up-to-date information.
+> This action ensures the media player page reflects the latest in media playback settings and status,
+> enhancing the user experience by providing up-to-date information.
 
 #### Supported features of the media player entity
 - PAUSE = 1
@@ -637,7 +654,8 @@ data:
 Plays melodies encoded in the RTTTL format, enabling the integration of audio feedback or alerts with simple text-based melody strings.
 
 **Usage:**
-This action is perfect for projects requiring audio signals, such as notifications, alerts, or simple melodies, by interpreting RTTTL (Ring Tone Text Transfer Language) strings.
+This action is perfect for projects requiring audio signals, such as notifications, alerts, or simple melodies,
+by interpreting RTTTL (Ring Tone Text Transfer Language) strings.
 RTTTL is a compact format for storing melody sequences in a text-based format, making it ideal for simple audio devices like buzzers.
 
 **Parameters:**
@@ -718,11 +736,13 @@ This action updates utility group display elements with the specified values and
 Updates an entity to display specific values, allowing for dynamic updates of icons, names, and value colors within Home Assistant.
 
 **Usage:**
-This action is intended for entities that need to display information dynamically, such as sensor readings or state values, with customized icons, names, and color coding for both icon and value.
+This action is intended for entities that need to display information dynamically,
+such as sensor readings or state values, with customized icons, names, and color coding for both icon and value.
 
 **Parameters:**
 - `id` (string): Identifier of the entity being updated. For details on entity identifiers, refer to "[Screen components](#screen-components)".
-- `icon` (string): Icon codepoint from [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
+- `icon` (string): Icon codepoint from
+  [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
 Indicates the icon displayed next to the value.
 - `icon_color` (int[]): RGB color array for the icon, allowing for custom icon colors.
 - `name` (string): The display name for the entity, useful for labeling the value displayed.
@@ -747,7 +767,8 @@ data:
 Activates the display from a screensaver or low-power state, enabling dynamic interface adjustments based on user interactions or automated triggers.
 
 **Usage:**
-Ideal for scenarios requiring the display to become active upon certain events, such as motion detection, thereby conserving energy while ensuring the display is available when needed.
+Ideal for scenarios requiring the display to become active upon certain events,
+such as motion detection, thereby conserving energy while ensuring the display is available when needed.
 
 **Parameters:**
 - `reset_timer` (bool): Determines whether to reset the sleep and dimming timers upon waking up the display.
@@ -769,7 +790,8 @@ This action can be seamlessly integrated with a motion sensor to wake the displa
 Additionally, if the display is already awake, calling this action with `reset_timer: true` can reset the sleep timer,
 keeping the display active as long as there is movement and allowing it to sleep normally once no motion is detected.
 
-The example below integrates the `wake_up` action with a motion sensor to ensure the display wakes or remains awake during periods of activity, reverting to sleep mode after inactivity.
+The example below integrates the `wake_up` action with a motion sensor to ensure the display wakes or remains awake during periods of activity,
+reverting to sleep mode after inactivity.
 
 ```yaml
 automation:

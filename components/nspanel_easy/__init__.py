@@ -36,7 +36,7 @@ CONFIG_SCHEMA = cv.Schema({
 async def to_code(config):
     # Arduino framework deprecation warning
     if CORE.using_arduino:
-        _LOGGER.warning("Arduino framework deprecated in v4.3.22. Migrate to ESP-IDF: https://github.com/Blackymas/NSPanel_HA_Blueprint/blob/main/docs/customization.md#frameworks")
+        _LOGGER.warning("Arduino framework deprecated. Migrate to ESP-IDF.")
 
     if PSRAM_CLK_PIN in config:
         clk_pin = config[PSRAM_CLK_PIN]
