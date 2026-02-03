@@ -1422,7 +1422,7 @@ class TestValidateMarkdownWorkflowComprehensive:
         """Test that workflow file contains valid YAML"""
         with open(self.WORKFLOW_FILE, 'r') as f:
             try:
-                data = yaml.load(f, Loader=yaml.FullLoader)
+                data = yaml.safe_load(f)
                 assert data is not None
             except yaml.YAMLError as e:
                 pytest.fail(f"Invalid YAML in validate_markdown.yml: {e}")
