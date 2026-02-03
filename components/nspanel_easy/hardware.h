@@ -43,12 +43,21 @@ namespace nspanel_easy {
     // Use the helper function below to access it as a HardwareSettings struct
     
     /**
-     * @brief Get hardware settings as a struct reference from the raw uint8_t
-     * @param raw_value Reference to the uint8_t global variable from YAML
-     * @return Reference to HardwareSettings struct (same memory location)
+     * `@brief` Get hardware settings from the raw uint8_t
+     * `@param` raw_value The uint8_t global variable from YAML
+     * `@return` HardwareSettings struct (copy, not reference)
      */
-    inline HardwareSettings& get_hardware_settings(uint8_t& raw_value) {
-        return reinterpret_cast<HardwareSettings&>(raw_value);
+    inline HardwareSettings get_hardware_settings(uint8_t raw_value) {
+        return from_raw(raw_value);
+    }
+
+    /**
+     * `@brief` Update raw value from hardware settings
+     * `@param` raw_value Reference to the uint8_t global variable from YAML
+     * `@param` settings The HardwareSettings to write
+     */
+    inline void set_hardware_settings(uint8_t& raw_value, const HardwareSettings& settings) {
+        raw_value = to_raw(settings);
     }
 
     inline HardwareSettings from_raw(uint8_t raw) {
