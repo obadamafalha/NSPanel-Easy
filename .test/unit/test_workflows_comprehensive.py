@@ -1408,5 +1408,626 @@ class TestWorkflowRegressionCases:
                         f"{workflow_file.name} uses deprecated action: {deprecated}"
 
 
+class TestValidateMarkdownWorkflowComprehensive:
+    """Comprehensive tests for validate_markdown.yml workflow"""
+
+    WORKFLOW_FILE = Path("/home/jailuser/git/.github/workflows/validate_markdown.yml")
+
+    def test_workflow_file_exists(self):
+        """Test that validate_markdown.yml workflow file exists"""
+        assert self.WORKFLOW_FILE.exists()
+        assert self.WORKFLOW_FILE.is_file()
+
+    def test_workflow_is_valid_yaml(self):
+        """Test that workflow file contains valid YAML"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            try:
+                data = yaml.load(f, Loader=yaml.FullLoader)
+                assert data is not None
+            except yaml.YAMLError as e:
+                pytest.fail(f"Invalid YAML in validate_markdown.yml: {e}")
+
+    def test_workflow_has_required_fields(self):
+        """Test that workflow has all required top-level fields"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            assert 'name' in data
+            # 'on' is parsed as True by YAML
+            assert True in data or 'on' in data
+            assert 'jobs' in data
+            assert data['name'] == "Validate Markdown"
+
+    def test_workflow_has_correct_triggers(self):
+        """Test that workflow triggers are correctly configured"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            # 'on' is parsed as True by YAML
+            triggers = data.get(True, data.get('on', {}))
+
+            # Check all expected triggers exist
+            assert 'push' in triggers
+            assert 'pull_request' in triggers
+            assert 'workflow_dispatch' in triggers
+
+    def test_workflow_push_trigger_has_paths(self):
+        """Test that push trigger monitors markdown file paths"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            triggers = data.get(True, data.get('on', {}))
+
+            assert 'paths' in triggers['push']
+            push_paths = triggers['push']['paths']
+            assert '**/*.md' in push_paths
+
+    def test_workflow_pull_request_trigger_has_paths(self):
+        """Test that pull_request trigger monitors markdown file paths"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            triggers = data.get(True, data.get('on', {}))
+
+            assert 'paths' in triggers['pull_request']
+            pr_paths = triggers['pull_request']['paths']
+            assert '**/*.md' in pr_paths
+
+    def test_workflow_push_and_pr_trigger_paths_match(self):
+        """Test that push and pull_request trigger paths are identical"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            triggers = data.get(True, data.get('on', {}))
+
+            push_paths = triggers['push']['paths']
+            pr_paths = triggers['pull_request']['paths']
+            assert push_paths == pr_paths, "Push and PR trigger paths should match"
+
+    def test_workflow_has_markdown_lint_job(self):
+        """Test that workflow contains markdown-lint job"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            assert 'markdown-lint' in data['jobs']
+
+    def test_workflow_has_markdown_links_job(self):
+        """Test that workflow contains markdown-links job"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            assert 'markdown-links' in data['jobs']
+
+    def test_markdown_lint_job_has_correct_name(self):
+        """Test that markdown-lint job has correct display name"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            job = data['jobs']['markdown-lint']
+            assert job['name'] == 'Markdown Lint'
+
+    def test_markdown_lint_job_runs_on_ubuntu(self):
+        """Test that markdown-lint job runs on ubuntu-latest"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            job = data['jobs']['markdown-lint']
+            assert job['runs-on'] == 'ubuntu-latest'
+
+    def test_markdown_lint_job_has_write_permissions(self):
+        """Test that markdown-lint job has contents write permission"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            job = data['jobs']['markdown-lint']
+            assert 'permissions' in job
+            assert job['permissions']['contents'] == 'write'
+
+    def test_markdown_links_job_has_correct_name(self):
+        """Test that markdown-links job has correct display name"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            job = data['jobs']['markdown-links']
+            assert job['name'] == 'Check links'
+
+    def test_markdown_links_job_runs_on_ubuntu(self):
+        """Test that markdown-links job runs on ubuntu-latest"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            job = data['jobs']['markdown-links']
+            assert job['runs-on'] == 'ubuntu-latest'
+
+    def test_markdown_links_job_has_read_permissions(self):
+        """Test that markdown-links job has contents read permission"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            job = data['jobs']['markdown-links']
+            assert 'permissions' in job
+            assert job['permissions']['contents'] == 'read'
+
+    def test_markdown_lint_uses_checkout_action(self):
+        """Test that markdown-lint job uses checkout action"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            checkout_step = next((s for s in steps if 'checkout' in s.get('uses', '').lower()), None)
+            assert checkout_step is not None
+            assert checkout_step['uses'] == 'actions/checkout@v6'
+
+    def test_markdown_lint_checkout_has_fetch_depth(self):
+        """Test that checkout action has fetch-depth configured"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            checkout_step = next((s for s in steps if 'checkout' in s.get('uses', '').lower()), None)
+            assert checkout_step is not None
+            assert 'with' in checkout_step
+            assert checkout_step['with']['fetch-depth'] == '0'
+
+    def test_markdown_lint_uses_changed_files_action(self):
+        """Test that markdown-lint job uses changed-files action"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            changed_files_step = next((s for s in steps if 'changed-files' in s.get('uses', '')), None)
+            assert changed_files_step is not None
+            assert changed_files_step['uses'] == 'tj-actions/changed-files@v41'
+
+    def test_markdown_lint_changed_files_has_id(self):
+        """Test that changed-files step has an ID for reference"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            changed_files_step = next((s for s in steps if 'changed-files' in s.get('uses', '')), None)
+            assert changed_files_step is not None
+            assert 'id' in changed_files_step
+            assert changed_files_step['id'] == 'changed-files'
+
+    def test_markdown_lint_changed_files_filters_markdown(self):
+        """Test that changed-files action filters for markdown files"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            changed_files_step = next((s for s in steps if 'changed-files' in s.get('uses', '')), None)
+            assert changed_files_step is not None
+            assert 'with' in changed_files_step
+            assert changed_files_step['with']['files'] == '**/*.md'
+
+    def test_markdown_lint_changed_files_uses_comma_separator(self):
+        """Test that changed-files action uses comma separator"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            changed_files_step = next((s for s in steps if 'changed-files' in s.get('uses', '')), None)
+            assert changed_files_step is not None
+            assert changed_files_step['with']['separator'] == ','
+
+    def test_markdown_lint_uses_markdownlint_action(self):
+        """Test that markdown-lint job uses markdownlint-cli2-action"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+            assert lint_step['uses'] == 'DavidAnson/markdownlint-cli2-action@v14'
+
+    def test_markdown_lint_action_has_conditional(self):
+        """Test that markdownlint action runs conditionally when files changed"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+            assert 'if' in lint_step
+            assert "steps.changed-files.outputs.any_changed == 'true'" in lint_step['if']
+
+    def test_markdown_lint_action_uses_changed_files_output(self):
+        """Test that markdownlint action receives changed files list"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+            assert 'with' in lint_step
+            assert 'globs' in lint_step['with']
+            assert '${{ steps.changed-files.outputs.all_changed_files }}' in lint_step['with']['globs']
+
+    def test_markdown_lint_action_uses_comma_separator(self):
+        """Test that markdownlint action uses comma separator"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+            assert lint_step['with']['separator'] == ','
+
+    def test_markdown_lint_action_uses_config_file(self):
+        """Test that markdownlint action uses configuration file"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+            assert 'config' in lint_step['with']
+            assert lint_step['with']['config'] == '.rules/.markdownlint.jsonc'
+
+    def test_markdown_lint_action_has_auto_fix_enabled(self):
+        """Test that markdownlint action has fix enabled"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+            assert 'fix' in lint_step['with']
+            assert lint_step['with']['fix'] is True
+
+    def test_markdown_lint_uses_auto_commit_action(self):
+        """Test that markdown-lint job uses git-auto-commit-action"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            commit_step = next((s for s in steps if 'git-auto-commit' in s.get('uses', '')), None)
+            assert commit_step is not None
+            assert commit_step['uses'] == 'stefanzweifel/git-auto-commit-action@v5'
+
+    def test_markdown_lint_auto_commit_has_conditional(self):
+        """Test that auto-commit runs conditionally when files changed"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            commit_step = next((s for s in steps if 'git-auto-commit' in s.get('uses', '')), None)
+            assert commit_step is not None
+            assert 'if' in commit_step
+            # Should check for changed files
+            assert "steps.changed-files.outputs.any_changed == 'true'" in commit_step['if']
+
+    def test_markdown_lint_auto_commit_only_on_push_or_same_repo(self):
+        """Test that auto-commit only runs on push or same repo PR"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            commit_step = next((s for s in steps if 'git-auto-commit' in s.get('uses', '')), None)
+            assert commit_step is not None
+            # Should check for push event or same repo
+            assert "github.event_name == 'push'" in commit_step['if']
+            assert "github.event.pull_request.head.repo.full_name == github.repository" in commit_step['if']
+
+    def test_markdown_lint_auto_commit_has_message(self):
+        """Test that auto-commit action has commit message"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            commit_step = next((s for s in steps if 'git-auto-commit' in s.get('uses', '')), None)
+            assert commit_step is not None
+            assert 'with' in commit_step
+            assert 'commit_message' in commit_step['with']
+            assert commit_step['with']['commit_message'] == "style: auto-fix markdown lint issues"
+
+    def test_markdown_lint_auto_commit_file_pattern(self):
+        """Test that auto-commit action targets markdown files"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            commit_step = next((s for s in steps if 'git-auto-commit' in s.get('uses', '')), None)
+            assert commit_step is not None
+            assert 'file_pattern' in commit_step['with']
+            assert commit_step['with']['file_pattern'] == '**/*.md'
+
+    def test_markdown_links_uses_checkout_action(self):
+        """Test that markdown-links job uses checkout action"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            checkout_step = next((s for s in steps if 'checkout' in s.get('uses', '').lower()), None)
+            assert checkout_step is not None
+            assert checkout_step['uses'] == 'actions/checkout@v6'
+
+    def test_markdown_links_checkout_has_fetch_depth(self):
+        """Test that checkout action has fetch-depth configured"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            checkout_step = next((s for s in steps if 'checkout' in s.get('uses', '').lower()), None)
+            assert checkout_step is not None
+            assert 'with' in checkout_step
+            assert checkout_step['with']['fetch-depth'] == '0'
+
+    def test_markdown_links_uses_link_check_action(self):
+        """Test that markdown-links job uses markdown-link-check action"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            link_check_step = next((s for s in steps if 'markdown-link-check' in s.get('uses', '')), None)
+            assert link_check_step is not None
+            assert link_check_step['uses'] == 'gaurav-nelson/github-action-markdown-link-check@v1'
+
+    def test_markdown_links_checks_modified_files_only(self):
+        """Test that markdown-links checks modified files only"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            link_check_step = next((s for s in steps if 'markdown-link-check' in s.get('uses', '')), None)
+            assert link_check_step is not None
+            assert 'with' in link_check_step
+            assert 'check-modified-files-only' in link_check_step['with']
+            # YAML parser converts 'yes' to True
+            check_value = link_check_step['with']['check-modified-files-only']
+            assert check_value in ['yes', True], f"Expected 'yes' or True, got {check_value}"
+
+    def test_markdown_links_uses_config_file(self):
+        """Test that markdown-links action uses configuration file"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            link_check_step = next((s for s in steps if 'markdown-link-check' in s.get('uses', '')), None)
+            assert link_check_step is not None
+            assert 'config-file' in link_check_step['with']
+            assert link_check_step['with']['config-file'] == '.rules/mlc_config.json'
+
+    def test_markdown_links_uses_correct_base_branch(self):
+        """Test that markdown-links action uses correct base branch"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            link_check_step = next((s for s in steps if 'markdown-link-check' in s.get('uses', '')), None)
+            assert link_check_step is not None
+            assert 'base-branch' in link_check_step['with']
+            assert link_check_step['with']['base-branch'] == 'main'
+
+    def test_markdown_lint_job_has_all_required_steps(self):
+        """Test that markdown-lint job has all required steps"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            # Check minimum number of steps
+            assert len(steps) >= 4, "markdown-lint job should have at least 4 steps"
+
+            # Check for specific step types
+            step_uses = [s.get('uses', '') for s in steps]
+            assert any('checkout' in uses for uses in step_uses), "Missing checkout step"
+            assert any('changed-files' in uses for uses in step_uses), "Missing changed-files step"
+            assert any('markdownlint' in uses for uses in step_uses), "Missing markdownlint step"
+            assert any('git-auto-commit' in uses for uses in step_uses), "Missing git-auto-commit step"
+
+    def test_markdown_links_job_has_all_required_steps(self):
+        """Test that markdown-links job has all required steps"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            # Check minimum number of steps
+            assert len(steps) >= 2, "markdown-links job should have at least 2 steps"
+
+            # Check for specific step types
+            step_uses = [s.get('uses', '') for s in steps]
+            assert any('checkout' in uses for uses in step_uses), "Missing checkout step"
+            assert any('markdown-link-check' in uses for uses in step_uses), "Missing markdown-link-check step"
+
+    def test_all_steps_have_names(self):
+        """Test that all steps in both jobs have descriptive names"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+
+            for job_name in ['markdown-lint', 'markdown-links']:
+                job = data['jobs'][job_name]
+                for i, step in enumerate(job['steps']):
+                    assert 'name' in step, f"Step {i} in {job_name} missing name"
+                    assert len(step['name']) > 0, f"Step {i} in {job_name} has empty name"
+
+    def test_no_hardcoded_secrets_in_workflow(self):
+        """Test that workflow does not contain hardcoded secrets"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            content = f.read().lower()
+
+            # Check for common secret patterns
+            sensitive_patterns = ['password', 'api_key', 'secret_key', 'token']
+            for pattern in sensitive_patterns:
+                # Allow github.token which is expected
+                if pattern in content and 'github.token' not in content:
+                    pytest.fail(f"Potential hardcoded secret pattern found: {pattern}")
+
+    def test_actions_use_pinned_versions(self):
+        """Test that all actions use pinned versions"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+
+            for job_name, job_data in data['jobs'].items():
+                for step in job_data['steps']:
+                    if 'uses' in step:
+                        uses = step['uses']
+                        assert '@v' in uses or '@' in uses, \
+                            f"Action {uses} in {job_name} should have pinned version"
+
+    def test_workflow_does_not_use_deprecated_actions(self):
+        """Test that workflow does not use deprecated action versions"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            content = f.read()
+
+            deprecated_actions = [
+                'actions/checkout@v2',
+                'actions/checkout@v3',
+                'actions/checkout@v4',
+                'actions/checkout@v5',
+            ]
+
+            for deprecated in deprecated_actions:
+                assert deprecated not in content, \
+                    f"Workflow uses deprecated action: {deprecated}"
+
+    def test_jobs_run_independently(self):
+        """Test that jobs do not have unnecessary dependencies"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+
+            # Neither job should have 'needs' since they run independently
+            for job_name in ['markdown-lint', 'markdown-links']:
+                job = data['jobs'][job_name]
+                assert 'needs' not in job, f"{job_name} should run independently"
+
+    def test_markdown_lint_step_names_are_descriptive(self):
+        """Test that markdown-lint job step names are descriptive"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            step_names = [s['name'] for s in steps]
+
+            # Check for specific expected step names
+            assert any('Check out code' in name or 'Checkout' in name for name in step_names)
+            assert any('changed files' in name.lower() for name in step_names)
+            assert any('Markdown Lint' in name for name in step_names)
+            assert any('Commit' in name for name in step_names)
+
+    def test_markdown_links_step_names_are_descriptive(self):
+        """Test that markdown-links job step names are descriptive"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            step_names = [s['name'] for s in steps]
+
+            # Check for specific expected step names
+            assert any('Check out code' in name or 'Checkout' in name for name in step_names)
+            assert any('link' in name.lower() for name in step_names)
+
+    def test_workflow_permissions_follow_least_privilege(self):
+        """Test that jobs follow least privilege principle for permissions"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+
+            # markdown-lint needs write to commit fixes
+            lint_perms = data['jobs']['markdown-lint']['permissions']
+            assert lint_perms['contents'] == 'write'
+
+            # markdown-links only needs read
+            links_perms = data['jobs']['markdown-links']['permissions']
+            assert links_perms['contents'] == 'read'
+
+    def test_changed_files_action_configuration_is_complete(self):
+        """Test that changed-files action has complete configuration"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            changed_files_step = next((s for s in steps if 'changed-files' in s.get('uses', '')), None)
+            assert changed_files_step is not None
+
+            # Check all required configuration
+            assert 'id' in changed_files_step
+            assert 'with' in changed_files_step
+            assert 'files' in changed_files_step['with']
+            assert 'separator' in changed_files_step['with']
+
+    def test_markdownlint_configuration_is_complete(self):
+        """Test that markdownlint action has complete configuration"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+            assert lint_step is not None
+
+            # Check all required configuration
+            assert 'if' in lint_step
+            assert 'with' in lint_step
+            assert 'globs' in lint_step['with']
+            assert 'separator' in lint_step['with']
+            assert 'config' in lint_step['with']
+            assert 'fix' in lint_step['with']
+
+    def test_auto_commit_configuration_is_complete(self):
+        """Test that auto-commit action has complete configuration"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            commit_step = next((s for s in steps if 'git-auto-commit' in s.get('uses', '')), None)
+            assert commit_step is not None
+
+            # Check all required configuration
+            assert 'if' in commit_step
+            assert 'with' in commit_step
+            assert 'commit_message' in commit_step['with']
+            assert 'file_pattern' in commit_step['with']
+
+    def test_link_checker_configuration_is_complete(self):
+        """Test that link checker action has complete configuration"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-links']['steps']
+
+            link_check_step = next((s for s in steps if 'markdown-link-check' in s.get('uses', '')), None)
+            assert link_check_step is not None
+
+            # Check all required configuration
+            assert 'with' in link_check_step
+            assert 'check-modified-files-only' in link_check_step['with']
+            assert 'config-file' in link_check_step['with']
+            assert 'base-branch' in link_check_step['with']
+
+    def test_workflow_supports_manual_dispatch(self):
+        """Test that workflow can be triggered manually via workflow_dispatch"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            triggers = data.get(True, data.get('on', {}))
+
+            assert 'workflow_dispatch' in triggers
+
+    def test_config_files_are_in_rules_directory(self):
+        """Test that all config files are in .rules directory"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            content = f.read()
+
+            # Check markdownlint config
+            assert '.rules/.markdownlint.jsonc' in content
+
+            # Check link checker config
+            assert '.rules/mlc_config.json' in content
+
+    def test_both_checkout_steps_are_consistent(self):
+        """Test that checkout steps in both jobs use same configuration"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+
+            lint_steps = data['jobs']['markdown-lint']['steps']
+            links_steps = data['jobs']['markdown-links']['steps']
+
+            lint_checkout = next((s for s in lint_steps if 'checkout' in s.get('uses', '').lower()), None)
+            links_checkout = next((s for s in links_steps if 'checkout' in s.get('uses', '').lower()), None)
+
+            # Both should use same version
+            assert lint_checkout['uses'] == links_checkout['uses']
+
+            # Both should have same fetch-depth
+            assert lint_checkout['with']['fetch-depth'] == links_checkout['with']['fetch-depth']
+
+    def test_separator_consistency_across_actions(self):
+        """Test that separator is consistent across actions that use it"""
+        with open(self.WORKFLOW_FILE, 'r') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+            steps = data['jobs']['markdown-lint']['steps']
+
+            # Both changed-files and markdownlint should use comma separator
+            changed_files_step = next((s for s in steps if 'changed-files' in s.get('uses', '')), None)
+            lint_step = next((s for s in steps if 'markdownlint' in s.get('uses', '')), None)
+
+            assert changed_files_step['with']['separator'] == lint_step['with']['separator']
+            assert changed_files_step['with']['separator'] == ','
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v', '--tb=short'])
