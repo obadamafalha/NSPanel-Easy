@@ -1,0 +1,324 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### TFT Upload engine                                                                         #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+##### ATTENTION: This will add advanced elements to the core system and requires the core part. #####
+#####################################################################################################
+---
+substitutions:
+  ################## Defaults ##################
+  nextion_update_base_url: "https://raw.githubusercontent.com/Blackymas/NSPanel_HA_Blueprint/"
+  nextion_update_url: "${nextion_update_base_url}/main/hmi/nspanel_eu.tft"
+  upload_tft_automatically: true
+  upload_tft_baud_rate: 115200
+  upload_tft_wait_ms_after_boot: 300000  # 5min
+  ##############################################
+  TAG_UPLOAD_TFT: "nspanel.addon.upload_tft"
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_ADDON_UPLOAD_TFT
+
+# yamllint disable rule:comments-indentation
+api:
+  actions:
+    ##### TFT File Update Service: `upload_tft`
+    # Updates the panel's TFT file remotely from a specified URL or the default location, requiring the "Upload TFT" add-on.
+    # Usage: Essential for applying custom TFT designs or updates, especially when direct repository access is unavailable.
+    #
+    # Parameters:
+    # - `url` (string): URL for the TFT file. If "default" or empty, uses the URL from "Update TFT - Display Model" in Home Assistant settings.
+    #
+    # Example:
+    # service: esphome.<your_panel_name>_upload_tft
+    # data:
+    #   url: "http://homeassistant.local:8123/local/custom_tft_file.tft"  # Custom or default URL to the TFT file
+    #
+    # [!NOTE]
+    # Utilize "default" to automatically use the URL associated with the display model set in Home Assistant.
+    #
+    # [!ATTENTION]
+    # Requires the "Upload TFT" add-on for functionality.
+    - action: upload_tft
+      variables:
+        url: string
+      then:
+        - lambda: |-
+            if (!system_flags.tft_upload_active)
+              upload_tft->execute(url.c_str());
+
+button:
+  ##### UPDATE TFT DISPLAY #####
+  - id: tft_update
+    name: Update TFT display
+    platform: template
+    icon: mdi:file-sync
+    entity_category: config
+    on_press:
+      then:
+        - lambda: |-
+            upload_tft->execute("");
+
+display:
+  - id: !extend disp1
+    tft_url: ${nextion_update_url}
+    exit_reparse_on_start: true
+
+globals:
+  - id: first_time_synced_ms
+    type: uint32_t
+    restore_value: false
+    initial_value: '0'
+
+nspanel_ha_blueprint:
+  lwip_tcp_mss: 1400
+  task_wdt_timeout_s: 30
+
+script:
+  - id: !extend check_versions
+    then:
+      - lambda: |-
+          // Automatic upload is enabled
+          #if upload_tft_automatically
+            // Return if sensor has value and versions match (no update needed)
+            if (version_tft->state == "${version}") {
+              ESP_LOGV("${TAG_UPLOAD_TFT}", "Same version");
+              return;
+            }
+
+            // Only proceed when a standard TFT is selected (indices 1+)
+            if (tft_file_model->active_index().value_or(0) == 0) {
+              ESP_LOGV("${TAG_UPLOAD_TFT}", "No standard TFT selected");
+              return;
+            }
+
+            ESP_LOGI("${TAG_UPLOAD_TFT}", "Auto updating TFT from '%s' to '${version}'", version_tft->state.c_str());
+            upload_tft->execute("");
+          #else  // Automatic upload is disabled
+            ESP_LOGV("${TAG_UPLOAD_TFT}", "Auto updating is disabled");
+            return;
+          #endif  // upload_tft_automatically
+
+  - id: !extend dump_config
+    then:
+      - lambda: |-
+          if (system_flags.tft_upload_active)
+            ESP_LOGW("${TAG_UPLOAD_TFT}", "TFT upload in progress");
+          ESP_LOGCONFIG("${TAG_UPLOAD_TFT}", "Add-on Upload TFT:");
+          #if ESPHOME_VERSION_CODE >= VERSION_CODE(2025, 11, 0)  // Code for ESPHome newer than v2025.11.0
+          ESP_LOGCONFIG("${TAG_UPLOAD_TFT}", "  File model: %s", tft_file_model->current_option());
+          #else
+          ESP_LOGCONFIG("${TAG_UPLOAD_TFT}", "  File model: %s", tft_file_model->state.c_str());
+          #endif
+          ESP_LOGCONFIG("${TAG_UPLOAD_TFT}", "  Valid TFT:  %s", YESNO((display_mode > 0 and display_mode < 4)));
+
+  - id: nextion_status
+    mode: restart
+    then:
+      - lambda: |-
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Nextion status:");
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "  Is detected: %s", YESNO(disp1->is_detected()));
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "  Is setup:    %s", YESNO(disp1->is_setup()));
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "  Queue size:  %d", disp1->queue_size());
+
+  - id: nextion_upload
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Waiting for empty UART and Nextion queues");
+      - wait_until:
+          condition:
+            - lambda: return (disp1->queue_size() < 1) and (tf_uart->available() < 1);
+          timeout: 10s
+      - delay: 2s
+      - lambda: |-
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Starting TFT upload");
+          tft_upload_result = disp1->upload_tft(${upload_tft_baud_rate}, !disp1->is_setup());
+          ESP_LOGV("${TAG_UPLOAD_TFT}", "TFT upload: %s", YESNO(tft_upload_result));
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          nextion_status->stop();
+
+  - id: upload_tft
+    mode: single
+    parameters:
+      url: string
+    then:
+      - while:
+          condition:
+            - lambda: return (uint32_t)(millis() - id(first_time_synced_ms)) < ${upload_tft_wait_ms_after_boot};
+          then:
+            - lambda: |-
+                const uint32_t elapsed = (uint32_t)(millis() - id(first_time_synced_ms));
+                const uint32_t target = ${upload_tft_wait_ms_after_boot};
+                ESP_LOGD("${TAG_UPLOAD_TFT}", "Waiting after time sync: %u / %u ms elapsed (%.1f%%)",
+                  elapsed, target, (elapsed * 100.0f) / target);
+            - delay: 15s
+
+      # Make sure the screen is ON
+      - if:
+          condition:
+            - switch.is_off: screen_power
+          then:
+            - switch.turn_on: screen_power
+            - delay: 5s
+      - lambda: |-
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Set Nextion unavailable for blueprint calls");
+          nextion_init->publish_state(false);
+
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Preparing for upload");
+
+          // Then start the upload
+          nextion_status->execute();
+          system_flags.tft_upload_active = true;
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Starting the upload script");
+          ESP_LOGV("${TAG_UPLOAD_TFT}", "  Valid TFT: %s", YESNO((display_mode > 0 and display_mode < 4)));
+          ESP_LOGV("${TAG_UPLOAD_TFT}", "  Baud rate: %" PRIu32, tf_uart->get_baud_rate());
+
+          // Calculate URL if needed
+          std::string resolved_url = url;
+
+          // Trim whitespace (both ends) for comparisons, but keep original casing
+          auto startPos = resolved_url.find_first_not_of(" \t");
+          auto endPos = resolved_url.find_last_not_of(" \t");
+          std::string trimmed = (startPos == std::string::npos)
+                                  ? ""
+                                  : resolved_url.substr(startPos, endPos - startPos + 1);
+
+          std::string normalized = trimmed;
+          std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                        [](unsigned char c){ return std::tolower(c); });
+
+          // Calculate URL if empty or "default"
+          if (normalized.empty() || normalized == "default") {
+            auto idx_opt = tft_file_model->active_index();
+            if (!idx_opt.has_value()) {
+              resolved_url = "${nextion_update_url}";  // Fallback if no valid index
+            } else {
+              const int idx = idx_opt.value();
+
+              if (idx == 0) {
+                resolved_url = "${nextion_update_url}";
+              } else if (idx >= 1 && idx <= 6) {
+                static const char* const FILENAME_PARTS[] = { "eu", "us", "us_land", "CJK_eu", "CJK_us", "CJK_us_land" };
+
+                resolved_url = std::string("${nextion_update_base_url}") +
+                              "v${version}/hmi/nspanel_" +
+                              FILENAME_PARTS[idx-1] + ".tft";
+              } else {
+                resolved_url = "${nextion_update_url}";
+              }
+            }
+          } else {
+            resolved_url = trimmed;
+          }
+
+          ESP_LOGV("${TAG_UPLOAD_TFT}", "  Upload URL: %s", resolved_url.c_str());
+          disp1->set_tft_url(resolved_url.c_str());
+
+      - delay: 2s
+      - lambda: |-
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Stopping other scripts");
+          stop_all->execute();
+      - script.wait: stop_all
+      - wait_until:
+          condition:
+            - lambda: return (!(display_mode > 0 and display_mode < 4));
+          timeout: 1s
+
+      ### Attempt twice at the original baud rate
+      - if:
+          condition:
+            - lambda: return (tf_uart->get_baud_rate() != ${upload_tft_baud_rate});
+          then:
+            - script.execute: upload_tft_sequence_attempt
+            - script.wait: upload_tft_sequence_attempt
+
+      ### Restart Nextion and attempt twice again at default baud rate
+      - lambda: |-
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Restarting Nextion display");
+          screen_power->turn_off();
+      - delay: 2s
+      - switch.turn_on: screen_power
+      - delay: 5s
+      - script.execute: upload_tft_sequence_attempt
+      - script.wait: upload_tft_sequence_attempt
+
+      ### All tries failed ###
+      - lambda: |-
+          ESP_LOGE("${TAG_UPLOAD_TFT}", "TFT upload failed");
+          ESP_LOGD("${TAG_UPLOAD_TFT}", "Turn off Nextion and restart ESPHome");
+          screen_power->turn_off();
+
+          // Restart ESPHome
+          App.safe_reboot();
+
+  - id: upload_tft_sequence_attempt
+    mode: single
+    then:
+      - lambda: |-
+          nextion_status->execute();
+      - repeat:
+          count: 2
+          then:
+            # First attempt
+            - script.execute: upload_tft_attempt
+            - script.wait: upload_tft_attempt
+            - delay: 5s
+
+  - id: upload_tft_attempt
+    mode: single
+    then:
+      - logger.log: "Attempting to upload TFT"
+      - lambda: tft_upload_attempt++;
+      - lambda: |-
+          char update_msg[128];
+          sprintf(update_msg, "Attempt #%d", tft_upload_attempt);
+          tft_upload_result = false;
+          ESP_LOGD("${TAG_UPLOAD_TFT}", update_msg);
+      - delay: 1s
+      - script.execute: nextion_upload
+      - script.wait: nextion_upload
+      - lambda: |-
+          char update_msg[128];
+          sprintf(update_msg, "Attempt #%d returned: %s", tft_upload_attempt,
+                                                          tft_upload_result ? "Success!" : "FAILED");
+          ESP_LOGD("${TAG_UPLOAD_TFT}", update_msg);
+          ESP_LOGI("addon_upload_tft.script.upload_tft_attempt", "Restarting ESPHome");
+          App.safe_reboot();
+
+select:
+  - id: tft_file_model
+    name: Update TFT display - Model
+    platform: template
+    options:
+      - "Use nextion_update_url"
+      - "NSPanel EU"
+      - "NSPanel US"
+      - "NSPanel US Landscape"
+      - "NSPanel EU (CJK languages)"
+      - "NSPanel US (CJK languages)"
+      - "NSPanel US Landscape (CJK languages)"
+    initial_option: "NSPanel EU"
+    optimistic: true
+    restore_value: true
+    internal: false
+    entity_category: config
+    disabled_by_default: false
+    icon: mdi:file-sync
+    update_interval: never
+
+time:
+  - id: !extend time_provider
+    on_time_sync:
+      then:
+        - lambda: |-
+            if (id(first_time_synced_ms) > 0) return;  // First time sync already registered
+            id(first_time_synced_ms) = millis();
+...

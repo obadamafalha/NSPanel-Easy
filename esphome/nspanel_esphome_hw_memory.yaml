@@ -1,0 +1,80 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME CORE - HARDWARE - Memory                                                          #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  BOOT_STEP_HW_MEMORY: '6'
+  GPIO_PSRAM_CLK_PIN: 5
+  GPIO_PSRAM_CS_PIN: 18
+  TAG_HW_MEMORY: nspanel.hw.memory
+  WIFI_USE_PSRAM: true
+
+esp32:
+  framework:
+    advanced:
+      loop_task_stack_size: 16384
+      ## minimum_chip_revision: "3.0"  # To do: Wait as this was released on v2026.1.0
+    sdkconfig_options:
+      CONFIG_ESP32_REV_MIN_3: y  # Remove after implementing `minimum_chip_revision`
+      CONFIG_BT_ALLOCATION_FROM_SPIRAM_FIRST: y
+      CONFIG_BT_BLE_DYNAMIC_ENV_MEMORY: y
+      CONFIG_MBEDTLS_DYNAMIC_BUFFER: y
+      CONFIG_MBEDTLS_DYNAMIC_FREE_CA_CERT: y
+      CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA: y
+      CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: y
+      CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY: y
+      CONFIG_SPIRAM_RODATA: y
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_HW_MEMORY
+      - -D USE_ESP32_MIN_CHIP_REVISION_SET  # Remove after implementing `minimum_chip_revision`
+
+NSPANEL_EASY:
+  main_task_stack_size: 16384  # To-do: Review this when PR#10564 gets merged
+  psram_clk_pin: ${GPIO_PSRAM_CLK_PIN}
+  psram_cs_pin: ${GPIO_PSRAM_CS_PIN}
+
+psram:
+  id: ext_ram
+
+script:
+  - id: !extend dump_config
+    then:
+      # Report memory
+      - lambda: |-
+          #include <esp_heap_caps.h>
+          const size_t internal_heap_size = heap_caps_get_total_size(MALLOC_CAP_INTERNAL);
+          const size_t internal_heap_size_free = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+          ESP_LOGCONFIG("${TAG_CORE}", "  Free heap:");
+
+          if (internal_heap_size != 0) {
+            ESP_LOGCONFIG("${TAG_CORE}", "    Internal:  %7zu bytes (%0.1f%%)", internal_heap_size_free,
+                    ((float)internal_heap_size_free / internal_heap_size) * 100.0f);
+          } else {
+            ESP_LOGCONFIG("${TAG_CORE}", "    Internal:  %7zu bytes", internal_heap_size_free);
+          }
+
+          #ifdef USE_PSRAM
+          const size_t psram_heap_size = heap_caps_get_total_size(MALLOC_CAP_SPIRAM);
+          const size_t psram_heap_size_free = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
+          if (psram_heap_size != 0) {
+            ESP_LOGCONFIG("${TAG_CORE}", "    PSRAM:     %7zu bytes (%0.1f%%)", psram_heap_size_free,
+                                                  ((float)psram_heap_size_free / psram_heap_size) * 100.0f);
+          } else {
+            ESP_LOGCONFIG("${TAG_CORE}", "    PSRAM:     %7zu bytes", psram_heap_size_free);
+          }
+          #endif  // USE_PSRAM
+
+wifi:
+  use_psram: ${WIFI_USE_PSRAM}
+...

@@ -1,0 +1,238 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+######################################################################################################
+#### ESPHOME CORE - HARDWARE - BUTTONS                                                         #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  invalid_cooldown: 100ms
+  buttons_color_on: ${COLOR_CYAN_BRIGHT}
+  buttons_color_off: ${COLOR_BLUE_INDIGO}
+  buttons_bar_text_follow_color: false
+  BOOT_STEP_HW_BUTTONS: '3'
+  GPIO_BUTTON_LEFT_PIN:
+    number: 14
+    inverted: true
+  GPIO_BUTTON_RIGHT_PIN:
+    number: 27
+    inverted: true
+  TAG_HW_BUTTONS: nspanel.hw.buttons
+
+binary_sensor:
+  - name: Left Button  # LEFT BUTTON BELOW DISPLAY
+    platform: gpio
+    id: left_button
+    pin: ${GPIO_BUTTON_LEFT_PIN}
+    on_multi_click:
+      - timing: &long_click-timing
+          - ON for at least 0.8s
+        invalid_cooldown: ${invalid_cooldown}
+        then:
+          - lambda: |-
+              ESP_LOGD("${TAG_HW_BUTTONS}", "Left button - Long click");
+              button_left_press_long->execute();
+              ha_button->execute(page_names[current_page_id], "hw_bt_left", "long_click");
+      - timing: &short_click-timing
+          - ON for at most 0.8s
+        invalid_cooldown: ${invalid_cooldown}
+        then:
+          - lambda: |-
+              ESP_LOGD("${TAG_HW_BUTTONS}", "Left button - Short click");
+              button_left_press_short->execute();
+              ha_button->execute(page_names[current_page_id], "hw_bt_left", "short_click");
+    on_release:
+      then:
+        - script.execute: button_left_release
+
+  - name: Right Button  # RIGHT BUTTON BELOW DISPLAY
+    platform: gpio
+    id: right_button
+    pin: ${GPIO_BUTTON_RIGHT_PIN}
+    on_multi_click:
+      - timing: *long_click-timing
+        invalid_cooldown: ${invalid_cooldown}
+        then:
+          - lambda: |-
+              ESP_LOGD("${TAG_HW_BUTTONS}", "Right button - Long click");
+              button_right_press_long->execute();
+              ha_button->execute(page_names[current_page_id], "hw_bt_right", "long_click");
+      - timing: *short_click-timing
+        invalid_cooldown: ${invalid_cooldown}
+        then:
+          - lambda: |-
+              ESP_LOGD("${TAG_HW_BUTTONS}", "Right button - Short click");
+              button_right_press_short->execute();
+              ha_button->execute(page_names[current_page_id], "hw_bt_right", "short_click");
+    on_release:
+      then:
+        - script.execute: button_right_release
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_HW_BUTTONS
+
+globals:
+  - id: buttons_color_on
+    type: uint16_t
+    restore_value: true
+    initial_value: '${buttons_color_on}'
+
+  - id: buttons_color_off
+    type: uint16_t
+    restore_value: true
+    initial_value: '${buttons_color_off}'
+
+  - id: buttons_bars_pages
+    type: uint32_t
+    restore_value: true
+    initial_value: '1'
+
+script:
+  - id: !extend action_component_color
+    then:
+      - lambda: |-
+          if (page == "mem") {
+            if (component == "button_bar_color_on") {
+              id(buttons_color_on) = color;
+            } else if (component == "button_bar_color_off") {
+              id(buttons_color_off) = color;
+            }
+          }
+
+  - id: !extend action_component_val
+    then:
+      - lambda: |-
+          if (page == "mem") {
+            if (component == "hw_bt_left") {
+              id(hardware_settings).button_left_state = (val != 0);
+              refresh_hardware_buttons_bars->execute(1);
+            } else if (component == "hw_bt_right") {
+              id(hardware_settings).button_right_state = (val != 0);
+              refresh_hardware_buttons_bars->execute(2);
+            } else if (component == "buttons_bars_pages") {
+              id(buttons_bars_pages) = val;
+              blueprint_status_flags.hw_buttons_settings = true;
+            } else if (component == "button_left") {
+              id(hardware_settings).button_left_enabled = (val != 0);
+            } else if (component == "button_right") {
+              id(hardware_settings).button_right_enabled = (val != 0);
+            }
+          }
+
+  - id: button_left_press_long
+    mode: restart
+    then:
+
+  - id: button_left_press_short
+    mode: restart
+    then:
+
+  - id: button_left_release
+    mode: restart
+    then:
+
+  - id: button_right_press_long
+    mode: restart
+    then:
+
+  - id: button_right_press_short
+    mode: restart
+    then:
+
+  - id: button_right_release
+    mode: restart
+    then:
+
+  - id: refresh_hardware_buttons_bars
+    mode: restart
+    parameters:
+      button_mask: uint8_t
+    then:
+      - script.wait: page_change
+      - lambda: |-
+          if (system_flags.tft_upload_active) return;  // Skip refresh if TFT update is in progress
+          ESP_LOGV("${TAG_HW_BUTTONS}", "Script: refresh_hardware_buttons_bars");
+          ESP_LOGV("${TAG_HW_BUTTONS}", "  Page:               %s", page_names[current_page_id]);
+          ESP_LOGV("${TAG_HW_BUTTONS}", "  buttons_bars_pages: %" PRIu32, id(buttons_bars_pages));
+          ESP_LOGV("${TAG_HW_BUTTONS}", "  button_mask:");
+          ESP_LOGV("${TAG_HW_BUTTONS}", "    left_enabled:     %s", YESNO(id(hardware_settings).button_left_enabled));
+          ESP_LOGV("${TAG_HW_BUTTONS}", "    left_state:       %s", ONOFF(id(hardware_settings).button_left_state));
+          ESP_LOGV("${TAG_HW_BUTTONS}", "    right_enabled:    %s", YESNO(id(hardware_settings).button_right_enabled));
+          ESP_LOGV("${TAG_HW_BUTTONS}", "    right_state:      %s", ONOFF(id(hardware_settings).button_right_state));
+          if ((id(buttons_bars_pages) & (1 << current_page_id)) == 0) {
+            ESP_LOGV("${TAG_HW_BUTTONS}", "Buttons bars not visible");
+            return;
+          }
+          // Left button
+          if (button_mask & 1 and id(hardware_settings).button_left_enabled) {
+            static uint16_t button_bar_text_left_last_color_sent;
+            const uint16_t button_bar_left_color = id(hardware_settings).button_left_state
+                                                  ? id(buttons_color_on)
+                                                  : id(buttons_color_off);
+            if (${'true' if buttons_bar_text_follow_color else 'false'} and
+                button_bar_left_color != button_bar_text_left_last_color_sent) {
+              button_bar_text_left_last_color_sent = button_bar_left_color;
+              disp1->set_component_font_color(hmi::home::LEFT_BT_TEXT.name, button_bar_left_color);
+            }
+            switch (display_mode) {
+              case 1:  // EU model
+                disp1->fill_area(48, 307, 118, 3, button_bar_left_color);
+                disp1->fill_area(47, 308, 120, 1, button_bar_left_color);
+                break;
+              case 2:  // US Portrait
+                disp1->fill_area(17, 466, 118, 3, button_bar_left_color);
+                disp1->fill_area(16, 467, 120, 1, button_bar_left_color);
+                break;
+              case 3:  // US Landscape
+                disp1->fill_area(467, 174, 3, 118, button_bar_left_color);
+                disp1->fill_area(468, 173, 1, 120, button_bar_left_color);
+                break;
+            }
+          }
+
+          // Right button
+          if (button_mask & 2 and id(hardware_settings).button_right_enabled) {
+            static uint16_t button_bar_text_right_last_color_sent;
+            const uint16_t button_bar_right_color = id(hardware_settings).button_right_state
+                                                  ? id(buttons_color_on)
+                                                  : id(buttons_color_off);
+            if (${'true' if buttons_bar_text_follow_color else 'false'} and
+                button_bar_right_color != button_bar_text_right_last_color_sent) {
+              button_bar_text_right_last_color_sent = button_bar_right_color;
+              disp1->set_component_font_color(hmi::home::RIGHT_BT_TEXT.name, button_bar_right_color);
+            }
+            switch (display_mode) {
+              case 1:  // EU model
+                disp1->fill_area(289, 307, 118, 3, button_bar_right_color);
+                disp1->fill_area(288, 308, 120, 1, button_bar_right_color);
+                break;
+              case 2:  // US Portrait
+                disp1->fill_area(184, 466, 118, 3, button_bar_right_color);
+                disp1->fill_area(183, 467, 120, 1, button_bar_right_color);
+                break;
+              case 3:  // US Landscape
+                disp1->fill_area(467, 28, 3, 118, button_bar_right_color);
+                disp1->fill_area(468, 27, 1, 120, button_bar_right_color);
+                break;
+            }
+          }
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          button_left_press_long->stop();
+          button_left_press_short->stop();
+          button_left_release->stop();
+          button_right_press_long->stop();
+          button_right_press_short->stop();
+          button_right_release->stop();
+          refresh_hardware_buttons_bars->stop();
+...
