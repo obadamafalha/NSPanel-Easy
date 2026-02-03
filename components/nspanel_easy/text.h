@@ -49,7 +49,7 @@ namespace nspanel_easy {
     */
     bool isStringInList(const std::string& strToSearch, std::initializer_list<std::string> list);
 
-    uint32_t decode_nextion_icon_utf8(const char* bytes);
+    uint32_t decode_nextion_icon_utf8(const char* bytes, size_t length);
 
     /**
     * @brief Compile-time string comparison for C++17/20.

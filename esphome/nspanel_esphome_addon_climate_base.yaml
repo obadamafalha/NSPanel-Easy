@@ -381,14 +381,14 @@ script:
           const char* icon = Icons::NONE;
           uint16_t color = Colors::BLACK;
 
-          if (action == nspanel_ha_blueprint::CLIMATE_ACTION_OFF) {
+          if (action == nspanel_easy::CLIMATE_ACTION_OFF) {
             // Handle OFF action with different modes
-            if (mode <= nspanel_ha_blueprint::CLIMATE_MODE_AUTO) {
+            if (mode <= nspanel_easy::CLIMATE_MODE_AUTO) {
               icon = climate_off_mode_icons[mode].icon;
               color = climate_off_mode_icons[mode].color;
             }
-          } else if (action >= nspanel_ha_blueprint::CLIMATE_ACTION_COOLING
-                  && action <= nspanel_ha_blueprint::CLIMATE_ACTION_FAN) {
+          } else if (action >= nspanel_easy::CLIMATE_ACTION_COOLING
+                  && action <= nspanel_easy::CLIMATE_ACTION_FAN) {
             // Handle active action states
             icon = climate_action_icons[action].icon;
             color = climate_action_icons[action].color;
