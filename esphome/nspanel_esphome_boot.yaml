@@ -178,10 +178,11 @@ script:
       - lambda: |-
           if (system_flags.blueprint_ready) return;
           static uint32_t last_boot_event_fired = 0;
-          if ((last_boot_event_fired + ${BOOT_EVENT_REPEAT_INTERVAL_MS}) > App.get_loop_component_start_time()) return;
+          const uint32_t now = App.get_loop_component_start_time();
+          if ((uint32_t)(now - last_boot_event_fired) < ${BOOT_EVENT_REPEAT_INTERVAL_MS}) return;
           ESP_LOGD("${TAG_BOOT}", "Request blueprint settings");
           fire_ha_event("boot", {{"step", step.c_str()}});
-          last_boot_event_fired = App.get_loop_component_start_time();
+          last_boot_event_fired = now;
 
   - id: !extend stop_all
     then:
