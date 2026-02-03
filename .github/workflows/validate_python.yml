@@ -11,6 +11,9 @@ on:
       - '**/*.py'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   flake8-lint:
     runs-on: ubuntu-latest

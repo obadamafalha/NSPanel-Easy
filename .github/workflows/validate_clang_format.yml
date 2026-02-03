@@ -15,6 +15,9 @@ on:
       - '**/*.cpp'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   clang-format-checking:
     runs-on: ubuntu-latest
