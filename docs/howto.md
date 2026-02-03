@@ -218,7 +218,7 @@ Afterwards, the climate.entity must be assigned accordingly in the panel configu
 ## Call a Page Directly
 
 In user-created automations within Home Assistant, there are scenarios where you might want to automatically display a specific page on your device's screen.
-The following action enable this functionality:
+The following action enables this functionality:
 
 ### Basic Pages
 

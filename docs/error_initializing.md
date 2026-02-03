@@ -56,7 +56,7 @@ If some of those versions are not shown, you can have an indication of where a p
 - **ESPHome** version will be shown as soon the ESPHome establishes the communication with the display.
 - **Blueprint** version requires both ESPHome and the Blueprint (in Home Assistant) to establish communication to be shown.
 
-In normal situation, all the versions should be displayed and should be the same. Different patch versions are supported.
+In normal situations, all the versions should be displayed and should be the same. Different patch versions are supported.
 
 #### Reboot button
 

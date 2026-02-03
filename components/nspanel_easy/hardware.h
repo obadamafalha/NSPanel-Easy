@@ -42,6 +42,12 @@ namespace nspanel_easy {
     // Note: hardware_settings_raw is declared as uint8_t in ESPHome YAML with restore_value: true
     // Use the helper function below to access it as a HardwareSettings struct
     
+    // Note: hardware_settings_raw is declared as uint8_t in ESPHome YAML with restore_value: true
+    // Use the helper function below to access it as a HardwareSettings struct
+
+    inline HardwareSettings from_raw(uint8_t raw);
+    inline uint8_t to_raw(const HardwareSettings& s);
+
     /**
      * `@brief` Get hardware settings from the raw uint8_t
      * `@param` raw_value The uint8_t global variable from YAML
