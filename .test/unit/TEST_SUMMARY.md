@@ -123,7 +123,7 @@ g++ -std=c++17 -I.. -lgtest -lgtest_main -pthread test_base.cpp -o test_base
 
 ### Python Tests: ✅ 80/80 PASSED
 
-```
+```log
 test_config_files.py: 59 passed
 test_workflows_simple.py: 21 passed
 ```
