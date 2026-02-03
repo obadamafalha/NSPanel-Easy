@@ -1,0 +1,291 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME - Page alarm                                                                      #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+---
+substitutions:
+  require_disarm_before_rearm: false
+
+  PAGE_ALARM_DELAY_DEFAULT: ${DELAY_DEFAULT}
+  PAGE_ALARM_DELAY_LONG: ${DELAY_LONG}
+  PAGE_ALARM_DELAY_SHORT: ${DELAY_SHORT}
+
+  BOOT_STEP_PAGE_ALARM: 10
+  PAGE_ALARM_ID: 23
+  TAG_PAGE_ALARM: nspanel.page.alarm
+
+api:
+  actions:
+    # Updates the alarm settings page with current state and configuration, integrating with the panel's interface.
+    - action: page_alarm
+      variables:
+        page_title: string       # Title for the alarm settings page, displayed prominently at the top.
+        state: string            # Current state of the alarm system (e.g., "armed_home", "disarmed").
+        supported_features: int  # Bitmask representing the alarm system's supported features, determining available controls on the page.
+        code_format: string      # Format required for the alarm code (numeric, alphanumeric).
+        code_arm_required: bool  # Indicates if a code is needed to arm the system.
+        entity: string           # Entity ID for the alarm system, enabling state updates and control.
+        mui_alarm: string[]      # Localized text for alarm control buttons (e.g., Arm, Disarm), allowing for a multilingual interface.
+      then:
+        # To do: This page constructor should be moved to Blueprint
+        - lambda: |-
+            if (current_page_id != ${PAGE_ALARM_ID}) return;
+
+            // Helper function to update alarm button state and visibility
+            // Handles feature checking, logging, and UI updates for all buttons including disarm
+            auto update_alarm_button = [&](
+                const char* button_name,  // Button prefix (e.g., "bt_home", "bt_disarm")
+                const char* armed_state,  // State string (e.g., "armed_home", "disarmed")
+                bool is_armed,
+                bool is_triggered,
+                AlarmFeature feature_bit  // Supported feature bit (ALWAYS_SHOW = always show)
+            ) {
+              // Check if button should be processed
+              if (feature_bit != AlarmFeature::ALWAYS_SHOW &&
+                  !((supported_features & static_cast<uint8_t>(feature_bit)) || (state == armed_state))) {
+                return;
+              }
+
+              ESP_LOGV("${TAG_PAGE_ALARM}", "Button - %s (state: %s)", button_name, armed_state);
+
+              const bool is_this_state = (state == armed_state);
+
+              // Update button appearance based on state
+              disp1->set_component_pic(
+                  (std::string(button_name) + "_pic").c_str(),
+                  is_this_state ? 43 : 42
+              );
+
+              const uint32_t bg_color = is_this_state ? Colors::GREEN : Colors::GRAY_LIGHT;
+              const uint32_t font_color = is_this_state ? Colors::WHITE : Colors::BLACK;
+
+              disp1->set_component_background_color((std::string(button_name) + "_text").c_str(), bg_color);
+              disp1->set_component_background_color((std::string(button_name) + "_icon").c_str(), bg_color);
+              disp1->set_component_font_color((std::string(button_name) + "_text").c_str(), font_color);
+              disp1->set_component_font_color((std::string(button_name) + "_icon").c_str(), font_color);
+
+              // Handle visibility based on button type and configuration
+              bool should_hide;
+              if (feature_bit == AlarmFeature::ALWAYS_SHOW) {
+                // Disarm button: hide when already disarmed
+                should_hide = is_this_state;
+              } else {
+                // Armed mode buttons: hide based on configuration
+                #ifdef USE_REQUIRE_DISARM_BEFORE_REARM
+                should_hide = is_this_state || is_triggered || is_armed;
+                #else  // USE_REQUIRE_DISARM_BEFORE_REARM
+                should_hide = is_this_state || is_triggered;
+                #endif  // USE_REQUIRE_DISARM_BEFORE_REARM
+              }
+
+              #if ESPHOME_VERSION_CODE >= VERSION_CODE(2025, 11, 0)  // ESPHome v2025.11.0+
+              disp1->set_component_visibility(button_name, !should_hide);
+              #else  // ESPHome < v2025.11.0
+              disp1->send_command_printf("vis %s,%i", button_name, should_hide ? 0 : 1);
+              #endif  // ESPHOME_VERSION_CODE
+
+              feed_wdt_delay(${PAGE_ALARM_DELAY_SHORT});
+            };
+
+            // Set detailed entity sensor
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Set detailed entity sensor");
+            detailed_entity->publish_state(entity.c_str());
+
+            // Determine alarm states
+            const bool is_armed = (state.find("armed_") == 0) || (state == "arming") || (state == "pending");
+            const bool is_triggered = (state == "triggered");
+            #ifdef USE_REQUIRE_DISARM_BEFORE_REARM
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Alarm is armed: %s", YESNO(is_armed));
+            #endif  // USE_REQUIRE_DISARM_BEFORE_REARM
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Alarm is triggered: %s", YESNO(is_triggered));
+
+            // Update all alarm mode buttons
+            update_alarm_button("bt_home", "armed_home", is_armed, is_triggered, AlarmFeature::ARM_HOME);
+            update_alarm_button("bt_away", "armed_away", is_armed, is_triggered, AlarmFeature::ARM_AWAY);
+            update_alarm_button("bt_night", "armed_night", is_armed, is_triggered, AlarmFeature::ARM_NIGHT);
+            update_alarm_button("bt_vacat", "armed_vacation", is_armed, is_triggered, AlarmFeature::ARM_VACATION);
+            update_alarm_button("bt_bypass", "armed_custom_bypass", is_armed, is_triggered, AlarmFeature::ARM_CUSTOM_BYPASS);
+            update_alarm_button("bt_disarm", "disarmed", is_armed, is_triggered, AlarmFeature::ALWAYS_SHOW);
+
+            // Page - Params
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Page - Params");
+            disp1->set_component_text("code_format", code_format.c_str());
+            disp1->set_component_text("code_arm_req", code_arm_required ? "1" : "0");
+            feed_wdt_delay(${PAGE_ALARM_DELAY_SHORT});
+
+            // Buttons - Text
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Buttons - Text");
+            disp1->set_component_text("bt_home_text", wrapText(mui_alarm[0].c_str(), 10, id(mui_bytes_per_char)).c_str());
+            disp1->set_component_text("bt_away_text", wrapText(mui_alarm[1].c_str(), 10, id(mui_bytes_per_char)).c_str());
+            disp1->set_component_text("bt_night_text", wrapText(mui_alarm[2].c_str(), 10, id(mui_bytes_per_char)).c_str());
+            disp1->set_component_text("bt_vacat_text", wrapText(mui_alarm[3].c_str(), 10, id(mui_bytes_per_char)).c_str());
+            disp1->set_component_text("bt_bypass_text", wrapText(mui_alarm[4].c_str(), 10, id(mui_bytes_per_char)).c_str());
+            disp1->set_component_text("bt_disarm_text", wrapText(mui_alarm[5].c_str(), 10, id(mui_bytes_per_char)).c_str());
+            feed_wdt_delay(${PAGE_ALARM_DELAY_SHORT});
+
+            // Page header
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Page header");
+            update_alarm_icon->execute("icon_state", state.c_str());  // Icon
+            // Page header - Title
+            if (page_title.find("\\r") != std::string::npos) {
+              page_title = page_title.replace(page_title.find("\\r"), 2, " ");
+            }
+            disp1->set_component_text("page_label", page_title.c_str());  // Title
+
+            ESP_LOGV("${TAG_PAGE_ALARM}", "Done!");
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_PAGE_ALARM
+
+NSPANEL_EASY:
+  require_disarm_before_rearm: ${require_disarm_before_rearm}
+script:
+  - id: !extend event_from_display  # Defined by hw_display
+    then:
+      - lambda: |-
+          if (params[0] == "alarm") {
+            // CSV Format: alarm,key,code_format,code_arm_req
+            // params[0]=page, params[1]=key, params[2]=code_format, params[3]=code_arm_req, params[4]=mui
+
+            if (params_count != 5) {
+              ESP_LOGW("${TAG_PAGE_ALARM}", "Bad params");
+              return;
+            }
+
+            const std::string& key = params[1];
+            const std::string& code_format = params[2];
+            const std::string& code_arm_req = params[3];
+            const std::string& mui = params[4];
+            ESP_LOGV("${TAG_PAGE_ALARM}", "key=%s, format=%s, arm_req=%s, mui=%s",
+                      key.c_str(), code_format.c_str(), code_arm_req.c_str(), mui.c_str());
+
+            if (code_format == "number" && (key == "disarm" || code_arm_req == "1")) {
+              ESP_LOGV("${TAG_PAGE_ALARM}", "Open keypad");
+              goto_page->execute(${PAGE_KEYB_NUM_ID});
+
+              disp1->set_component_value("page_id", ${PAGE_ALARM_ID});
+              disp1->set_component_text("domain", "alarm");
+              disp1->set_component_text("key", key.c_str());
+              disp1->set_component_text("value", "click");
+              disp1->set_component_text("entity", detailed_entity->state.c_str());
+              disp1->set_component_text("title", mui.c_str());
+            } else {
+              ESP_LOGV("${TAG_PAGE_ALARM}", "Executing direct alarm action: key=%s, format=%s",
+                        key.c_str(), code_format.c_str());
+              alarm_control_panel_action->execute(detailed_entity->state.c_str(), key.c_str(),
+                                                  code_format.c_str(), "");
+            }  // endif numeric keypad required
+          }
+
+  - id: alarm_control_panel_action
+    mode: single
+    parameters:
+      entity: string
+      key: string
+      code_format: string
+      pin: string
+    then:
+      - lambda: |-
+          ESP_LOGV("${TAG_PAGE_ALARM}", "Alarm control panel action call");
+          ESP_LOGV("${TAG_PAGE_ALARM}", "  entity_id: %s", entity.c_str());
+          ESP_LOGV("${TAG_PAGE_ALARM}", "  key: %s", key.c_str());
+          ESP_LOGV("${TAG_PAGE_ALARM}", "  pin provided: %s", pin.empty() ? "NO" : "YES");
+
+      - if:
+          condition:
+            - lambda: return pin.empty();
+          then:
+            - homeassistant.action:
+                action: &alarm_control_panel_action !lambda |-
+                  static std::string action_str;
+                  action_str = "alarm_control_panel.alarm_";
+                  if (key != "disarm") action_str += "arm_";
+                  if (key == "bypass") action_str += "custom_";
+                  action_str += key;
+                  return action_str.c_str();
+                data:
+                  entity_id: !lambda return entity;
+          else:
+            - homeassistant.action:
+                action: *alarm_control_panel_action
+                data:
+                  entity_id: !lambda return entity;
+                  code: !lambda return pin;
+
+  - id: !extend dump_config  # Defined by nspanel_esphome_core_base.yaml
+    then:
+      - lambda: |-
+          // Check for requirements
+          #if !defined(NSPANEL_EASY_PAGE_KEYB_NUM)
+            #error "The package nspanel_esphome_standard_page_keyb_num.yaml is required."
+          #endif
+
+  - id: page_alarm
+    mode: single
+    then:  # There's nothing here so far
+
+  - id: !extend page_change
+    then:
+      - lambda: |-
+          if (new_page_id == ${PAGE_ALARM_ID})
+            page_alarm->execute();
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          alarm_control_panel_action->stop();
+          update_alarm_icon->stop();
+
+  - id: !extend stop_page_constructors
+    then:
+      - lambda: page_alarm->stop();
+
+  - id: update_alarm_icon
+    mode: single
+    parameters:
+      component: string
+      state: string
+    then:
+      - lambda: |-
+          const char* icon = Icons::SHIELD_ALERT_OUTLINE;
+          uint16_t color = Colors::WHITE;
+
+          // Optimized state checking using first character for fast branching
+          if (state[0] == 'd') {  // "disarmed" or "disarming"
+            icon = Icons::SHIELD_OFF_OUTLINE;
+            color = (state == "disarming") ? Colors::YELLOW : Colors::WHITE;
+          } else if (state[0] == 'a') {  // "armed_*" or "arming"
+            if (state == "arming") {
+              icon = Icons::SHIELD_OUTLINE;
+              color = Colors::YELLOW;
+            } else {
+              color = Colors::GREEN;
+              if (state == "armed_home") {
+                icon = Icons::SHIELD_HOME_OUTLINE;
+              } else if (state == "armed_away") {
+                icon = Icons::SHIELD_LOCK_OUTLINE;
+              } else if (state == "armed_night") {
+                icon = Icons::SHIELD_MOON_OUTLINE;
+              } else if (state == "armed_vacation") {
+                icon = Icons::SHIELD_AIRPLANE_OUTLINE;
+              } else if (state == "armed_custom_bypass") {
+                icon = Icons::SHIELD_HALF_FULL;
+              }
+            }
+          } else if (state == "pending") {
+            icon = Icons::SHIELD_OUTLINE;
+            color = Colors::YELLOW;
+          } else if (state == "triggered") {
+            icon = Icons::SHIELD_ALERT_OUTLINE;
+            color = Colors::RED;
+          }
+
+          // Apply the icon and color to the display component
+          disp1->set_component_text(component.c_str(), icon);
+          disp1->set_component_font_color(component.c_str(), static_cast<uint16_t>(color));
+...

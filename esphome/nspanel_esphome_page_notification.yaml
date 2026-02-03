@@ -1,0 +1,194 @@
+#####################################################################################################
+#####                 NSPanel Easy - https://github.com/edwardtfn/NSPanel-Easy                  #####
+#####################################################################################################
+##### ESPHOME CORE - PAGE - NOTIFICATION                                                        #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+
+---
+substitutions:
+  BOOT_STEP_PAGE_NOTIFICATION: 21
+  PAGE_NOTIFICATION_ID: 16
+  tone_notification: "two short:d=4,o=5,b=100:16e6,16e6"
+  TAG_PAGE_NOTIFICATION: nspanel.page.notification
+
+api:
+  actions:
+    # This action removes any displayed notifications from the screen,
+    # helping to keep the user interface clean and focused on its primary functions.
+    - action: notification_clear
+      then:
+        - script.execute: notification_clear
+
+    # Displays a notification message on the screen, useful for alerts or informational updates.
+    - action: notification_show
+      variables:
+        # Title or label for the notification, displayed in a prominent format.
+        label: string
+        # Detailed message or content of the notification. Include `\r` to insert a line break,
+        # allowing for custom formatting.
+        message: string
+      then:
+        - lambda: |-
+            notification_label = label;
+            notification_text = message;
+            notification_unread->publish_state(true);
+            if (current_page_id == ${PAGE_NOTIFICATION_ID}) {
+              page_notification->execute();
+            } else {
+              goto_page->execute(${PAGE_NOTIFICATION_ID});
+            }
+            // Only when buzzer is available
+            #ifdef NSPANEL_EASY_HW_BUZZER
+            notification_play_sound->execute();
+            #endif
+            disp1->set_component_font_color(hmi::home::BT_NOTIFIC.name, notification_icon_color_unread);
+            if (current_page_id == hmi::home::PAGE.id) {
+              disp1->show_component("bt_notific");
+            }
+
+binary_sensor:
+  - id: notification_unread
+    name: Notification Unread
+    platform: template
+    internal: false
+    icon: mdi:bell-alert-outline
+    disabled_by_default: true
+
+display:
+  - id: !extend disp1
+    on_touch:
+      then:
+        - lambda: |-
+            if (
+                  page_id == ${PAGE_NOTIFICATION_ID} and  // Page notification
+                  !touch_event                            // Only act with release
+                ) {
+              switch (component_id) {
+                case 7:  // bt_accept
+                  ha_button->execute("notification", "bt_accept", "released");
+                  notification_clear->execute();
+                  break;
+                case 8:  // bt_clear
+                  ha_button->execute("notification", "bt_clear", "released");
+                  notification_unread->publish_state(false);
+                  disp1->set_component_font_color(hmi::home::BT_NOTIFIC.name, notification_icon_color_normal);
+                  goto_page->execute(hmi::home::PAGE.id);
+                  break;
+              }
+            }
+
+esphome:
+  platformio_options:
+    build_flags:
+      - -D NSPANEL_EASY_PAGE_NOTIFICATION
+
+script:
+  - id: !extend action_component_color
+    then:
+      - lambda: |-
+          if (page == "mem") {
+            if (component == "notification_icon_color_normal") {
+              notification_icon_color_normal = color;
+            } else if (component == "notification_icon_color_unread") {
+              notification_icon_color_unread = color;
+            }
+          }
+
+  - id: !extend boot
+    then:
+      - lambda: |-
+          notification_clear->execute();
+
+  - id: !extend page_change
+    then:
+      - lambda: if (new_page_id == ${PAGE_NOTIFICATION_ID}) page_notification->execute();
+
+  - id: page_notification
+    mode: single
+    then:
+      - lambda: |-
+          if (current_page_id == ${PAGE_NOTIFICATION_ID}) {
+            disp1->set_component_text("notifi_label", notification_label.c_str());
+            disp1->set_component_text("notifi_text01", wrapText(notification_text.c_str(),
+                                                                display_mode == 2 ? 23 : 32,
+                                                                id(mui_bytes_per_char)).c_str());
+          }
+
+  - id: !extend page_home
+    then:
+      - lambda: |-
+          if (notification_text.empty()) {
+            disp1->set_component_font_color(hmi::home::BT_NOTIFIC.name, Colors::BLACK);
+            if (current_page_id == hmi::home::PAGE.id) {
+              disp1->hide_component("bt_notific");
+            }
+          } else {
+            disp1->set_component_font_color(hmi::home::BT_NOTIFIC.name, notification_unread->state
+                                                                      ? notification_icon_color_unread
+                                                                      : notification_icon_color_normal);
+            if (current_page_id == hmi::home::PAGE.id) {
+              disp1->show_component("bt_notific");
+            }
+          }
+
+  - id: notification_clear
+    mode: single
+    then:
+      - lambda: |-
+          if (current_page_id == ${PAGE_NOTIFICATION_ID})
+            goto_page->execute(hmi::home::PAGE.id);
+          notification_label = "";
+          notification_text = "";
+          notification_unread->publish_state(false);
+          disp1->set_component_font_color(hmi::home::BT_NOTIFIC.name, Colors::BLACK);
+          if (current_page_id == hmi::home::PAGE.id) {
+            disp1->hide_component("bt_notific");
+          }
+
+  - id: notification_play_sound
+    mode: single
+    then:
+      - lambda: |-
+          // Only when buzzer is available
+          #ifdef NSPANEL_EASY_HW_BUZZER
+          if (notification_sound->state)
+            buzzer->play("${tone_notification}");
+          #endif
+
+  - id: !extend stop_all
+    then:
+      - lambda: |-
+          notification_clear->stop();
+          notification_play_sound->stop();
+
+  - id: !extend stop_page_constructors
+    then:
+      - lambda: page_notification->stop();
+
+switch:
+  - name: Sound - Notification  # Notification sound
+    platform: template
+    id: notification_sound
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      then:
+        - lambda: |-
+            // Only when buzzer is available
+            #ifdef NSPANEL_EASY_HW_BUZZER
+            if (notification_unread->state)
+              notification_play_sound->execute();
+            #endif
+    on_turn_off:
+      then:
+        - lambda: |-
+            notification_play_sound->stop();
+            // Only when buzzer is available
+            #ifdef NSPANEL_EASY_HW_BUZZER
+            if (buzzer->is_playing())
+              buzzer->stop();
+            #endif
+...
