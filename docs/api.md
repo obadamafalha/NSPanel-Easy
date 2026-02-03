@@ -305,27 +305,6 @@ This action is ideal for creating interactive user interfaces that adapt by hidi
   It is crucial that this matches the component's ID in your display layout to ensure the correct element is hidden/shown.
 - `visible` (bool): Set to true to show the component, or false to hide it.
 
-> [!IMPORTANT]
-> **Using `page: mem` for Memory Variables**
->
-> The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`.
-> This is by design to support a modular architecture.
->
-> To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
-> These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
->
-> - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
-> - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
-> - Other component files may add their own `mem` handlers
->
-> **Before using `page: mem` in your automations:**
->
-> 1. Verify that your ESPHome configuration includes the extension file that handles the specific memory variable you want to update
-> 2. Check the component's documentation to confirm which memory variables are supported
-> 3. If `page: mem` doesn't work as expected, ensure the required extension package is loaded in your configuration
->
-> When an extension is not present, using `page: mem` will have no effect, and the action may be silently ignored.
-
 **Home Assistant Example:**
 
 ```yaml
