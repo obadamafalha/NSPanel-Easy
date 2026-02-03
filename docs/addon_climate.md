@@ -6,6 +6,7 @@ This add-on enables the use of your panel's relays to act as a thermostat (eithe
 using the internal temperature sensor and independent of the network availability.
 
 ### Attention
+
 1. The NSPanel is limited to 2A per relay.
 Don't use it to directly power your cooler/heater if it exceeds the panel specifications:
     - 150W/110V/Gang, 300W/110V/Total
@@ -22,7 +23,7 @@ You will need to add the reference to `addon_climate_heat`, `addon_climate_cool`
 and after the `remote_package` (base code), as shown below (for `heat` in this example):
 
 > [!NOTE]
-> Occasionally, ESPHome updates may result in the `entity_id` of embedded thermostats being appended with `_2`. 
+> Occasionally, ESPHome updates may result in the `entity_id` of embedded thermostats being appended with `_2`.
 > If you experience this change, refer to this [forum post](https://community.home-assistant.io/t/esphome-devices-all-renamed-with-2-added/388146) on the Home Assistant Forum for guidance.
 
 ```yaml
@@ -174,7 +175,6 @@ packages:
       # - esphome/nspanel_esphome_addon_display_light.yaml  # Show the display as a light in Home Assistant
 ```
 
-
 ### Dual
 
 ```yaml
@@ -220,6 +220,7 @@ packages:
 ```
 
 ### Real Use Case Example: Water Underfloor Heating with NSPanel
+
 The NSPanel works nicely as a replacement for existing water underfloor heating controllers, installed at eye level and often powered by 100-240VAC.
 In my specific use case, the control valve is of the 'normally closed' type, meaning that an open relay indicates 'no heating.'
 I have utilized relay #1 for this purpose. It's important to note that this setup does not act as a PID controller, but operates on a simple on-off mechanism.

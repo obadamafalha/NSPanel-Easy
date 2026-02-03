@@ -24,7 +24,7 @@ This is technically the only required field, as basic functionality will be avai
 > [!NOTE]
 > You cannot have more than one blueprint-based automation per each panel
 
-### Language for NSPanel 
+### Language for NSPanel
 
 The language can be selected via the drop-down menu.
 
@@ -108,9 +108,10 @@ Here is an example (simply change SSID and password to your credentials and eith
 
 `WIFI:S:SSID;T:WPA/WEP;P:PASSWORD;;`
 
-#### Example:
+#### Example
 
 For a network with the following parameters:
+
 - **SSID:** my_ssid
 - **Pass:** MySecurePa$$w0rd
 - **Type:** WPA
@@ -161,14 +162,14 @@ Either the individual button pages can be accessed one after the other by swipin
 
 The buttons are numbered as follows:
 
-#### EU and US landscape models:
+#### EU and US landscape models
 
 |       | Button Page 1 | Button Page 2 | Button Page 3 | Button Page 4 |
 | :--:  | :--:          | :--:          | :--:          | :--:          |
 | Row 1 | 01 02 03 04   | 09 10 11 12   | 17 18 19 20   | 25 26 27 28   |
 | Row 2 | 05 06 07 08   | 13 14 15 16   | 21 22 23 24   | 29 30 31 32   |
 
-#### US model:
+#### US model
 
 |       | Button Page 1             | Button Page 2             | Button Page 3             | Button Page 4             |
 | :--:  | :--:                      | :--:                      | :--:                      | :--:                      |

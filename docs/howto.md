@@ -9,9 +9,10 @@ If you have a solution or tip to share, please contribute! Your knowledge can si
 You can write a short message with your findings, and we'll include it here.
 
 ## Topics and Solutions
+
 Below are the topics covered in this document, each with relevant tips and solutions.
 
-1. [How do I create "Issues" when I have a problem ](#how-to-create-issues-when-i-have-a-problem)
+1. [How do I create "Issues" when I have a problem](#how-to-create-issues-when-i-have-a-problem)
 2. [Update Blueprint](#update-blueprint)
 3. [Update ESPHome](#update-esphome)
 4. [Update TFT](#update-tft)
@@ -127,17 +128,18 @@ The new firmware will be built and then flashed to your panel, which will restar
 
 ![image](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/94725493/e63dcb4a-ef74-4665-9897-455e02950964)
 
-
 ## Update TFT
+>
 > [!IMPORTANT]
 > These instructions are for updating a panel where an older version of these files are already installed.
 
-1. Go to ***Settings --> Devices & services --> Integrations***, select the display under the ESPHome integration.
-2. Select the "**Update TFT Display - Model**" accordingly, under **Configuration**. 
+1. Go to _**Settings --> Devices & services --> Integrations**_, select the display under the ESPHome integration.
+2. Select the "**Update TFT Display - Model**" accordingly, under **Configuration**.
 3. Press the button "**Update TFT Display**".
 4. The display starts the update process and then restarts.
 
 ## Notification via HA
+
 To show a notification on the NSPanel, the following action call can be used:
 
 ```yaml
@@ -146,6 +148,7 @@ data:
   label: Example label text
   message: Example message text
 ```
+
 > [!NOTE]
 > For more details about this action call, please refer to our [API documentation](api.md#notification-show-action-notification_show).
 
@@ -154,6 +157,7 @@ To clear any notifications, the following action call can be used:
 ```yaml
 action: esphome.panelname_notification_clear
 ```
+
 > [!NOTE]
 > For more details about this action call, please refer to our [API documentation](api.md#notification-clear-action-notification_clear).
 
@@ -176,13 +180,14 @@ action:
 ```
 
 ## Climate control with Relays
+>
 > [!WARNING]
-> Although these instructions are still valid, since v4.0 there is a better way to setup a climate control using the panel's relays an the [add-on climate](addon_climate.md), 
-> which will continue to work even if Home Assistant and/or WiFi are not available. 
-> You probably only want to use this approach, if you are not using the build-in thermometer. 
+> Although these instructions are still valid, since v4.0 there is a better way to setup a climate control using the panel's relays an the [add-on climate](addon_climate.md),
+> which will continue to work even if Home Assistant and/or WiFi are not available.
+> You probably only want to use this approach, if you are not using the build-in thermometer.
 
 In order to use the NSPanel to control a radiator or underfloor heating, at least one Generic Thermostat must be created in the HA.
-More information can be found here: https://www.home-assistant.io/integrations/generic_thermostat/
+More information can be found here: <https://www.home-assistant.io/integrations/generic_thermostat/>
 
 Example configuration Generic Thermostat:
 
@@ -227,18 +232,18 @@ data:
 
 Currently, the following pages can be accessed using this method:
 
-- `buttonpage01`
-- `buttonpage02`
-- `buttonpage03`
-- `buttonpage04`
-- `entitypage01`
-- `entitypage02`
-- `entitypage03`
-- `entitypage04`
-- `home`
-- `qrcode`
-- `screensaver`
-- `utilities`
+* `buttonpage01`
+* `buttonpage02`
+* `buttonpage03`
+* `buttonpage04`
+* `entitypage01`
+* `entitypage02`
+* `entitypage03`
+* `entitypage04`
+* `home`
+* `qrcode`
+* `screensaver`
+* `utilities`
 
 For instance, to directly navigate to button page 2, replace `home` in the command with `buttonpage02`:
 
@@ -247,6 +252,7 @@ action: esphome.xxxxx_command
 data:
   cmd: page buttonpage02
 ```
+
 > [!NOTE]
 > For more details about this action call, please refer to our [API documentation](api.md#command-action-command).
 
@@ -261,6 +267,7 @@ data:
   entity_id: climate.my_thermostat
   back_page: buttonpage01
 ```
+
 > [!NOTE]
 > For more details about this action call, please refer to our [API documentation](api.md#entity-details-show-action-entity_details_show).
 
@@ -306,7 +313,7 @@ The Simpsons:d=4,o=5,b=160:c.6,e6,f#6,8a6,g.6,e6,c6,8a,8f#,8f#,8f#,2g,8p,8p,8f#,
 
 ![HA - Developer Tools - Action - RTTTL Play](pics/ha_developer_tools_action_rtttl_play.png)
 
-More information: https://esphome.io/components/rtttl/#common-beeps
+More information: <https://esphome.io/components/rtttl/#common-beeps>
 
 > [!NOTE]
 > For more details about this action call, please refer to our [API documentation](api.md#rtttl-play-action-rtttl_play).
@@ -324,6 +331,7 @@ In the last step, assign the trigger to a button in the Panel Config.
 ## Updating Wi-Fi settings and OTA Passwords in ESPHome with This Project
 
 ### Overview
+
 When you update your Wi-Fi password in a device with firmware from our project,
 it's important to remember that the `wifi_password` substitution is used for both Wi-Fi and OTA updates (and a few more places that are not relevant now).
 Failing to update both simultaneously can lead to connection issues.
@@ -331,11 +339,11 @@ Failing to update both simultaneously can lead to connection issues.
 ### Step-by-Step Guide
 
 1. **Prepare Your Device for Update**
-   - Ensure your device is connected to your computer and is accessible via your current Wi-Fi network.
+   * Ensure your device is connected to your computer and is accessible via your current Wi-Fi network.
 
 2. **Update OTA Password First**
-   - Open your panel's YAML.
-   - Add the following in the customization area:
+   * Open your panel's YAML.
+   * Add the following in the customization area:
 
      ```yaml
      esphome:
@@ -349,36 +357,36 @@ Failing to update both simultaneously can lead to connection issues.
        id: my_ota
      ```
 
-   - Flash your device.
+   * Flash your device.
 It will use the current password for this flash and will inform your device to start using the new password for the next OTA.
-   - When your device starts, **remove the lines above**.
-   - Find the `wifi_ssid` and `wifi_password` key in the `substitutions` area (usually at the beginning of the file) and change it to your new Wi-Fi password.
+   * When your device starts, **remove the lines above**.
+   * Find the `wifi_ssid` and `wifi_password` key in the `substitutions` area (usually at the beginning of the file) and change it to your new Wi-Fi password.
     If that is point to `!secret`, you will have to edit it in your `secrets.yaml` file instead.
-   - Flash your device again with the updated YAML.
+   * Flash your device again with the updated YAML.
 It will use the current Wi-Fi to connect to your device and the new Wi-Fi password as the OTA password, then will inform your device to connect to the Wi-Fi with the new settings.
 
 3. **Update Wi-Fi Settings in Your Access Point**
 
 ### Important Notes
 
-- The device will still be using the old Wi-Fi settings for this update.
+* The device will still be using the old Wi-Fi settings for this update.
 If you've already changed your Wi-Fi network settings, this step will fail.
-- **Troubleshooting: Unable to Connect via Wi-Fi**
-  - If your device cannot connect to Wi-Fi due to a password or SSID change, you will need to flash the device via a serial connection.
-  - Connect your device to your computer using a USB-to-Serial adapter.
-  - Use the ESPHome flasher tool to upload the new configuration.
-  - In this case, don't worry about the OTA password, as it's not required when flashing via serial.
+* **Troubleshooting: Unable to Connect via Wi-Fi**
+  * If your device cannot connect to Wi-Fi due to a password or SSID change, you will need to flash the device via a serial connection.
+  * Connect your device to your computer using a USB-to-Serial adapter.
+  * Use the ESPHome flasher tool to upload the new configuration.
+  * In this case, don't worry about the OTA password, as it's not required when flashing via serial.
 
 ### Verify the Update
 
-- Once the new configuration is uploaded, your device should automatically connect to your Wi-Fi network with the new settings.
-- Verify that OTA updates are working with the new password.
+* Once the new configuration is uploaded, your device should automatically connect to your Wi-Fi network with the new settings.
+* Verify that OTA updates are working with the new password.
 
 ### Additional Tips
 
-- **Backup Your Configuration:** Always keep a backup of your ESPHome configuration files.
-- **Network Accessibility:** Ensure your device remains within your Wi-Fi network's range during the update process.
-- **Serial Flashing:** Familiarize yourself with the process of flashing via serial, as it's a reliable fallback method.
+* **Backup Your Configuration:** Always keep a backup of your ESPHome configuration files.
+* **Network Accessibility:** Ensure your device remains within your Wi-Fi network's range during the update process.
+* **Serial Flashing:** Familiarize yourself with the process of flashing via serial, as it's a reliable fallback method.
 
 ### Conclusion
 

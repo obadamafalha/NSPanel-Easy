@@ -29,6 +29,7 @@ substitutions:
 ```
 
 **Key Notes:**
+
 - Use simple numeric values (e.g., `22`) for basic GPIO assignments
 - Use indented YAML syntax for complex configurations with multiple properties
 - `inverted: true` is used when your hardware behaves in active-low mode (e.g., relay turns ON when pin is LOW)
@@ -57,11 +58,13 @@ substitutions:
 ## ⚠️ Troubleshooting
 
 ### Common Issues
+
 - **Boot loops**: Check if you're using conflicting pins with your hardware design
 - **Non-functional outputs**: Verify your hardware supports the selected pins
 - **Inverted behavior**: Toggle the `inverted` flag or use `*_INVERTED` substitutions
 
 ### Validation Steps
+
 1. Test each function individually after pin changes
 2. Monitor serial logs for GPIO-related errors during boot
 3. Refer to your hardware's documentation for pin compatibility

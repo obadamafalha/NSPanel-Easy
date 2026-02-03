@@ -1,4 +1,5 @@
 # Getting Started with NSPanel HA Blueprint
+
 Welcome to this setup guide, a community-driven approach to integrating NSPanel into your smart home.
 This guide is designed to be user-friendly, aiming to assist users who have a basic understanding of Home Assistant and ESPHome.
 While it's crafted to be accessible at all levels, a foundational knowledge in smart home automation will help you make the most of it.
@@ -22,6 +23,7 @@ Let’s embark on this journey together to create a smart home that’s uniquely
 <!-- markdownlint-enable MD028 -->
 
 ## Summary
+
 - [Preparation](#preparation)
 - [ESPHome Firmware](#esphome-firmware)
   - [Preparing the ESPHome Environment](#preparing-the-esphome-environment)
@@ -45,6 +47,7 @@ Let’s embark on this journey together to create a smart home that’s uniquely
 ------
 
 ## Preparation
+
 Start by ensuring you have all the necessary tools and files.
 This includes your NSPanel device, a stable internet connection, and access to your Home Assistant instance.
 
@@ -60,9 +63,9 @@ ESPHome can be integrated into your setup in various ways, including as a Home A
 This guide is based on using the ESPHome dashboard, which is available in all standard implementations.
 
 > [!NOTE]
-> 4GB of memory are recommended if you are installing ESPHome as a Home Assistant add-on. 
-Therefore, a RasPi 4 with 4GB RAM is the minimum if you are using a Raspberry Pi. 
-A manual installation requires at least 2GB of memory and 500MB of swap space or 3GB of memory. 
+> 4GB of memory are recommended if you are installing ESPHome as a Home Assistant add-on.
+Therefore, a RasPi 4 with 4GB RAM is the minimum if you are using a Raspberry Pi.
+A manual installation requires at least 2GB of memory and 500MB of swap space or 3GB of memory.
 With less memory the compiler will crash!
 
 - **Installing ESPHome as a Home Assistant Add-On**: For seamless integration with Home Assistant, ESPHome can be installed as an add-on.
@@ -78,6 +81,7 @@ Detailed steps for a manual installation can be found in the guide [Installing E
 ### Setting Up a Device on ESPHome Dashboard
 
 Follow these steps to add a new device in the ESPHome Dashboard:
+
 1. Click the **+ New Device** button.
 
 2. Enter a unique name for your new ESPHome device.  
@@ -96,13 +100,14 @@ Follow these steps to add a new device in the ESPHome Dashboard:
    ![API Section](pics/ha_esphome_dashboard_new_device_05.png)
 
    which can be edited clicking `secrets` at the top right of your ESPHome menu.
-   
+
    ![API Section](pics/ha_esphome_dashboard_new_device_05c.png)
 
 7. Note the device name at the beginning of the file under `esphome`.  
    ![Device Name](pics/ha_esphome_dashboard_new_device_05b.png)
 
 8. Clear all existing content and paste the following YAML configuration:
+
    ```yaml
    substitutions:
      # Settings - Editable values
@@ -183,7 +188,9 @@ Your NSPanel is now configured in your ESPHome Dashboard.
 - Keep all small parts, like screws and cables, safely stored.
 
 #### Required Tools
+
 For first-time flashing of your NSPanel with ESPHome, you may need:
+
 1. [USB-to-Serial TTL adapter](https://esphome.io/guides/physical_device_connection/#usb-serial-adapter)
 2. [Jumper wires](https://esphome.io/guides/physical_device_connection/#jumper-wires)
 3. [Breakable headers (optional)](https://esphome.io/guides/physical_device_connection/#pcb-headers)
@@ -192,6 +199,7 @@ For first-time flashing of your NSPanel with ESPHome, you may need:
 #### Connecting Your Device via USB-to-Serial TTL Interface
 
 Before you begin disassembling your panel, it is recommended to review the following resources for guidance:
+
 - [YouTube - Mark Watt Tech - HOW TO - Setup the SIMPLEST Smart Home Scene Controller](https://www.youtube.com/watch?v=jpSTA_ILB8g&t=323s)
 - @blakadder's [Sonoff NSPanel EU Switch in Detail](https://blakadder.com/nspanel-teardown/)
 - [ESPHome - Physically Connecting to Your Device](https://esphome.io/guides/physical_device_connection)
@@ -227,6 +235,7 @@ The use of a non-conductive tool, like the blue plastic one shown in the picture
 By following these guidelines and referring to the provided resources, you can safely prepare your NSPanel for firmware updates.
 
 #### Transferring the Firmware to Your Device
+
 After ensuring your device is properly connected, proceed to update or install the firmware using the ESPHome Dashboard.
 
 1. **Access the ESPHome Dashboard** and locate your NSPanel device.
@@ -241,23 +250,21 @@ After ensuring your device is properly connected, proceed to update or install t
    Both these options will compile the firmware and allow you to download it to your computer.
    ![140043](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/3c08d3b7-df9b-4862-8ced-347deff41cb5)
 
-
 4. **Transfer Firmware via USB-to-Serial TTL:**
    - Navigate to [ESPHome Web](https://web.esphome.io/) on your computer.
    - Click **Connect** and choose the serial interface connected to your USB-to-Serial TTL adapter.
      ![141609](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/fde27c26-3434-48f5-a028-6baee15ab35e)
 
-
    - Once connected, opt to install an existing firmware to your panel.
    Select the compiled firmware file and initiate the installation.
    ![141248](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/5879533/ad6a5813-131c-43d5-9174-3a9f73d5b6bf)
-
 
 The firmware installation process will take a few minutes.
 After completion, reassemble your panel and mount it back on the wall.
 Power it up, and it should appear online in the ESPHome Dashboard within a couple of minutes, running the latest firmware.
 
 ### Integrating your panel to Home Assistant
+
 Once your panel loaded the new ESPHome firmware, it should be automatically detected by Home Assistant and you should get a notification about that.
 If that isn't happening, you can manually add it as a new integration with the following steps:
 > [!TIP]
@@ -279,10 +286,12 @@ It might take a minute or two until the device's page gets fully populated, but 
 You can always get back to the device's page under your [ESPHome integration's page](https://my.home-assistant.io/redirect/integration/?domain=esphome).
 
 ### Making Changes Over The Air (OTA)
+
 Once your NSPanel is flashed with ESPHome, updating the firmware wirelessly via Over The Air (OTA) updates is a straightforward process.
 This method eliminates the need for a USB-to-serial TTL adapter for most firmware updates.
 
 #### Steps for OTA Updates
+
 1. After making your changes in the yaml editor, click the **Install** button located at the top of the editor.
 Alternatively, you can click the three-dot menu next to your device on the ESPHome Dashboard and select **Install**.
 
@@ -302,6 +311,7 @@ Using OTA for firmware updates is a time-efficient way to keep your NSPanel upda
 ensuring a smooth and hassle-free user experience.
 
 ### Updating Your NSPanel Firmware
+
 Regularly updating your NSPanel firmware ensures that you have the latest features and improvements from this project and ESPHome.
 To update your device's firmware to the latest version, simply follow the [Steps for OTA Updates](#steps-for-ota-updates) as outlined above.
 
@@ -313,6 +323,7 @@ To update your device's firmware to the latest version, simply follow the [Steps
 Keeping each component of the NSPanel HA Blueprint in sync with the same version enhances the stability and functionality of your smart panel.
 
 #### Other
+
 Please try the standard process and if you find any issue,
 please [create a new issue](https://github.com/edwardtfn/NSPanel-Easy/issues) and inform
 which custom firmware you have installed before migrating to NSPanel HA Blueprint.
@@ -336,6 +347,7 @@ Make sure to select and upload the correct TFT file corresponding to your specif
 > For troubleshooting TFT transfer issues, consult our [TFT Transfer Troubleshooting Guide](tft_upload.md).
 
 ### Select the right file
+
 Open the device's page under [ESPHome integration's page](https://my.home-assistant.io/redirect/integration/?domain=esphome)
 and look for **Update TFT display** and **Update TFT display - Model** under the **Configuration** area.
 
@@ -346,6 +358,7 @@ Expand the **Update TFT display - Model** control and find the model that better
 ![image](pics/ha_device_configuration_tft_upload_model.png)
 
 The options are:
+
 - **Use `nextion_update_url`:** This will indicate ESPHome to download the TFT file from the URL
 you specified in your panel's yaml setting under the ESPHome dashboard and is typically used
 when your device have issues to transfer a TFT file directly from the GitHub repository or when
@@ -370,6 +383,7 @@ installed on the landscape position with the buttons at the right side of the sc
 and want to use the CJK (Chinese/Japanese/Korean) languages.
 
 ### Uploading to Nextion
+
 Once the right model is selected, please press the button **Update TFT display**.
 
 In a few seconds your display should start transferring the file correspondent to the selected model.
@@ -385,21 +399,25 @@ If after this time it isn't close to finnish, please cancel the process by resta
 > For troubleshooting TFT transfer issues, consult our [TFT Transfer Troubleshooting Guide](tft_upload.md).
 
 ### Troubleshooting TFT transfer issues
+
 We have an useful guide for [troubleshooting TFT transfer issues](tft_upload.md). Please take a look there.
 
 ## Blueprint
+
 This section provides guidance on importing the NSPanel HA Blueprint from our GitHub repository into your Home Assistant,
 creating a new automation for your panel setup, and updating the blueprint when new versions are available.
 These processes are straightforward with the latest versions of Home Assistant.
 If you have any questions or need clarification, please reach out to us.
 
 ### Importing the Blueprint
+
 Importing the blueprint into Home Assistant is a simple process. Just click the button below and follow the steps:
 <!-- markdownlint-disable MD013 -->
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fedwardtfn%2FNSPanel-Easy%2Fblob%2Fmain%2Fnspanel_blueprint.yaml)
 <!-- markdownlint-enable MD013 -->
 
 ### Creating an Automation
+
 After importing the Blueprint into Home Assistant, create a new automation using these steps:
 
 1. Go to [**Settings** → **Automations & Scenes** → **Blueprints**](https://my.home-assistant.io/redirect/blueprints/) in Home Assistant.
@@ -413,6 +431,7 @@ After importing the Blueprint into Home Assistant, create a new automation using
 > For a comprehensive list of panel settings, refer to the [Blueprint Guide](blueprint.md).
 
 ### Editing Automation Settings
+
 You can modify your automation anytime to change configurations:
 
 1. In Home Assistant, go to **Settings** → **Automations & Scenes**. Or use the link below.
@@ -426,6 +445,7 @@ You can modify your automation anytime to change configurations:
 > For a comprehensive list of panel settings, refer to the [Blueprint Guide](blueprint.md).
 
 ## How to Handle Multiple Panels
+
 For homes with multiple panels:
 
 1. Repeat the steps in the "Blueprint" section for each panel.
@@ -523,6 +543,7 @@ packages:
 ```
 
 This approach allows you to:
+
 - Enable only required functionality
 - Temporarily disable memory-intensive components
 - Add custom components while maintaining core functionality
@@ -532,6 +553,7 @@ This approach allows you to:
 For scenarios requiring temporary memory trade-offs (e.g., TFT updates vs. Bluetooth functionality):
 
 ###### Option 1: TFT Update Configuration
+
 ```yaml
 # Configuration for TFT updates - Disable Bluetooth temporarily
 substitutions:
@@ -574,6 +596,7 @@ packages:
 ```
 
 ###### Option 2: Runtime Configuration
+
 ```yaml
 # Configuration for normal operation - Enable Bluetooth, disable TFT upload
 substitutions:
@@ -636,6 +659,7 @@ Use this information to determine if additional components can be safely added o
 Here's a complete workflow for integrating Bluetooth Proxy while managing memory constraints:
 
 1. **Initial Setup with TFT Support**:
+
    ```yaml
    substitutions:
      device_name: "your_nspanel_name"
@@ -664,6 +688,7 @@ Here's a complete workflow for integrating Bluetooth Proxy while managing memory
 2. **Flash firmware and upload TFT file**
 
 3. **Switch to Bluetooth Configuration**:
+
    ```yaml
    substitutions:
      device_name: "your_nspanel_name"
@@ -801,6 +826,7 @@ The Blueprint file `nspanel_blueprint.yaml` can be customized for specific use c
 While the standard Blueprint handles most scenarios, advanced users may need specialized automations.
 
 For local Blueprint modifications:
+
 1. Download `nspanel_blueprint.yaml` from the repository
 2. Modify according to your requirements
 3. Import the local file instead of the remote URL
@@ -818,6 +844,7 @@ All `.HMI` source files are available in the repository for custom TFT developme
 4. **Host the file**: Make it accessible via HTTP for your panel
 
 For guidance on Nextion development:
+
 - [Nextion Instruction Set](https://nextion.tech/instruction-set)
 - [Nextion Editor Guide](https://nextion.tech/editor_guide/)
 
@@ -853,11 +880,13 @@ This enhanced documentation provides advanced users with the knowledge needed to
 while maintaining system stability and functionality.
 
 ## Additional Tips and Resources
+>
 > [!TIP]
 > For troubleshooting TFT transfer issues, consult our [TFT Transfer Troubleshooting Guide](tft_upload.md) first.
 
 If problems persist after troubleshooting, visit the [Issues](https://github.com/edwardtfn/NSPanel-Easy/issues) page.
 Feel free to create a new issue for personalized assistance, providing details such as:
+
 1. A description or picture of what is displayed on your screen.
 2. Information on whether you are updating from a previous version of this project,
    migrating from another NSPanel customization, or customizing a panel with the original Sonoff settings.
@@ -865,4 +894,5 @@ Feel free to create a new issue for personalized assistance, providing details s
 4. A description of what you have already tried.
 
 ## Important Note
+
 Remember, these instructions serve as a guideline and may vary based on your specific setup and any systems previously installed.
