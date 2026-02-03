@@ -301,7 +301,7 @@ By repeatedly calling this action whenever motion is detected, the panel can be 
 
 HA can send a RTTTL to the NSPanel, custom melodies are possible.
 
-The use this function, the following action is called: `rtttl_play`
+To use this function, call the following action: `rtttl_play`
 
 You can find many RTTTL strings on the web, the important thing is that they must start with the name and then a colon.
 
