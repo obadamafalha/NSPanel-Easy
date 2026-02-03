@@ -45,9 +45,6 @@ substitutions:
   ## Upload TFT
   upload_tft_automatically: true
 
-  ## Add-on climate
-  # heater_relay: "1"  # Possible values: "1" or "2"
-
 # Customization area
 ##### My customization - Start #####
 ##### My customization - End #####
