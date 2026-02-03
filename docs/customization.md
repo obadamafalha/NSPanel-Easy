@@ -1,6 +1,7 @@
 # Customization
 
 Table of contents:
+
 - [Description](#description)
 - [Instructions](#instructions)
 - [Memory Management](#memory-management)
@@ -37,7 +38,9 @@ Table of contents:
 
 &nbsp;
 &nbsp;
+
 ## Description
+
 This project adds many features to your NSPanel, and we are constantly adding new ones based on user feedback.
 However, you might have specific cases that are not included in the current implementation or are uncommon for other users.
 
@@ -48,11 +51,14 @@ and this document intends to clarify how to use this and give some examples of c
 Please feel free to add your own customization to this document by submitting a PR.
 
 ***IMPORTANT:***
+
 - *Use customization at your own risk. Custom/advanced systems won't be supported by this project's team.*
 - *Please monitor the memory consumption when using customizations. Getting closer to the full memory can drive to errors in the system or prevent your system to support the future updates.*
 
 &nbsp;
+
 ## Instructions
+
 There's nothing particular for this project, so you can just use any of the [ESPHome Configuration Types](https://esphome.io/guides/configuration-types.html)
 and only edit your local ESPHome yaml settings.
 
@@ -107,10 +113,12 @@ packages:
 ```
 
 ## Memory Management
+
 When adding new components or code to your ESP32, it's important to be mindful of memory usage.
 Your device has limited memory, and every addition uses some of this precious resource.
 
 ### Understanding Memory Usage
+
 After compiling your firmware, you'll see a summary showing how much memory your firmware needs.
 Here's what it might look like:
 
@@ -131,18 +139,22 @@ ESPHome checks if your static memory usage exceeds your device's limits to preve
 **Aim to keep static RAM usage below 20% and static Flash usage below 75%** to ensure there's enough room for dynamic operations.
 
 ### Risks of Exceeding Memory Limits
+
 Exceeding memory limits can lead to issues:
+
 - **During Compilation**: ESPHome might prevent firmware installation if static memory is too high.
 - **During Runtime**: Exceeding dynamic memory can cause unexpected restarts.
 - **During Startup**: If your device runs out of memory at startup, it may not load the firmware, resulting in a black screen and an unresponsive device.
 The solution is to use a serial cable to reflash your device with a lighter firmware.
 
 ### Tips for Managing Memory
+
 - Be cautious when adding memory-intensive components like `bluetooth_proxy`.
 - Compile your firmware with the option to download it before installation.
 This lets you check static memory usage without risking wireless installation issues.
 
 ## Removing Standard Settings
+
 You can use customizations to remove certain default components or settings from this project.
 This is useful for altering standard settings or freeing up memory for additional components.
 Here's how you might remove some default settings:
@@ -165,6 +177,7 @@ ota:
 ## Examples
 
 ### API encryption
+>
 > [!IMPORTANT]
 > Changing the API encryption can break the connection to Home Assistant,
 > requiring the device to be removed from integrations (**Settings** > **Devices & services** > **ESPHome**) and then re-added.
@@ -180,6 +193,7 @@ api:
 ```
 
 ### Custom OTA password
+
 By default, the Wi-Fi password will be used as your OTA password, but you can replace it.
 
 First, you need to change the default password using this code.
@@ -207,6 +221,7 @@ ota:
 ```
 
 ### Web server credentials
+
 By default, the web server credentials are defined by this project (advanced only) using `admin` as `username` and your `Wi-Fi password` as `password`, but you can replace it using this customization:
 
 ```yaml
@@ -218,6 +233,7 @@ web_server:
 ```
 
 ### Reboot when API fails
+
 Reboot your panel if it loses its connection to Home Assistant for more than a certain time (15 minutes in this example).
 
 Sometimes the low-level ESP functions could report that the ESP is connected to the network,
@@ -232,6 +248,7 @@ api:
 ```
 
 ### Manual IP
+
 Set IP address manually.
 
 > [!ATTENTION]
@@ -251,6 +268,7 @@ wifi:
 ```
 
 ### Hidden Wi-Fi
+
 Connect to a hidden Wi-Fi network.
 
 ```yaml
@@ -263,6 +281,7 @@ wifi:
 ```
 
 ### Connect to multiple networks
+
 NSPanel will attempt to connect to the one with the highest signal strength or, if you set a priority, it will try to connect to the highest priority.
 After failing it will connect to the second network.
 
@@ -278,6 +297,7 @@ wifi:
 ```
 
 ### SNTP (time) server
+
 ESPHome takes it's time from Home Assistant, however you can configure it to use a Network Time Server instead.
 
 ```yaml
@@ -292,6 +312,7 @@ time:
 ```
 
 ### Sensor for display awake vs sleeping
+
 Creates a binary sensor to indicate either when the display is showing some page (`on`) or sleeping (`off`).
 
 ```yaml
@@ -317,6 +338,7 @@ binary_sensor:
 ```
 
 ### Deep sleep
+
 In this example, the panel will deep sleep for 7 hours, starting at 23:00:00 every day, for its maximum energy saving.
 
 During this time, nothing will be shown, the screen will be off and therefore no response to touch, and the panel will be disconnected from Wi-Fi,
@@ -349,6 +371,7 @@ time:
 You can find more ideas around this on [Blackymas/NSPanel_HA_Blueprint#955](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/955).
 
 ### Enforce time zone
+
 Until v3.4 (including), the time was coming from Home Assistant with it's timezone,
 so the Blueprint was sending the info with no transformation, to the panel.
 From v4.0, the time reference still coming from HA (or optionally from a time server),
@@ -367,6 +390,7 @@ time:
 ```
 
 ### Compiling ESPHome on lower powered machines
+
 For systems with lower CPU or memory capabilities, like an RPi 3 or systems with less than 2GB of RAM,
 this could help preventing errors caused by lack of resources when compiling ESPHome firmware.
 
@@ -379,6 +403,7 @@ esphome:
 ```
 
 ### Sleep & Wake-up buttons
+
 There are several ways to wake-up or put your panel to sleep, but in this example we tried a simple approach by adding two buttons (you can implement only one of those if you want):
 
 ```yaml
@@ -420,6 +445,7 @@ and turn on/off just like any other light. This is useful for automations that c
 your panel is on with the same automation you use for your lights.
 
 **To enable this add-on**, uncomment the following line in your ESPHome YAML packages section:
+
 ```yaml
 packages:
   remote_package:
@@ -432,12 +458,14 @@ packages:
 ```
 
 **Features:**
+
 - Control display brightness through Home Assistant
 - Turn display on/off like any other light entity
 - Include display in lighting automations
 - Schedule display sleep/wake times
 
 ### Current brightness sensor
+
 Exposes to Home Assistant the current brightness of your panel.
 
 ```yaml
@@ -455,6 +483,7 @@ sensor:
 ```
 
 ### Scheduled actions
+
 Although ESPHome doesn't have a Scheduler component, it is possible to use the timer to schedule actions and this is entirely managed in the device,
 so it will work even if Home Assistant and/or the Wi-Fi are unavailable.
 
@@ -490,6 +519,7 @@ time:
 ```
 
 #### Scheduled climate
+>
 > [!NOTE]
 > This requires add-on climate to be installed
 
@@ -549,9 +579,9 @@ You can overlap the settings with this customization.
 more boards are supported and the memory management is better,
 making it ideal if you want to customize your panel to support memory consumption functionalities,
 like `bluetooth_proxy` or [Improv](https://www.improv-wifi.com/).
-Consequently, this project uses `esp-idf` as the default framework since `v4.3.0`. 
+Consequently, this project uses `esp-idf` as the default framework since `v4.3.0`.
 
-~~However, the `arduino` protocol still very popular and, therefore, more components are available and the project allows to switch between the frameworks 
+~~However, the `arduino` protocol still very popular and, therefore, more components are available and the project allows to switch between the frameworks
 by adding the following lines in your panel's yaml file.~~
 
 #### Framework `esp-idf` (RECOMMENDED)
@@ -602,6 +632,7 @@ climate:
 ```
 
 ### Push button / Momentary switch
+
 You can set the physical relays to be `on` only while the hardware buttons are pressed, and then back to `off` when the buttons are released:
 
 ```yaml
@@ -633,6 +664,7 @@ Starting from version 4.3.30, the project provides dedicated scripts for hardwar
 This approach is more efficient than using the generic `ha_button` service and reduces unnecessary load on your ESP32.
 
 The available scripts are:
+
 - `button_left_press_long` - Triggered when the left button is pressed and held
 - `button_left_press_short` - Triggered when the left button is pressed briefly
 - `button_left_release` - Triggered when the left button is released
@@ -644,7 +676,7 @@ These scripts are particularly useful when you need custom behavior during netwo
 
 #### Example: HTTP requests when Home Assistant is disconnected
 
-This example shows how to control external devices via HTTP requests when your NSPanel loses connection to Home Assistant, 
+This example shows how to control external devices via HTTP requests when your NSPanel loses connection to Home Assistant,
 such as controlling a Shelly device directly:
 
 ```yaml
@@ -722,11 +754,13 @@ script:
 > The `api.connected` condition ensures that custom actions only execute when Home Assistant is unavailable, allowing normal operation to resume once connectivity is restored.
 
 ### Expose Relay Fallback Switch
+
 You can configure a local fallback relay to integrate with Home Assistant.
 This is particularly useful for devices like WiFi-connected lights.
 For instance, you can program it to cut the power to a connected light under certain conditions, directly via a switch.
 
 #### Use Case
+
 One application, as utilized by @tikismoke and detailed in
 [Blackymas/NSPanel_HA_Blueprint#1349](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/1349),
 is in response to fluctuating energy prices.
@@ -774,6 +808,7 @@ switch:
 ```
 
 ### Relay Interlocking
+
 This is using ESPHome capability to prevents the two relays to be active at the same time, which could be useful in some cases,
 like to control a cover like discussed in
 [Blackymas/NSPanel_HA_Blueprint#965](https://github.com/Blackymas/NSPanel_HA_Blueprint/issues/965).
@@ -794,6 +829,7 @@ switch:
 ```
 
 ### Remove non-essential components
+
 This can be useful to free-up memory, so other custom components could be used instead.
 
 ```yaml
@@ -805,6 +841,7 @@ web_server: !remove
 ```
 
 ### Restart with 15s button press
+
 This could be used to have an easy way to restart your panel locally in addition to the [reset pin in the bottom of your panel](pics/eu_reset_button.png).
 
 ```yaml

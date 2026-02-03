@@ -99,6 +99,7 @@ In some cases you can also see duplicate entities on the device's page in Home A
 After troubleshooting, if issues persist, consult the [Issues](https://github.com/edwardtfn/NSPanel-Easy/issues) and feel free to create a new one asking for more personalized assistance.
 
 Please share as much info as possible, like:
+
 1. Describing (or a picture of) what is on your screen
 2. Are you updating from a previous version of this project, or you coming from another NSPanel customization (which one?) or are you customizing for the first time a panel with the original Sonoff settings?
 3. Please share the ESPHome logs from when your panel starts to the moment the upload fails.

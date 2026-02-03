@@ -12,10 +12,12 @@ using its relays to drive the motor to open or close a cover.
   We want to change this in the future so it could be fully controlled locally.
 
 ### Attention
+
 The NSPanel is limited to 2A per relay.
 Don't use it to directly power your cover's motor if it exceeds the panel specifications:
-  - 150W/110V/Gang, 300W/110V/Total
-  - 300W/220V/Gang, 600W/220V/Total
+
+- 150W/110V/Gang, 300W/110V/Total
+- 300W/220V/Gang, 600W/220V/Total
 
 > [!NOTE]
 > More details on the [Sonoff NSPanel's page](https://sonoff.tech/product/central-control-panel/nspanel/)
@@ -23,13 +25,13 @@ Don't use it to directly power your cover's motor if it exceeds the panel specif
 
 ## Installation
 
-You will need to add the reference to the `addon_cover` file in your ESPHome 
-settings in the `package` section and after the `remote_package` (base code), 
+You will need to add the reference to the `addon_cover` file in your ESPHome
+settings in the `package` section and after the `remote_package` (base code),
 as shown below:
 
 > [!NOTE]
-> Occasionally, ESPHome updates may result in the `entity_id` of embedded covers 
-> being appended with `_2`. If you experience this change, refer to this [forum 
+> Occasionally, ESPHome updates may result in the `entity_id` of embedded covers
+> being appended with `_2`. If you experience this change, refer to this [forum
 > post](https://community.home-assistant.io/t/esphome-devices-all-renamed-with-2-added/388146)
 > on the Home Assistant Forum for guidance.
 
@@ -70,7 +72,6 @@ packages:
 For this add-on, all the basic settings are accessible via the device's page in
 your Home Assistant. For most cases, no additional YAML settings are needed.
 You will find the following configuration entities under the device's page (**Settings** > **Devices & services** > **ESPHome**):
-
 
 <!-- markdownlint-disable MD013 MD033 -->
 |Entity|Supported values|Default|Description|

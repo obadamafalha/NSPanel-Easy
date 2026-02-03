@@ -1,32 +1,33 @@
 # Alarm Control Panel
 
-You can control an Alarm Control Panel from your NSPanel, which allows you to set the alarm mode to standard 
+You can control an Alarm Control Panel from your NSPanel, which allows you to set the alarm mode to standard
 modes supported by Home Assistant (Home, Away, Night, Vacation, or Custom bypass) or disarm the alarm.
 
-Currently, the NSPanel supports alarms without a code or with a numeric code. For alarms using a text code, 
-the NSPanel will display it, but interactions (like button clicks) will send action calls to Home Assistant 
+Currently, the NSPanel supports alarms without a code or with a numeric code. For alarms using a text code,
+the NSPanel will display it, but interactions (like button clicks) will send action calls to Home Assistant
 without the code, leading to failed operations that require a code.
 
 > [!IMPORTANT]
 > **Security advisory**
-> The default communication between your NSPanel (ESPHome) and Home Assistant (HA) is not encrypted. This 
-> could allow someone with network access to monitor and replicate the action calls. This risk is 
+> The default communication between your NSPanel (ESPHome) and Home Assistant (HA) is not encrypted. This
+> could allow someone with network access to monitor and replicate the action calls. This risk is
 > particularly relevant when controlling your alarm system.
 >
-> To enhance security, we strongly recommend enabling API encryption for NSPanel users managing an Alarm 
-> system. Follow the instructions in the ["API encryption" example here](customization.md#api-encryption) 
+> To enhance security, we strongly recommend enabling API encryption for NSPanel users managing an Alarm
+> system. Follow the instructions in the ["API encryption" example here](customization.md#api-encryption)
 > to implement this security measure.
 
 ## Configuration
 
 ### Allow the device to perform Home Assistant actions
 
-First, you need to configure your Home Assistant to permit your NSPanel to perform actions. While 
-most actions are handled via the Blueprint, ESPHome needs to send events with all necessary data in 
-plain text for these action calls. To mitigate any security risks, alarm-related calls are managed 
+First, you need to configure your Home Assistant to permit your NSPanel to perform actions. While
+most actions are handled via the Blueprint, ESPHome needs to send events with all necessary data in
+plain text for these action calls. To mitigate any security risks, alarm-related calls are managed
 directly by the panel.
 
 To enable this:
+
 1. Go to your ESPHome integrations panel (Settings > Devices and services > ESPHome).
 2. Click "Configure" next to your panel's entry.
 
@@ -39,6 +40,7 @@ To enable this:
 ### Blueprint settings
 
 To assign Alarm Control Panel entities to buttons:
+
 1. Open the NSPanel Blueprint automation.
 2. Find the button configuration section.
 3. Choose a button and select your alarm control panel entity.
@@ -47,16 +49,18 @@ To assign Alarm Control Panel entities to buttons:
    ![Assigning Alarm Control Panel entities in Blueprint](pics/ha_blueprint_home_custom_buttons_alarm.png)
 
 Follow these steps to ensure your NSPanel is correctly configured for controlling your alarm system.
+
 ## Controlling your alarm from your panel
 
-When an alarm control panel is configured in your Blueprint automation, the alarm icon appears on your 
-NSPanel's Home page or the respective button page. This icon changes based on the alarm state, detailed 
+When an alarm control panel is configured in your Blueprint automation, the alarm icon appears on your
+NSPanel's Home page or the respective button page. This icon changes based on the alarm state, detailed
 in the following table.
 
-Clicking this button opens the Alarm Control Panel page. Here, you can adjust alarm settings with a 
+Clicking this button opens the Alarm Control Panel page. Here, you can adjust alarm settings with a
 single click or return to the Home page.
 
 ![View of the Alarm Control Panel page on NSPanel](https://github.com/Blackymas/NSPanel_HA_Blueprint/assets/94725493/bc312981-3d5a-42c7-b0b4-203457ff549f)
+
 ### Description of states shown with the alarm icon
 
 <!-- markdownlint-disable MD013 -->
@@ -78,4 +82,3 @@ unknown/unavailable | White | ![shield-alert-outline](https://github.com/Blackym
 > [!NOTE]
 > The availability, behavior, and exact semantics of these states depend on the alarm system integration used in Home Assistant.
 > Not all systems support all states, and the meaning of each mode may vary according to the integration’s configuration.
-
