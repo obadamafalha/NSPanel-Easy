@@ -3,6 +3,8 @@
 **/.DS_Store
 
 Nextion2Text.*
+SyncAll.cmd
+SyncNextion2TXT.cmd
 *.cmd
 *.bat
 
@@ -12,6 +14,6 @@ Nextion2Text.*
 # Ignore dev folder
 dev
 .esphome
-/components/nspanel_ha_blueprint/__pycache__
+/components/nspanel_easy/__pycache__
 
 local
