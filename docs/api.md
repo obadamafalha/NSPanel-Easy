@@ -1,7 +1,9 @@
 # API
+
 This document provides details on custom actions designed for integration with Home Assistant, including their usage, parameters, and examples.
 
 ## Summary
+
 - [Action Documentation](#action-documentation)
   - [Button Action (`button`)](#button-action-button): Configures properties and state of buttons on a specified button page.
   - [Command Action (`command`)](#command-action-command): Sends a custom command directly to the display.
@@ -36,6 +38,7 @@ Updates the visual state (on/off) of the left and right hardware button indicato
 ## Action Documentation
 
 ### General Guidance
+
 In general, there’s no validation of parameters in an action call.
 Please validate inputs on the caller side; otherwise this can crash the ESPHome side and likely restart the panel.
 
@@ -69,6 +72,7 @@ If you send anything different, the conversion to the RGB565 used by Nextion wil
 <!-- markdownlint-enable MD013 -->
 
 ### Button Action: `button`
+
 Configures the properties and state of buttons on a specified button page, allowing for dynamic updates to button appearance and behavior based on specified parameters.
 
 **Usage:**
@@ -76,6 +80,7 @@ This action is designed for dynamic user interface adjustments, enabling the cus
 It's particularly useful for reflecting changes in device states or user interactions within the UI.
 
 **Parameters:**
+
 - `page` (string): The page identifier where the button is located.
 - `id` (string): The button's unique identifier.
 - `state` (bool): The state of the button, which can affect its background picture and other visual elements.
@@ -88,6 +93,7 @@ Example: "\uE6E8" for `mdi:lightbulb-on-outline`.
 - `label` (string): The main text label displayed on the button.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_button
 data:
@@ -100,11 +106,13 @@ data:
   bri: "75%"
   label: "Living Room"
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
 > This action dynamically updates the specified button's properties to match the provided parameters.
 
 ### Command Action: `command`
+
 Sends a custom command directly to the display, enabling direct interaction and dynamic content updates.
 
 **Usage:**
@@ -112,10 +120,12 @@ This action is particularly useful for advanced customizations and direct displa
 such as showing messages, updating statuses, or any other display-centric commands.
 
 **Parameters:**
+
 - `cmd` (string): The command string to be sent to the display.
 Please refer to [The Nextion Instruction Set](https://nextion.tech/instruction-set/) for a comprehensive list of commands supported.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_command
 data:
@@ -128,6 +138,7 @@ data:
 > Ensure the command string (`cmd`) is properly formatted according to your display's command processing capabilities.
 
 ### Component Color Action: `component_color`
+
 Changes the foreground color of a specified component on the display, enabling dynamic color updates for user interface customization.
 
 **Usage:**
@@ -135,6 +146,7 @@ This action is ideal for creating visually dynamic interfaces, allowing elements
 events, or user actions, such as indicating status changes or highlighting specific UI components.
 
 **Parameters:**
+
 - `page` (string): Identifier of the page where the component is.
     Use `mem` when setting memory vars or leave empty for current page or global vars.
 - `id` (string): Identifier of the component whose color will be updated.
@@ -143,25 +155,28 @@ events, or user actions, such as indicating status changes or highlighting speci
 
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
-> 
+>
 > The base implementation of `component_color` action does **not** include handling for `page: mem`.
 > This is by design to support a modular architecture.
-> 
+>
 > To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
 > These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables.
 > For example:
+>
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
-> 
+>
 > **Before using `page: mem` in your automations:**
+>
 > 1. Verify that your ESPHome configuration includes the extension file that handles the specific memory variable you want to update
 > 2. Check the component's documentation to confirm which memory variables are supported
 > 3. If `page: mem` doesn't work as expected, ensure the required extension package is loaded in your configuration
-> 
+>
 > When an extension is not present, using `page: mem` will have no effect, and the action may be silently ignored.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_component_color
 data:
@@ -169,43 +184,49 @@ data:
   id: time
   color: [255, 0, 0]  # Changes the component's color to red
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant to ensure correct action execution.
 >
 > Ensure the `id` and color parameters accurately target and define the new color for the component.
 
 ### Component Text Action: `component_text`
+
 Updates the text of a specified component on the display, enabling dynamic text content updates.
 
 **Usage:**
 Ideal for user interfaces that require real-time text updates, such as status messages, labels, or any text-based information display.
 
 **Parameters:**
+
 - `page` (string): Identifier of the page where the component is. Use `mem` when setting memory vars or leave empty for current page or global vars.
 - `id` (string): Identifier of the component whose text will be updated. Ensure this matches the component's ID in your display layout.
 - `txt` (string): The new text content to display. This can include static text or dynamic information passed at runtime.
 
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
-> 
+>
 > The base implementation of `component_text` action does **not** include handling for `page: mem`.
 > This is by design to support a modular architecture.
-> 
+>
 > To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
 > These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables.
 > For example:
+>
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
-> 
+>
 > **Before using `page: mem` in your automations:**
+>
 > 1. Verify that your ESPHome configuration includes the extension file that handles the specific memory variable you want to update
 > 2. Check the component's documentation to confirm which memory variables are supported
 > 3. If `page: mem` doesn't work as expected, ensure the required extension package is loaded in your configuration
-> 
+>
 > When an extension is not present, using `page: mem` will have no effect, and the action may be silently ignored.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_component_text
 data:
@@ -213,18 +234,21 @@ data:
   id: time
   txt: "12:34"
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant to ensure correct action execution.
 >
 > Make sure the `id` corresponds to the correct component on your display for the text update to work as intended.
 
 ### Component Value Action: `component_val`
+
 Updates the value of a specified component on the display, enabling dynamic value updates.
 
 **Usage:**
 Ideal for interfaces requiring real-time updates of numerical values, such as counters, temperature readings, or any numeric indicators.
 
 **Parameters:**
+
 - `page` (string): Identifier of the page where the component is. Use `mem` when setting memory vars or leave empty for current page or global vars.
 - `id` (string): Identifier of the component whose value will be updated. It's crucial this matches the component's ID in your display layout accurately.
 - `val` (int): The new integer value to be set for the component.
@@ -232,25 +256,28 @@ Ideal for interfaces requiring real-time updates of numerical values, such as co
 
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
-> 
+>
 > The base implementation of `component_val` action does **not** include handling for `page: mem`.
 > This is by design to support a modular architecture.
-> 
+>
 > To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
 > These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables.
 > For example:
+>
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
-> 
+>
 > **Before using `page: mem` in your automations:**
+>
 > 1. Verify that your ESPHome configuration includes the extension file that handles the specific memory variable you want to update
 > 2. Check the component's documentation to confirm which memory variables are supported
 > 3. If `page: mem` doesn't work as expected, ensure the required extension package is loaded in your configuration
-> 
+>
 > When an extension is not present, using `page: mem` will have no effect, and the action may be silently ignored.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_component_val
 data:
@@ -258,18 +285,21 @@ data:
   id: coverslider
   val: 25
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant to ensure correct action execution.
 >
 > Ensure the `id` accurately matches the component on your display to successfully update its value.
 
 ### Components Visibility Action: `components_visibility`
+
 Hides or shows a list of components on the display, allowing for dynamic interface changes.
 
 **Usage:**
 This action is ideal for creating interactive user interfaces that adapt by hiding or showing certain elements based on user actions, conditions, or events.
 
 **Parameters:**
+
 - `page` (string): Identifier of the page where the component is. Use `mem` when setting memory vars or leave empty for current page or global vars.
 - `ids` (string[]): Array of identifiers of the components to be hidden/shown.
   It is crucial that this matches the component's ID in your display layout to ensure the correct element is hidden/shown.
@@ -277,24 +307,27 @@ This action is ideal for creating interactive user interfaces that adapt by hidi
 
 > [!IMPORTANT]
 > **Using `page: mem` for Memory Variables**
-> 
+>
 > The base implementation of these actions (`component_color`, `component_text`, `component_val`) does **not** include handling for `page: mem`.
 > This is by design to support a modular architecture.
-> 
+>
 > To use `page: mem`, you must ensure that the appropriate extension file is included in your configuration.
 > These extension files use ESPHome's `!extend` feature to add `page == "mem"` handling for their specific memory variables. For example:
+>
 > - `nspanel_esphome_version.yaml` extends these actions to handle version-related memory variables
 > - `nspanel_esphome_page_utilities.yaml` extends these actions for utilities-specific memory variables
 > - Other component files may add their own `mem` handlers
-> 
+>
 > **Before using `page: mem` in your automations:**
+>
 > 1. Verify that your ESPHome configuration includes the extension file that handles the specific memory variable you want to update
 > 2. Check the component's documentation to confirm which memory variables are supported
 > 3. If `page: mem` doesn't work as expected, ensure the required extension package is loaded in your configuration
-> 
+>
 > When an extension is not present, using `page: mem` will have no effect, and the action may be silently ignored.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_components_visibility
 data:
@@ -310,11 +343,12 @@ data:
 
 > [!IMPORTANT]
 > This command only works when the target page is visible.
-> 
+>
 > If a component being hidden/shown is not part of the current page, the command will fail and an error message will be logged.
 <!-- markdownlint-enable MD028 -->
 
 ### Entity Details Show Action: `entity_details_show`
+
 This action is designed to display detailed information about a specific entity within the panel's interface.
 It enables users to navigate to a dedicated page showing extensive details about an entity, such as a light or a climate,
 and provides a structured way to return to either the home page or a specific button page.
@@ -325,23 +359,27 @@ By specifying the `entity` and `back_page`, users are offered a seamless navigat
 ensuring they can easily access detailed information and return to their initial navigation point within the interface.
 
 **Parameters:**
+
 - `entity` (string): The unique identifier of the entity (`entity_id` in Home Assistant) for which details are displayed.
 - `back_page` (string): The page identifier to return to after viewing entity details.
 Valid options are `home` for the home page or `buttonpage01` to `buttonpage04` for button pages.
 No other pages are supported to maintain navigation consistency.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_entity_details_show
 data:
   entity: "light.living_room"
   back_page: "buttonpage01"
 ```
+
 > [!NOTE]
 > Ensure to replace <your_panel_name> with the specific name of your panel configured in Home Assistant.
 > This setup provides a direct and user-friendly way to access and return from detailed entity information, enhancing the interface's usability.
 
 ### Hardware Button State Indication Action: `hw_button_state`
+
 This action dynamically updates the on-screen indication bars for the hardware buttons, reflecting the current state of the entities they control.
 It's designed to provide immediate visual feedback,
 enhancing the user interface by showing the active/inactive state of the left and right hardware button indicators on the panel.
@@ -351,28 +389,33 @@ Utilize this action to modify the visual state (on/off) of hardware button indic
 This allows for visual feedback that matches the operational state of the buttons.
 
 **Parameters:**  
+
 - `button_mask` (int): A bitwise identifier for buttons. Use `1` for the left button, `2` for the right button, and `3` for both buttons.
 - `state` (bool): The state to apply to the button(s) indicated by `button_mask`. True for on (active), false for off (inactive).
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_hw_button_state
 data:
   button_mask: 3  # Targets both the left (1) and right (2) buttons
   state: true     # Turns the indication bars on for both buttons
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant.
 > This action leverages a bitmask (`button_mask`) for flexible control over multiple hardware buttons simultaneously,
 > offering a streamlined method for updating their visual states.
 
 ### Icon Action: `icon`
+
 Updates a chip or custom button's icon, color, and visibility within Home Assistant.
 
 **Usage:**
 This action is ideal for dynamically updating icons on your Panel, allowing for a customizable and interactive user interface.
 
 **Parameters:**
+
 - `page` (string): Identifier of the page where the component is. Leave empty for current page.
 - `id` (string): Identifier of the chip or button component. Refer to "[Screen components](#screen-components)" for more details.
 - `icon` (string): Icon codepoint from
@@ -382,6 +425,7 @@ Example: "\uE6E8" for `mdi:lightbulb-on-outline`.
 - `visible` (bool): Flag indicating whether the icon should be visible (`true`) or hidden (`false`).
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_icon
 data:
@@ -391,10 +435,12 @@ data:
   icon_color: [0, 255, 0]  # Green
   visible: true
 ```
+
 > [!NOTE]
 > Ensure the placeholder `<your_panel_name>` is replaced with the specific panel name you will need to reference in your Home Assistant configuration.
 
 ### Notification Clear Action: `notification_clear`
+
 Removes any displayed notification from the screen, allowing the display to return to its normal state or view.
 
 **Usage:**
@@ -402,14 +448,17 @@ This action is essential after displaying notifications or alerts.
 It ensures the user interface remains clean and uncluttered by clearing messages once they are no longer needed or have been acknowledged.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_notification_clear
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant to ensure the action executes correctly.
 This simple action clears the current notification from the display, maintaining a tidy interface.
 
 ### Notification Show Action: `notification_show`
+
 Displays a notification message on the screen, enabling dynamic presentation of information or alerts.
 
 **Usage:**
@@ -417,18 +466,21 @@ Designed for scenarios requiring immediate feedback or notification on the displ
 this action is suitable for showing alerts, informational messages, or updates directly on the screen interface.
 
 **Parameters:**
+
 - `label` (string): A brief title or label for the notification, typically displayed in a prominent, bold format.
 - `message` (string): The detailed message or content of the notification, providing the main information or alert to the user.
 The system will automatically wrap text to fit the display unless `\r` is used to insert manual line breaks. When `\r` is present,
 the system respects only the line breaks provided by the user, enhancing message formatting control.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_notification_show
 data:
   label: "Security Alert"
   message: "Front door opened at 10:30 PM\rPlease check the entrance."
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
 > This ensures the action executes correctly, displaying the notification with the specified `label` and `message`.
@@ -436,6 +488,7 @@ data:
 > Utilize `\r` within the message for custom line breaks, offering precise formatting control.
 
 ### Alarm Settings Page Action: `page_alarm`
+
 Populates the alarm settings page with the current configuration and state information,
 seamlessly integrating with the panel's interface to reflect the latest settings and statuses of the alarm system.
 
@@ -446,6 +499,7 @@ It plays a crucial role in ensuring a responsive and user-friendly interface for
 allowing for real-time interaction with the alarm system directly from the panel.
 
 **Parameters:**
+
 - `page_title` (string): The title displayed at the top of the alarm settings page.
 - `state` (string): The current state of the alarm system, such as "armed_home" or "disarmed".
 - `supported_features` (int): A bitmask indicating the features supported by the alarm system.
@@ -458,6 +512,7 @@ The bitmask values are aligned with the
 - `mui_alarm` (string[]): An array of localized text strings for the alarm control buttons, supporting various alarm states and actions.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_page_alarm
 data:
@@ -475,12 +530,14 @@ data:
     - "Umgehen"
     - "Entwaffnen"
 ```
+
 > [!NOTE]
 > Ensure to replace `<your_panel_name>` with the actual name of your panel configured in Home Assistant.
 > This action configuration allows for the alarm settings page to dynamically reflect the current features, state,
 > and control options of your alarm system, enhancing the overall user experience.
 
 #### Supported features of the alarm control panel entity
+
 - ARM_HOME = 1
 - ARM_AWAY = 2
 - ARM_NIGHT = 4
@@ -489,6 +546,7 @@ data:
 - ARM_VACATION = 32
 
 ### Climate Page Action: `page_climate`
+
 Updates the climate page with the current state information, seamlessly integrating with the panel's interface to display the latest climate settings and statuses.
 
 **Usage:**
@@ -496,6 +554,7 @@ Designed to dynamically update the climate page, this action ensures users have 
 It's crucial for maintaining a responsive and informative interface for efficient climate management.
 
 **Parameters:**
+
 - `current_temp` (float): The current temperature.
 - `supported_features` (int): Bitmask indicating the climate device's supported features.
 These features determine the available climate controls and settings on the device.
@@ -518,6 +577,7 @@ selected from [HASwitchPlate Material Design Icons](https://htmlpreview.github.i
 - `entity` (string): Entity ID for the climate device.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_page_climate
 data:
@@ -533,11 +593,13 @@ data:
   embedded_climate: true
   entity: "climate.living_room"
   ```
+
   > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
 > This action ensures the climate page reflects the latest in climate control settings, enhancing the user experience by providing up-to-date information.
 
 #### Supported features of the climate entity
+
 - TARGET_TEMPERATURE = 1
 - TARGET_TEMPERATURE_RANGE = 2
 - TARGET_HUMIDITY = 4
@@ -549,6 +611,7 @@ data:
 - TURN_ON = 256
 
 ### Media Player Page Action: `page_media_player`
+
 Updates the media player page with current configuration and state information,
 integrating seamlessly with the panel's interface to display the latest media playback status and controls.
 
@@ -559,6 +622,7 @@ This action is essential for providing a responsive and user-friendly interface 
 allowing real-time interaction with the media player directly from the panel.
 
 **Parameters:**
+
 - `entity` (string): The entity ID of the media player.
 - `state` (string): The current state of the media player (e.g., playing, paused, stopped).
 - `is_volume_muted` (bool): Indicates whether the volume is currently muted.
@@ -574,6 +638,7 @@ The bitmask values correspond to the
 [Home Assistant Media Player Supported Features](#supported-features-of-the-media-player-entity).
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_page_media_player
 data:
@@ -589,12 +654,14 @@ data:
   media_position_delta: 0.5
   supported_features: 84  # Example: Play, Pause, Next, Previous
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
 > This action ensures the media player page reflects the latest in media playback settings and status,
 > enhancing the user experience by providing up-to-date information.
 
 #### Supported features of the media player entity
+
 - PAUSE = 1
 - SEEK = 2
 - VOLUME_SET = 4
@@ -619,6 +686,7 @@ data:
 - MEDIA_ENQUEUE = 2097152
 
 ### QR Code Action: `qrcode`
+
 Displays a QR code on the display, which can be used for various purposes such as sharing a WiFi password or linking to a website.
 
 **Usage:**
@@ -626,11 +694,13 @@ This action enables the dynamic display of QR codes on a specified page of the E
 It's particularly useful for settings where quick, scannable access to data is beneficial.
 
 **Parameters:**
+
 - `title` (string): The title or heading to display above the QR code, providing context or instructions.
 - `qrcode` (string): The actual data or URL to be encoded into the QR code.
 - `show` (bool): A flag that determines whether to immediately display the QR code page upon calling the action.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_qrcode
 data:
@@ -651,6 +721,7 @@ data:
 <!-- markdownlint-enable MD028 -->
 
 ### RTTTL Play Action: `rtttl_play`
+
 Plays melodies encoded in the RTTTL format, enabling the integration of audio feedback or alerts with simple text-based melody strings.
 
 **Usage:**
@@ -659,24 +730,28 @@ by interpreting RTTTL (Ring Tone Text Transfer Language) strings.
 RTTTL is a compact format for storing melody sequences in a text-based format, making it ideal for simple audio devices like buzzers.
 
 **Parameters:**
+
 - `tone` (string): The RTTTL string representing the melody to be played.
-This string must conform to the RTTTL format, which includes the melody's name, default settings, and a sequence of notes. 
+This string must conform to the RTTTL format, which includes the melody's name, default settings, and a sequence of notes.
 
 **Example Tones:**
 For example tones and further inspiration, you can visit examples of RTTTL songs [here](https://esphome.io/components/rtttl/#common-beeps).
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_rtttl_play
 data:
   tone: "The Simpsons:d=4,o=5,b=160:c.6,e6,f#6,8a6,g.6,e6,c6,8a,8f#,8f#,8f#,2g,8p,8p,8f#,8f#,8f#,8g,a#.,8c6,8c6,8c6,c6"
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant to ensure correct action execution.
 >
 > Ensure the `tone` parameter contains a valid RTTTL string to successfully play the melody.
 
 ### TFT File Update Action: `upload_tft`
+
 Enables the remote update of the panel's TFT file from a specified URL or a default location,
 available exclusively with the "Upload TFT" add-on installed.
 This action is valuable for downloading alternative TFT files for customization or addressing file access issues.
@@ -686,10 +761,12 @@ This action is crucial for dynamically updating the TFT file, facilitating seaml
 It's particularly useful for applying custom interface designs or updates when direct access to the repository is limited.
 
 **Parameters:**
+
 - `url` (string): The URL for downloading the TFT file.
 If set to "default", it utilizes the URL from the "**Update TFT - Display Model**" selection in Home Assistant (**Settings** > **Devices & Actions** > **ESPHome**).
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_upload_tft
 data:
@@ -705,12 +782,14 @@ data:
 <!-- markdownlint-enable MD028 -->
 
 ### Utilities Group Refresh Action: `utilities_group_refresh`
+
 Updates utility group display values and direction indicators on the panel. This action is used to refresh the displayed values for utility groups dynamically.
 
 **Usage:**
 This action is particularly useful for updating display elements associated with utility groups, such as values and directional indicators, based on specified parameters.
 
 **Parameters:**
+
 - `group_id` (string): The unique identifier for the utility group.
 - `value1` (string): The first value to be displayed for the group.
 - `value2` (string): The second value to be displayed for the group.
@@ -718,6 +797,7 @@ This action is particularly useful for updating display elements associated with
 - `constructor` (bool): A flag to indicate if this is a constructor call, which forces updates regardless of current values.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_utilities_group_refresh
 data:
@@ -727,12 +807,14 @@ data:
   direction: 1
   constructor: false
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant to ensure correct action execution.
 
 This action updates utility group display elements with the specified values and direction indicators dynamically.
 
 ### Value Action: `value`
+
 Updates an entity to display specific values, allowing for dynamic updates of icons, names, and value colors within Home Assistant.
 
 **Usage:**
@@ -740,6 +822,7 @@ This action is intended for entities that need to display information dynamicall
 such as sensor readings or state values, with customized icons, names, and color coding for both icon and value.
 
 **Parameters:**
+
 - `id` (string): Identifier of the entity being updated. For details on entity identifiers, refer to "[Screen components](#screen-components)".
 - `icon` (string): Icon codepoint from
   [HASwitchPlate Material Design Icons](https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html).
@@ -750,6 +833,7 @@ Indicates the icon displayed next to the value.
 - `value_color` (int[]): RGB color array for the value text, enabling custom coloring of the displayed value.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_value
 data:
@@ -760,10 +844,12 @@ data:
   value: "75°F"
   value_color: [255, 255, 0] # Yellow
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with your specific panel name as configured in Home Assistant to ensure correct action execution.
 
 ### Wake Up Action: `wake_up`
+
 Activates the display from a screensaver or low-power state, enabling dynamic interface adjustments based on user interactions or automated triggers.
 
 **Usage:**
@@ -771,15 +857,18 @@ Ideal for scenarios requiring the display to become active upon certain events,
 such as motion detection, thereby conserving energy while ensuring the display is available when needed.
 
 **Parameters:**
+
 - `reset_timer` (bool): Determines whether to reset the sleep and dimming timers upon waking up the display.
 Setting this to `true` ensures the display remains active during user presence, while `false` retains the existing timer durations.
 
 **Home Assistant Example:**
+
 ```yaml
 action: esphome.<your_panel_name>_wake_up
 data:
   reset_timer: true
 ```
+
 > [!NOTE]
 > Replace `<your_panel_name>` with the specific name of your panel configured in Home Assistant.
 > This ensures the action executes correctly,
@@ -806,6 +895,7 @@ automation:
           reset_timer: true
     mode: restart
 ```
+
 > [!NOTE]
 > Adjust `<your_panel_name>` and `binary_sensor.motion_sensor_123` to your actual panel and sensor entity IDs.
 > This setup ensures the display is responsive to environmental conditions, enhancing user interaction while managing energy consumption efficiently.
@@ -813,38 +903,45 @@ automation:
 ## Screen components
 
 ### Home Page - Chips
+
 ![Image](pics/Nextion_Components_Home_Chips_EU.png)
 ![Image](pics/Nextion_Components_Home_Chips_US.png)
 
 #### User-defined Chips
+
 - **Description**: Chips are icons that are shown in specific situations or hidden. Their behaviour is controlled by the blueprint.
 - **Type**: Icon only with no touch commands.
 - **Availability**: Global (available even when page is not visible).
 - **Ids**: `home.chip01` to `home.chip07`.
 
 #### Relays Chips
+
 - **Description**: Icons representing each of the relays states.
 - **Type**: Icon only with no touch commands.
 - **Availability**: Global (available even when page is not visible).
 - **Ids**: `home.chip_relay1` and `home.chip_relay2`.
 
 #### Climate Chip
+
 - **Description**: Icon representing the state of the main climate entity.
 - **Type**: Icon only with no touch commands.
 - **Availability**: Global (available even when page is not visible).
 - **Ids**: `home.chip_climate`.
 
 ### Home Page - Custom buttons
+
 ![Image](pics/Nextion_Components_Home_Custom_Buttons_EU.png)
 ![Image](pics/Nextion_Components_Home_Custom_Buttons_US.png)
 
 ### Home Page - Values
+
 ![Image](pics/Nextion_Components_Home_Values_EU.png)
 ![Image](pics/Nextion_Components_Home_Values_US.png)
 This is a multi-component system, with names `value01` to `value03` containing the state of the entity,
 where `value01_icon` to `value03_icon` supports the icons.
 
 ### Entities Pages - Values
+
 Just like in "[Home Page - Values](#home-page---values)", this is a multi-component system, with names `value01` to `value08` containing the state of the entity,
 where `value01_icon` to `value08_icon` supports the icons and, exclusively in the Entities pages, `value01_label` to `value08_label`,
 which will contain the friendly name or some alternative label for the entities.
