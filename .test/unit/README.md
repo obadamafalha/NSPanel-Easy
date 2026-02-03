@@ -4,13 +4,13 @@ This directory contains comprehensive tests for the NSPanel Easy project.
 
 ## Test Structure
 
-### Python Tests
+**Python Tests**
 
 - `test_nspanel_easy_init.py` - Tests for the ESPHome component initialization (`components/nspanel_easy/__init__.py`)
 - `test_workflows.py` - Integration tests for GitHub Actions workflows
 - `test_config_files.py` - Validation tests for configuration files (YAML, JSON, etc.)
 
-### C++ Tests
+**C++ Tests**
 
 - `test_addon_climate.cpp` - Unit tests for climate addon functionality
 - `test_addon_upload_tft.cpp` - Unit tests for TFT upload state management
@@ -18,7 +18,7 @@ This directory contains comprehensive tests for the NSPanel Easy project.
 
 ## Running Tests
 
-### Python Tests
+**Python Tests**
 
 Install dependencies:
 ```bash
@@ -40,7 +40,7 @@ Run with coverage:
 pytest --cov=../components/nspanel_easy --cov-report=html
 ```
 
-### C++ Tests
+**C++ Tests**
 
 C++ tests require Google Test framework. To compile and run:
 
